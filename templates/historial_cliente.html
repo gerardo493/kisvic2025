@@ -1,0 +1,1734 @@
+{% extends "base.html" %}
+
+{% block title %}Historial del Cliente - {{ cliente.nombre }}{% endblock %}
+
+{% block content %}
+<div class="historial-container">
+    <!-- Header mejorado -->
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="client-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="client-info">
+                    <h2><i class="fas fa-user-clock me-2"></i>Historial del Cliente</h2>
+                    <p class="subtitle">{{ cliente.nombre }}</p>
+                    <span class="client-id">{{ cliente.id }}</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-outline-light">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <a href="{{ url_for('editar_cliente', id=cliente.id) }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i>Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- Información del cliente mejorada -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="client-details-card">
+                    <div class="card-header-custom">
+                        <h5><i class="fas fa-user-circle me-2"></i>Información del Cliente</h5>
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-user text-primary"></i>
+                                <span>Nombre</span>
+                            </div>
+                            <div class="info-value">{{ cliente.nombre }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-id-card text-success"></i>
+                                <span>RIF</span>
+                            </div>
+                            <div class="info-value">{{ cliente.id }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-envelope text-info"></i>
+                                <span>Email</span>
+                            </div>
+                            <div class="info-value">{{ cliente.email or 'No disponible' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-phone text-warning"></i>
+                                <span>Teléfono</span>
+                            </div>
+                            <div class="info-value">{{ cliente.telefono or 'No disponible' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-map-marker-alt text-danger"></i>
+                                <span>Dirección</span>
+                            </div>
+                            <div class="info-value">{{ cliente.direccion or 'No disponible' }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acciones rápidas -->
+                <div class="quick-actions-card">
+                    <div class="card-header-custom">
+                        <h5><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="quick-actions">
+                            {% if cliente.email %}
+                            <a href="mailto:{{ cliente.email }}" class="quick-action-btn email-btn">
+                                <i class="fas fa-envelope"></i>
+                                <span>Enviar Email</span>
+                            </a>
+                            {% endif %}
+                            {% if cliente.telefono %}
+                            <a href="https://wa.me/{{ cliente.telefono }}" target="_blank" class="quick-action-btn whatsapp-btn">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>WhatsApp</span>
+                            </a>
+                            {% endif %}
+                            {% if cliente.direccion %}
+                            <a href="https://www.google.com/maps/dir/?api=1&destination={{ cliente.direccion|urlencode }}" 
+                               target="_blank" class="quick-action-btn directions-btn">
+                                <i class="fas fa-directions"></i>
+                                <span>Ruta</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mapa mejorado -->
+            <div class="col-lg-8">
+                {% if cliente.direccion %}
+                <div class="map-card">
+                    <div class="card-header-custom">
+                        <h5><i class="fas fa-map me-2"></i>Ubicación del Cliente</h5>
+                        <div class="map-controls">
+                            <select id="mapTypeSelector" class="form-select form-select-sm">
+                                <option value="roadmap">Mapa</option>
+                                <option value="satellite">Satélite</option>
+                                <option value="hybrid">Híbrido</option>
+                                <option value="terrain">Terreno</option>
+                            </select>
+                            <button id="zoomIn" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button id="zoomOut" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button id="centerMap" class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-crosshairs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body-custom">
+                        <div id="map"></div>
+                        <div class="map-status" id="mapStatus">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Cargando mapa...
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="no-address-card">
+                    <div class="card-header-custom">
+                        <h5><i class="fas fa-map-marker-alt me-2"></i>Ubicación</h5>
+                    </div>
+                    <div class="card-body-custom">
+                        <div class="no-address-content">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h5>Sin dirección registrada</h5>
+                            <p>Este cliente no tiene una dirección registrada para mostrar en el mapa.</p>
+                            <a href="{{ url_for('editar_cliente', id=cliente.id) }}" class="btn btn-primary">
+                                <i class="fas fa-edit me-2"></i>Agregar Dirección
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Filtros mejorados -->
+        <div class="filters-section">
+            <div class="filters-card">
+                <div class="card-header-custom">
+                    <h5><i class="fas fa-filter me-2"></i>Filtros de Fecha</h5>
+                </div>
+                <div class="card-body-custom">
+                    <form method="get" class="filters-form">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="filtroAnio" class="form-label">Año</label>
+                                <select name="anio" class="form-select" id="filtroAnio">
+                                    <option value="">Todos los años</option>
+                                    {% for anio in anios_disponibles %}
+                                    <option value="{{ anio }}" {% if anio|string == filtro_anio %}selected{% endif %}>{{ anio }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="filtroMes" class="form-label">Mes</label>
+                                <select name="mes" class="form-select" id="filtroMes">
+                                    <option value="">Todos los meses</option>
+                                    {% for m in range(1, 13) %}
+                                    <option value="{{ m }}" {% if m|string == filtro_mes %}selected{% endif %}>{{ "%02d"|format(m) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary flex-fill">
+                                        <i class="fas fa-filter me-2"></i>Filtrar
+                                    </button>
+                                    <a href="{{ url_for('historial_cliente', id=cliente.id) }}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas mejoradas -->
+        <div class="stats-section">
+            <div class="row">
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ facturas|length }}</h3>
+                            <p>Facturas</p>
+                            <small>Total filtradas</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>${{ '%.2f' % total_compras }}</h3>
+                            <p>Total USD</p>
+                            <small>Período actual</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-boliviano-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>${{ '%.2f' % total_bs }}</h3>
+                            <p>Total BS</p>
+                            <small>Período actual</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>${{ '%.2f' % (promedio_por_factura if promedio_por_factura is defined else 0) }}</h3>
+                            <p>Promedio</p>
+                            <small>Por factura</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-year"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>${{ '%.2f' % total_anual_usd }}</h3>
+                            <p>Anual USD</p>
+                            <small>{{ now.year }}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-sm-6 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>${{ '%.2f' % total_mensual_usd }}</h3>
+                            <p>Mensual USD</p>
+                            <small>{{ now.strftime('%B %Y') }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de facturas mejorada -->
+        <div class="facturas-section">
+            <div class="facturas-card">
+                <div class="card-header-custom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-list me-2"></i>Facturas del Cliente</h5>
+                        <div class="header-actions">
+                            <span class="badge bg-primary">{{ facturas|length }} facturas encontradas</span>
+                            {% if facturas %}
+                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="exportarFacturas()">
+                                <i class="fas fa-download me-1"></i>Exportar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body-custom">
+                                    {% if facturas %}
+                <div class="table-responsive">
+                    <div class="scroll-indicator">
+                        <i class="fas fa-arrows-alt-h"></i> Scroll horizontal
+                    </div>
+                    <table class="table table-hover custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Número</th>
+                                    <th>Fecha</th>
+                                    <th>Total USD</th>
+                                    <th>Total BS</th>
+                                    <th>Estado</th>
+                                    <th>Saldo Pendiente</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for factura in facturas %}
+                                <tr>
+                                    <td>
+                                        <div class="invoice-number">
+                                            <strong>{{ factura.numero or factura.id }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="invoice-date">
+                                            <i class="fas fa-calendar-alt text-muted me-1"></i>
+                                            {{ factura.fecha }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="amount usd">${{ '%.2f' % factura.total_usd }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="amount bs">${{ '%.2f' % factura.total_bs }}</span>
+                                    </td>
+                                    <td>
+                                        {% if factura.estado == 'cobrada' %}
+                                            <span class="status-badge paid">
+                                                <i class="fas fa-check me-1"></i>Cobrada
+                                            </span>
+                                        {% elif factura.estado == 'abonada' %}
+                                            <span class="status-badge partial">
+                                                <i class="fas fa-clock me-1"></i>Abonada
+                                            </span>
+                                        {% else %}
+                                            <span class="status-badge pending">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>Pendiente
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if factura.estado != 'cobrada' %}
+                                            <span class="amount pending">${{ '%.2f' % (factura.saldo_pendiente or 0) }}</span>
+                                        {% else %}
+                                            <span class="amount paid">$0.00</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{{ url_for('ver_factura', id=factura.id) }}" class="btn btn-sm btn-info" title="Ver factura">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('editar_factura', id=factura.id) }}" class="btn btn-sm btn-warning" title="Editar factura">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            {% if factura.estado != 'cobrada' %}
+                                            <a href="{{ url_for('registrar_pago', id=factura.id) }}" class="btn btn-sm btn-success" title="Registrar pago">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </a>
+                                            {% endif %}
+                                            <a href="{{ url_for('descargar_factura_pdf', id=factura.id) }}" class="btn btn-sm btn-secondary" title="Descargar PDF">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No se encontraron facturas</h5>
+                        <p class="text-muted">
+                            {% if filtro_anio or filtro_mes %}
+                                No hay facturas para el período seleccionado.
+                                <a href="{{ url_for('historial_cliente', id=cliente.id) }}" class="btn btn-outline-primary btn-sm ms-2">
+                                    <i class="fas fa-times me-1"></i>Limpiar Filtros
+                                </a>
+                            {% else %}
+                                Este cliente aún no tiene facturas registradas.
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .historial-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    /* Header mejorado */
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        pointer-events: none;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .client-avatar {
+        width: 80px;
+        height: 80px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .client-info h2 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .subtitle {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .client-id {
+        background: rgba(255,255,255,0.2);
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        backdrop-filter: blur(10px);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .header-actions .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .header-actions .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Contenido principal */
+    .content-wrapper {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
+
+    /* Tarjetas de información */
+    .client-details-card,
+    .quick-actions-card,
+    .map-card,
+    .no-address-card,
+    .filters-card,
+    .facturas-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .client-details-card:hover,
+    .quick-actions-card:hover,
+    .map-card:hover,
+    .filters-card:hover,
+    .facturas-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .card-header-custom {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 1.5rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header-custom h5 {
+        margin: 0;
+        color: #495057;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .card-body-custom {
+        padding: 1.5rem;
+    }
+
+    /* Información del cliente */
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f3f4;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 500;
+        color: #6c757d;
+    }
+
+    .info-label i {
+        width: 20px;
+        text-align: center;
+    }
+
+    .info-value {
+        color: #495057;
+        font-weight: 600;
+        text-align: right;
+        max-width: 60%;
+        word-break: break-word;
+    }
+
+    /* Acciones rápidas */
+    .quick-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        border-radius: 10px;
+        text-decoration: none;
+        color: white;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: none;
+        width: 100%;
+        text-align: left;
+    }
+
+    .quick-action-btn:hover {
+        transform: translateX(5px);
+        text-decoration: none;
+        color: white;
+    }
+
+    .email-btn {
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    }
+
+    .whatsapp-btn {
+        background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    }
+
+    .directions-btn {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    }
+
+    /* Mapa */
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 12px;
+        border: 2px solid #e0e0e0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .map-controls {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .map-controls .form-select {
+        min-width: 120px;
+    }
+
+    .map-status {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        z-index: 1000;
+    }
+
+    .no-address-content {
+        text-align: center;
+        color: #6c757d;
+        padding: 3rem 1rem;
+    }
+
+    .no-address-content i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* Filtros */
+    .filters-form {
+        margin: 0;
+    }
+
+    /* Estadísticas */
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .stat-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .stat-content h3 {
+        margin: 0;
+        color: #495057;
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .stat-content p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .stat-content small {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        color: #6c757d;
+    }
+
+    /* Tabla de facturas */
+    .custom-table {
+        margin: 0;
+        width: 100%;
+        min-width: 1200px;
+        table-layout: fixed;
+    }
+
+    .custom-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        border: none;
+        padding: 1.2rem 1rem;
+        font-size: 0.95rem;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .custom-table td {
+        vertical-align: middle;
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #f1f3f4;
+        font-size: 0.9rem;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+    }
+
+    /* Ancho específico para columnas */
+    .custom-table th:nth-child(1), /* Número */
+    .custom-table td:nth-child(1) {
+        width: 12%;
+        min-width: 120px;
+    }
+
+    .custom-table th:nth-child(2), /* Fecha */
+    .custom-table td:nth-child(2) {
+        width: 12%;
+        min-width: 120px;
+    }
+
+    .custom-table th:nth-child(3), /* Total USD */
+    .custom-table td:nth-child(3) {
+        width: 12%;
+        min-width: 100px;
+        text-align: right;
+    }
+
+    .custom-table th:nth-child(4), /* Total BS */
+    .custom-table td:nth-child(4) {
+        width: 12%;
+        min-width: 120px;
+        text-align: right;
+    }
+
+    .custom-table th:nth-child(5), /* Estado */
+    .custom-table td:nth-child(5) {
+        width: 12%;
+        min-width: 100px;
+        text-align: center;
+    }
+
+    .custom-table th:nth-child(6), /* Saldo Pendiente */
+    .custom-table td:nth-child(6) {
+        width: 15%;
+        min-width: 130px;
+        text-align: right;
+    }
+
+    .custom-table th:nth-child(7), /* Acciones */
+    .custom-table td:nth-child(7) {
+        width: 25%;
+        min-width: 200px;
+        text-align: center;
+    }
+
+    .invoice-number {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .invoice-date {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .amount {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .amount.usd {
+        color: #28a745;
+    }
+
+    .amount.bs {
+        color: #007bff;
+    }
+
+    .amount.pending {
+        color: #dc3545;
+    }
+
+    .amount.paid {
+        color: #28a745;
+    }
+
+    .status-badge {
+        padding: 0.5rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-badge.paid {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-badge.partial {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .status-badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .action-buttons .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        min-width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .action-buttons .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    /* Mejorar el contenedor de la tabla */
+    .table-responsive {
+        border-radius: 12px;
+        overflow: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background: white;
+        max-height: 600px;
+        scrollbar-width: thin;
+        scrollbar-color: #667eea #f1f3f4;
+    }
+
+    /* Estilos para scrollbar personalizado */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f3f4;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+    /* Scroll horizontal suave */
+    .table-responsive {
+        scroll-behavior: smooth;
+    }
+
+    /* Mejorar el contenedor de facturas */
+    .facturas-card {
+        margin-bottom: 2rem;
+    }
+
+    .facturas-card .card-body-custom {
+        padding: 0;
+    }
+
+    /* Indicador de scroll */
+    .scroll-indicator {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(102, 126, 234, 0.9);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .table-responsive:hover .scroll-indicator {
+        opacity: 1;
+    }
+
+    /* Mejorar el header de la tabla para que se mantenga fijo */
+    .table-responsive {
+        position: relative;
+    }
+
+    .custom-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-state i {
+        opacity: 0.5;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .header-left {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .map-controls {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .quick-actions {
+            flex-direction: column;
+        }
+
+        .stat-card {
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .action-buttons .btn {
+            width: 100%;
+        }
+
+        /* Tabla responsive en móviles */
+        .custom-table {
+            font-size: 0.8rem;
+            min-width: 800px;
+        }
+
+        .table-responsive {
+            max-height: 400px;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        .custom-table th:nth-child(1),
+        .custom-table td:nth-child(1),
+        .custom-table th:nth-child(2),
+        .custom-table td:nth-child(2) {
+            min-width: 80px;
+        }
+
+        .custom-table th:nth-child(3),
+        .custom-table td:nth-child(3),
+        .custom-table th:nth-child(4),
+        .custom-table td:nth-child(4) {
+            min-width: 70px;
+        }
+
+        .custom-table th:nth-child(5),
+        .custom-table td:nth-child(5) {
+            min-width: 80px;
+        }
+
+        .custom-table th:nth-child(6),
+        .custom-table td:nth-child(6) {
+            min-width: 90px;
+        }
+
+        .custom-table th:nth-child(7),
+        .custom-table td:nth-child(7) {
+            min-width: 150px;
+        }
+
+        .scroll-indicator {
+            opacity: 1;
+            background: rgba(102, 126, 234, 0.95);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .content-wrapper {
+            padding: 1rem;
+        }
+
+        .custom-table {
+            font-size: 0.75rem;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            padding: 0.5rem 0.25rem;
+        }
+
+        .action-buttons .btn {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.75rem;
+            min-width: 30px;
+            height: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Variables globales del mapa
+let map, marker, geocoder, directionsService, directionsRenderer;
+let currentPosition = null;
+
+// Datos del cliente (se llenan desde el servidor)
+var clienteNombre = "{{ cliente.nombre|e }}";
+var clienteId = "{{ cliente.id|e }}";
+var clienteDireccion = "{{ cliente.direccion|e if cliente.direccion else '' }}";
+var tieneDireccion = {% if cliente.direccion %}true{% else %}false{% endif %};
+
+// Configuración de Google Maps
+var apiKey = "{{ maps_config.api_key|e }}";
+var libraries = {{ maps_config.libraries|tojson|safe }};
+
+// Base de datos de ubicaciones exactas de Venezuela
+var ubicacionesExactas = {
+    // Caracas y alrededores
+    'caracas': { lat: 10.4806, lng: -66.9036 },
+    'petare': { lat: 10.4800, lng: -66.8167 },
+    'guarenas': { lat: 10.4703, lng: -66.6193 },
+    'guatire': { lat: 10.4744, lng: -66.5424 },
+    'los teques': { lat: 10.3450, lng: -67.0333 },
+    'la guaira': { lat: 10.6000, lng: -66.9333 },
+    'catia': { lat: 10.5000, lng: -66.9333 },
+    'charallave': { lat: 10.2333, lng: -66.8667 },
+    'santa teresa': { lat: 10.2333, lng: -66.6500 },
+    'ocumare del tuy': { lat: 10.1167, lng: -66.7833 },
+    'santa lucia': { lat: 10.2667, lng: -66.6667 },
+    
+    // Aragua
+    'maracay': { lat: 10.2469, lng: -67.5958 },
+    'turmero': { lat: 10.2333, lng: -67.4833 },
+    'cagua': { lat: 10.1833, lng: -67.4500 },
+    'la victoria': { lat: 10.2167, lng: -67.3333 },
+    'villa de cura': { lat: 10.0333, lng: -67.4833 },
+    'san juan de los morros': { lat: 9.9000, lng: -67.3500 },
+    'tinaquillo': { lat: 9.9167, lng: -67.7333 },
+    
+    // Carabobo
+    'valencia': { lat: 10.1579, lng: -67.9972 },
+    'puerto cabello': { lat: 10.4731, lng: -67.6314 },
+    'san felipe': { lat: 10.3333, lng: -68.7333 },
+    'yaritagua': { lat: 10.0833, lng: -69.1167 },
+    'chivacoa': { lat: 10.1667, lng: -68.9000 },
+    'nirgua': { lat: 10.1500, lng: -68.5667 },
+    
+    // Zulia
+    'maracaibo': { lat: 10.6427, lng: -71.6125 },
+    'ciudad ojeda': { lat: 10.2000, lng: -71.3000 },
+    'cabimas': { lat: 10.4000, lng: -71.4500 },
+    'punto fijo': { lat: 11.7000, lng: -70.2000 },
+    'coro': { lat: 11.3950, lng: -69.6817 },
+    
+    // Lara
+    'barquisimeto': { lat: 10.0670, lng: -69.3467 },
+    'acarigua': { lat: 9.5597, lng: -69.2019 },
+    'guanare': { lat: 9.0433, lng: -69.7489 },
+    
+    // Portuguesa
+    'san fernando': { lat: 7.8940, lng: -67.4727 },
+    
+    // Mérida
+    'merida': { lat: 8.5982, lng: -71.1448 },
+    'valera': { lat: 9.3167, lng: -70.6000 },
+    
+    // Trujillo
+    'trujillo': { lat: 9.3657, lng: -70.4339 },
+    
+    // Barinas
+    'barinas': { lat: 8.6226, lng: -70.2075 },
+    
+    // Táchira
+    'san cristobal': { lat: 7.7669, lng: -72.2250 },
+    
+    // Bolívar
+    'ciudad bolivar': { lat: 8.1292, lng: -63.5407 },
+    'ciudad guayana': { lat: 8.3535, lng: -62.6410 },
+    'puerto ordaz': { lat: 8.3535, lng: -62.6410 },
+    'san felix': { lat: 8.3535, lng: -62.6410 },
+    'upata': { lat: 8.0167, lng: -62.4000 },
+    'tumeremo': { lat: 7.3000, lng: -61.5500 },
+    'el callao': { lat: 6.2333, lng: -61.4500 },
+    'santa elena': { lat: 4.6000, lng: -61.1167 },
+    
+    // Anzoátegui
+    'barcelona': { lat: 10.1333, lng: -64.7000 },
+    'puerto la cruz': { lat: 10.2138, lng: -64.6328 },
+    'puerto pirito': { lat: 10.0667, lng: -65.0333 },
+    'el tigre': { lat: 8.8833, lng: -64.2667 },
+    'anaco': { lat: 9.4333, lng: -64.4667 },
+    'carupano': { lat: 10.6667, lng: -63.2500 },
+    'guiria': { lat: 10.5667, lng: -62.3000 },
+    
+    // Sucre
+    'cumana': { lat: 10.4560, lng: -64.1675 },
+    
+    // Monagas
+    'maturin': { lat: 9.7491, lng: -63.1763 },
+    
+    // Nueva Esparta
+    'porlamar': { lat: 10.9500, lng: -63.8500 },
+    'pampatar': { lat: 10.9667, lng: -63.8000 },
+    'la asuncion': { lat: 11.0333, lng: -63.8667 },
+    
+    // Guárico
+    'calabozo': { lat: 8.9167, lng: -67.4167 },
+    'valle de la pascua': { lat: 9.2167, lng: -66.0167 },
+    'zaraza': { lat: 9.3500, lng: -65.3167 },
+    'altagracia de orituco': { lat: 9.8500, lng: -66.3833 },
+    
+    // Cojedes
+    'san carlos': { lat: 9.6500, lng: -68.5833 },
+    'tinaquillo': { lat: 9.9167, lng: -67.7333 },
+    
+    // Delta Amacuro
+    'tucupita': { lat: 9.0667, lng: -62.0500 },
+    
+    // Amazonas
+    'puerto ayacucho': { lat: 5.6639, lng: -67.6236 },
+    
+    // Apure
+    'san fernando de apure': { lat: 7.8940, lng: -67.4727 },
+    'achaguas': { lat: 7.7833, lng: -68.2167 },
+    'san juan de payara': { lat: 7.6500, lng: -67.6167 },
+    
+    // Yaracuy
+    'san felipe': { lat: 10.3333, lng: -68.7333 },
+    'yaritagua': { lat: 10.0833, lng: -69.1167 },
+    'chivacoa': { lat: 10.1667, lng: -68.9000 },
+    'nirgua': { lat: 10.1500, lng: -68.5667 },
+    
+    // Falcón
+    'punto fijo': { lat: 11.7000, lng: -70.2000 },
+    'coro': { lat: 11.3950, lng: -69.6817 },
+    
+    // Miranda
+    'petare': { lat: 10.4800, lng: -66.8167 },
+    'guarenas': { lat: 10.4703, lng: -66.6193 },
+    'guatire': { lat: 10.4744, lng: -66.5424 },
+    'los teques': { lat: 10.3450, lng: -67.0333 },
+    'charallave': { lat: 10.2333, lng: -66.8667 },
+    'santa teresa': { lat: 10.2333, lng: -66.6500 },
+    'ocumare del tuy': { lat: 10.1167, lng: -66.7833 },
+    'santa lucia': { lat: 10.2667, lng: -66.6667 },
+    
+    // Vargas
+    'la guaira': { lat: 10.6000, lng: -66.9333 },
+    'catia': { lat: 10.5000, lng: -66.9333 },
+    
+    // Distrito Capital
+    'caracas': { lat: 10.4806, lng: -66.9036 }
+};
+
+// Función para verificar si los datos se cargaron correctamente
+function verificarDatos() {
+    console.log('=== VERIFICACIÓN DE DATOS ===');
+    console.log('Nombre del cliente:', clienteNombre);
+    console.log('ID del cliente:', clienteId);
+    console.log('Dirección del cliente:', clienteDireccion);
+    console.log('¿Tiene dirección?:', tieneDireccion);
+    console.log('API Key:', apiKey);
+    console.log('Libraries:', libraries);
+    console.log('============================');
+}
+
+function initMap() {
+    console.log('Iniciando mapa...');
+    
+    // Verificar si el cliente tiene dirección
+    if (!tieneDireccion) {
+        console.log('El cliente no tiene dirección, no se inicializará el mapa');
+        return;
+    }
+    
+    console.log('Cliente tiene dirección:', clienteDireccion);
+    
+    // Configuración inicial del mapa
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 15,
+        center: { lat: 10.5, lng: -66.9 }, // Centro en Venezuela
+        mapTypeControl: false,
+        streetViewControl: true,
+        fullscreenControl: true,
+        zoomControl: false
+    });
+
+    // Inicializar servicios (pueden no estar disponibles sin API key)
+    try {
+        geocoder = new google.maps.Geocoder();
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+        console.log('Servicios de Google Maps inicializados correctamente');
+    } catch (error) {
+        console.log('Servicios de Google Maps no disponibles (modo sin API key)');
+        geocoder = null;
+        directionsService = null;
+        directionsRenderer = null;
+    }
+
+    // Configurar controles personalizados
+    setupMapControls();
+    
+    // Geocodificar la dirección del cliente
+    geocodeAddress(clienteDireccion);
+    
+    // Obtener ubicación actual del usuario
+    getCurrentLocation();
+}
+
+function setupMapControls() {
+    // Control de tipo de mapa
+    const mapTypeSelector = document.getElementById('mapTypeSelector');
+    if (mapTypeSelector) {
+        mapTypeSelector.addEventListener('change', function() {
+            const mapType = this.value;
+            switch(mapType) {
+                case 'satellite':
+                    map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+                    break;
+                case 'hybrid':
+                    map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+                    break;
+                case 'terrain':
+                    map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+                    break;
+                default:
+                    map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+            }
+        });
+    }
+
+    // Controles de zoom
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+    
+    if (zoomIn) {
+        zoomIn.addEventListener('click', function() {
+            map.setZoom(map.getZoom() + 1);
+        });
+    }
+    
+    if (zoomOut) {
+        zoomOut.addEventListener('click', function() {
+            map.setZoom(map.getZoom() - 1);
+        });
+    }
+
+    // Botón centrar mapa
+    const centerMap = document.getElementById('centerMap');
+    if (centerMap) {
+        centerMap.addEventListener('click', function() {
+            if (currentPosition) {
+                map.setCenter(currentPosition);
+                map.setZoom(15);
+            }
+        });
+    }
+}
+
+function geocodeAddress(address) {
+    console.log('Geocodificando dirección:', address);
+    updateMapStatus('Buscando ubicación...');
+    
+    // Primero intentar con la base de datos de ubicaciones exactas
+    var ubicacionExacta = buscarUbicacionExacta(address);
+    if (ubicacionExacta) {
+        console.log('Ubicación exacta encontrada en base de datos:', ubicacionExacta);
+        mostrarUbicacionEnMapa(ubicacionExacta, address, 'Ubicación exacta encontrada');
+        return;
+    }
+    
+    // Si no hay geocoder disponible (sin API key), usar ubicación aproximada
+    if (!geocoder) {
+        console.log('Geocoder no disponible, usando ubicación aproximada');
+        useApproximateLocation(address);
+        return;
+    }
+    
+    // Mejorar la dirección para geocodificación en Venezuela
+    let improvedAddress = address;
+    if (!address.toLowerCase().includes('venezuela')) {
+        improvedAddress = address + ', Venezuela';
+    }
+    
+    console.log('Dirección mejorada:', improvedAddress);
+    
+    geocoder.geocode({ 
+        'address': improvedAddress,
+        'region': 'VE' // Especificar región Venezuela
+    }, function(results, status) {
+        console.log('Resultado geocodificación:', status);
+        
+        if (status === 'OK') {
+            const location = results[0].geometry.location;
+            currentPosition = location;
+            
+            console.log('Ubicación encontrada por Google:', location.lat(), location.lng());
+            mostrarUbicacionEnMapa(location, address, 'Ubicación encontrada por Google Maps');
+            
+        } else {
+            // Si falla, intentar con la dirección original sin "Venezuela"
+            if (improvedAddress !== address) {
+                console.log('Intentando con dirección original...');
+                geocoder.geocode({ 
+                    'address': address,
+                    'region': 'VE'
+                }, function(results2, status2) {
+                    console.log('Segundo intento geocodificación:', status2);
+                    
+                    if (status2 === 'OK') {
+                        const location = results2[0].geometry.location;
+                        currentPosition = location;
+                        
+                        console.log('Ubicación encontrada en segundo intento:', location.lat(), location.lng());
+                        mostrarUbicacionEnMapa(location, address, 'Ubicación encontrada en segundo intento');
+                        
+                    } else {
+                        console.log('Geocodificación falló, usando ubicación aproximada');
+                        updateMapStatus('No se pudo encontrar la ubicación');
+                        useApproximateLocation(address);
+                    }
+                });
+            } else {
+                console.log('Geocodificación falló, usando ubicación aproximada');
+                updateMapStatus('No se pudo encontrar la ubicación');
+                useApproximateLocation(address);
+            }
+        }
+    });
+}
+
+function buscarUbicacionExacta(address) {
+    console.log('Buscando ubicación exacta para:', address);
+    var direccionLower = address.toLowerCase();
+    
+    // Buscar coincidencias exactas en la base de datos
+    for (var ciudad in ubicacionesExactas) {
+        if (direccionLower.includes(ciudad)) {
+            console.log('Ciudad encontrada en base de datos:', ciudad);
+            return ubicacionesExactas[ciudad];
+        }
+    }
+    
+    // Buscar por palabras clave específicas
+    if (direccionLower.includes('edo') || direccionLower.includes('estado')) {
+        if (direccionLower.includes('bolivar')) {
+            console.log('Estado Bolívar detectado, usando Ciudad Bolívar');
+            return ubicacionesExactas['ciudad bolivar'];
+        }
+        if (direccionLower.includes('carabobo')) {
+            console.log('Estado Carabobo detectado, usando Valencia');
+            return ubicacionesExactas['valencia'];
+        }
+        if (direccionLower.includes('aragua')) {
+            console.log('Estado Aragua detectado, usando Maracay');
+            return ubicacionesExactas['maracay'];
+        }
+        if (direccionLower.includes('miranda')) {
+            console.log('Estado Miranda detectado, usando Los Teques');
+            return ubicacionesExactas['los teques'];
+        }
+        if (direccionLower.includes('zulia')) {
+            console.log('Estado Zulia detectado, usando Maracaibo');
+            return ubicacionesExactas['maracaibo'];
+        }
+        if (direccionLower.includes('lara')) {
+            console.log('Estado Lara detectado, usando Barquisimeto');
+            return ubicacionesExactas['barquisimeto'];
+        }
+        if (direccionLower.includes('anzoategui') || direccionLower.includes('anzoátegui')) {
+            console.log('Estado Anzoátegui detectado, usando Barcelona');
+            return ubicacionesExactas['barcelona'];
+        }
+        if (direccionLower.includes('sucre')) {
+            console.log('Estado Sucre detectado, usando Cumaná');
+            return ubicacionesExactas['cumana'];
+        }
+        if (direccionLower.includes('monagas')) {
+            console.log('Estado Monagas detectado, usando Maturín');
+            return ubicacionesExactas['maturin'];
+        }
+        if (direccionLower.includes('nueva esparta')) {
+            console.log('Estado Nueva Esparta detectado, usando Porlamar');
+            return ubicacionesExactas['porlamar'];
+        }
+        if (direccionLower.includes('guarico') || direccionLower.includes('guárico')) {
+            console.log('Estado Guárico detectado, usando Calabozo');
+            return ubicacionesExactas['calabozo'];
+        }
+        if (direccionLower.includes('cojedes')) {
+            console.log('Estado Cojedes detectado, usando San Carlos');
+            return ubicacionesExactas['san carlos'];
+        }
+        if (direccionLower.includes('merida') || direccionLower.includes('mérida')) {
+            console.log('Estado Mérida detectado, usando Mérida');
+            return ubicacionesExactas['merida'];
+        }
+        if (direccionLower.includes('trujillo')) {
+            console.log('Estado Trujillo detectado, usando Trujillo');
+            return ubicacionesExactas['trujillo'];
+        }
+        if (direccionLower.includes('barinas')) {
+            console.log('Estado Barinas detectado, usando Barinas');
+            return ubicacionesExactas['barinas'];
+        }
+        if (direccionLower.includes('tachira') || direccionLower.includes('táchira')) {
+            console.log('Estado Táchira detectado, usando San Cristóbal');
+            return ubicacionesExactas['san cristobal'];
+        }
+        if (direccionLower.includes('falcon') || direccionLower.includes('falcón')) {
+            console.log('Estado Falcón detectado, usando Coro');
+            return ubicacionesExactas['coro'];
+        }
+        if (direccionLower.includes('yaracuy')) {
+            console.log('Estado Yaracuy detectado, usando San Felipe');
+            return ubicacionesExactas['san felipe'];
+        }
+        if (direccionLower.includes('portuguesa')) {
+            console.log('Estado Portuguesa detectado, usando Guanare');
+            return ubicacionesExactas['guanare'];
+        }
+        if (direccionLower.includes('apure')) {
+            console.log('Estado Apure detectado, usando San Fernando');
+            return ubicacionesExactas['san fernando'];
+        }
+        if (direccionLower.includes('delta amacuro')) {
+            console.log('Estado Delta Amacuro detectado, usando Tucupita');
+            return ubicacionesExactas['tucupita'];
+        }
+        if (direccionLower.includes('amazonas')) {
+            console.log('Estado Amazonas detectado, usando Puerto Ayacucho');
+            return ubicacionesExactas['puerto ayacucho'];
+        }
+    }
+    
+    console.log('No se encontró ubicación exacta en la base de datos');
+    return null;
+}
+
+function mostrarUbicacionEnMapa(location, address, tipoUbicacion) {
+    console.log('Mostrando ubicación en mapa:', tipoUbicacion);
+    
+    // Crear marcador
+    marker = new google.maps.Marker({
+        map: map,
+        position: location,
+        title: clienteNombre,
+        animation: google.maps.Animation.DROP,
+        icon: {
+            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            scaledSize: new google.maps.Size(40, 40)
+        }
+    });
+
+    // Crear ventana de información
+    var infoContent = '<div style="padding: 10px; max-width: 250px;">' +
+            '<h6 style="margin: 0 0 5px 0; color: #667eea;">' +
+            '<i class="fas fa-user"></i> ' + clienteNombre +
+            '</h6>' +
+            '<p style="margin: 0 0 5px 0; font-size: 0.9em;">' +
+            '<i class="fas fa-map-marker-alt"></i> ' + address +
+            '</p>' +
+            '<p style="margin: 0; font-size: 0.8em; color: #666;">' +
+            '<i class="fas fa-id-card"></i> ' + clienteId +
+            '</p>';
+    
+    if (tipoUbicacion.includes('exacta')) {
+        infoContent += '<p style="margin: 0; font-size: 0.7em; color: #28a745; font-style: italic;">' +
+                '<i class="fas fa-check-circle"></i> Ubicación exacta' +
+                '</p>';
+    } else if (tipoUbicacion.includes('aproximada')) {
+        infoContent += '<p style="margin: 0; font-size: 0.7em; color: #ffc107; font-style: italic;">' +
+                '<i class="fas fa-info-circle"></i> Ubicación aproximada' +
+                '</p>';
+    }
+    
+    infoContent += '<div style="margin-top: 10px;">' +
+            '<button onclick="openDirections(\'' + address + '\')" ' +
+            'style="background: #667eea; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em;">' +
+            '<i class="fas fa-directions"></i> Obtener Ruta' +
+            '</button>' +
+            '</div>' +
+            '</div>';
+
+    const infowindow = new google.maps.InfoWindow({
+        content: infoContent
+    });
+
+    // Eventos del marcador
+    marker.addListener('click', function() {
+        infowindow.open(map, marker);
+    });
+
+    // Centrar mapa en la ubicación
+    map.setCenter(location);
+    map.setZoom(16);
+    
+    // Mostrar ventana de información
+    infowindow.open(map, marker);
+    
+    updateMapStatus(tipoUbicacion);
+    
+    // Ocultar el status después de 3 segundos
+    setTimeout(() => {
+        hideMapStatus();
+    }, 3000);
+}
+
+function getCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                console.log('Ubicación actual obtenida:', pos);
+                
+                // Crear marcador de ubicación actual
+                new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: 'Tu ubicación',
+                    icon: {
+                        url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                        scaledSize: new google.maps.Size(40, 40)
+                    }
+                });
+                
+                // Guardar ubicación para rutas
+                currentPosition = pos;
+                
+            },
+            function() {
+                console.log('No se pudo obtener la ubicación actual');
+            }
+        );
+    }
+}
+
+function useApproximateLocation(address) {
+    console.log('Usando ubicación aproximada para:', address);
+    
+    // Buscar en la base de datos de ubicaciones exactas
+    var ubicacionEncontrada = buscarUbicacionExacta(address);
+    
+    // Si no se encuentra una ubicación específica, usar ubicación por defecto
+    if (!ubicacionEncontrada) {
+        ubicacionEncontrada = { lat: 10.5, lng: -66.9 }; // Centro de Venezuela
+        console.log('Usando ubicación por defecto (centro de Venezuela)');
+    }
+    
+    console.log('Ubicación aproximada final:', ubicacionEncontrada);
+    
+    // Mostrar ubicación en el mapa
+    mostrarUbicacionEnMapa(ubicacionEncontrada, address, 'Ubicación aproximada mostrada');
+}
+
+function openDirections(address) {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+    window.open(url, '_blank');
+}
+
+function updateMapStatus(message) {
+    const status = document.getElementById('mapStatus');
+    if (status) {
+        status.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${message}`;
+        status.style.display = 'block';
+    }
+}
+
+function hideMapStatus() {
+    const status = document.getElementById('mapStatus');
+    if (status) {
+        status.style.display = 'none';
+    }
+}
+
+function loadGoogleMapsScript() {
+    console.log('Cargando script de Google Maps...');
+    var script = document.createElement('script');
+    var librariesStr = libraries.join(',');
+    
+    // Intentar cargar sin API key primero (para desarrollo/pruebas)
+    if (!apiKey || apiKey === 'AIzaSyDwc6TnKyHP0Q6O6tNo4_RfK24CuKvM524') {
+        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=' + librariesStr + '&callback=initMap';
+        console.log('Cargando Google Maps sin API key (modo desarrollo)');
+    } else {
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey + '&libraries=' + librariesStr + '&callback=initMap';
+        console.log('Cargando Google Maps con API key');
+    }
+    
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+    console.log('Script de Google Maps agregado al DOM');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, iniciando configuración...');
+    document.getElementById('filtroAnio').focus();
+    
+    // Verificar datos al cargar la página
+    verificarDatos();
+    
+    // Cargar mapa si el cliente tiene dirección
+    if (tieneDireccion) {
+        console.log('Iniciando carga del mapa...');
+        loadGoogleMapsScript();
+    } else {
+        console.log('El cliente no tiene dirección, no se cargará el mapa');
+    }
+});
+
+function exportarFacturas() {
+    // Crear tabla CSV con las facturas
+    const facturasData = JSON.parse('{{ facturas|tojson|safe }}');
+    let csvContent = 'Número,Fecha,Total USD,Total BS,Estado,Saldo Pendiente\n';
+    
+    facturasData.forEach(function(factura) {
+        const numero = factura.numero || factura.id;
+        const fecha = factura.fecha;
+        const totalUsd = factura.total_usd || 0;
+        const totalBs = factura.total_bs || 0;
+        const estado = factura.estado || 'pendiente';
+        const saldoPendiente = factura.saldo_pendiente || 0;
+        
+        csvContent += `"${numero}","${fecha}","${totalUsd}","${totalBs}","${estado}","${saldoPendiente}"\n`;
+    });
+    
+    // Crear y descargar archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `facturas_${clienteId}_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+</script>
+{% endblock %}
+{% endblock %} 

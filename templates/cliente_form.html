@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar Cliente' if cliente else 'Nuevo Cliente' }} - SENIAT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 offset-md-1">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    {{ 'Editar Cliente SENIAT' if cliente else 'Nuevo Cliente SENIAT' }}
+                </h4>
+                <small>Formulario con validaciones según Providencia 00102</small>
+            </div>
+            <div class="card-body">
+                <!-- Alerta de información SENIAT -->
+                <div class="alert alert-info border-left-info" role="alert">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle fa-2x text-info"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="alert-heading">📋 Requisitos SENIAT</h6>
+                            <p class="mb-0"><strong>Campos obligatorios:</strong> RIF completo, nombre, dirección completa (mínimo 10 caracteres), teléfono válido.</p>
+                            <small class="text-muted">Todos los datos se validan automáticamente según normativas fiscales.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% if cliente %}{{ url_for('editar_cliente', id=cliente.id|urlencode) }}{% else %}{{ url_for('nuevo_cliente') }}{% endif %}" id="cliente-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    
+                    <!-- IDENTIFICACIÓN FISCAL -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-id-card me-2"></i>Identificación Fiscal
+                            </h5>
+                        </div>
+                    </div>
+
+                    {% if not cliente %}
+                    <!-- NUEVO CLIENTE -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="tipo_id" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Tipo de ID
+                            </label>
+                            <select class="form-select" id="tipo_id" name="tipo_id" required onchange="toggleDigitoVerificador()">
+                                <option value="">Seleccione...</option>
+                                <option value="V">V - Venezolano</option>
+                                <option value="E">E - Extranjero</option>
+                                <option value="J">J - Persona Jurídica</option>
+                                <option value="P">P - Pasaporte</option>
+                                <option value="G">G - Gubernamental</option>
+                            </select>
+                            <div class="form-text">Según registro SENIAT</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="numero_id" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Número de Identificación
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="numero_id" 
+                                   name="numero_id" 
+                                   pattern="[0-9]{7,10}" 
+                                   minlength="7" 
+                                   maxlength="10"
+                                   placeholder="Ej: 12345678"
+                                   required>
+                            <div class="form-text">Entre 7 y 10 dígitos, solo números</div>
+                        </div>
+                        <div class="col-md-3" id="digito-verificador-container" style="display: none;">
+                            <label for="digito_verificador" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Dígito Verificador
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="digito_verificador" 
+                                   name="digito_verificador" 
+                                   pattern="[0-9]{1}" 
+                                   maxlength="1"
+                                   placeholder="0-9">
+                            <div class="form-text">Solo para personas jurídicas</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="alert alert-warning" id="rif-preview" style="display: none;">
+                                <strong>RIF generado:</strong> <span id="rif-display"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% else %}
+                    <!-- CLIENTE EXISTENTE -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id" class="form-label fw-bold">RIF/Identificación (Inmutable)</label>
+                            <input type="text" class="form-control bg-light" id="id" name="id_visible" value="{{ cliente.rif or cliente.id }}" readonly>
+                            <div class="form-text text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                El RIF no se puede modificar por seguridad fiscal
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Estado SENIAT</label>
+                            <div class="form-control bg-success text-white">
+                                <i class="fas fa-check-circle me-2"></i>
+                                {% if cliente.validado_seniat %}
+                                    ✅ Validado SENIAT
+                                {% else %}
+                                    ⚠️ Requiere validación
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- DATOS GENERALES -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-user me-2"></i>Datos Generales
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="nombre" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Nombre Completo / Razón Social
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="nombre" 
+                                   name="nombre" 
+                                   value="{{ cliente.nombre if cliente else '' }}" 
+                                   minlength="3"
+                                   maxlength="100"
+                                   placeholder="Nombre completo o razón social"
+                                   required>
+                            <div class="form-text">Según documento de identidad</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="email" class="form-label fw-bold">Correo Electrónico</label>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ cliente.email if cliente else '' }}"
+                                   placeholder="correo@ejemplo.com">
+                            <div class="form-text">Opcional, para notificaciones</div>
+                        </div>
+                    </div>
+
+                    <!-- CONTACTO -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-primary mb-3">
+                                <i class="fas fa-phone me-2"></i>Información de Contacto
+                            </h5>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="codigo_pais" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Código País
+                            </label>
+                            <select class="form-select" id="codigo_pais" name="codigo_pais">
+                                <option value="+58" {% if not cliente or (cliente.telefono and cliente.telefono.startswith('+58')) %}selected{% endif %}>
+                                    🇻🇪 +58 (Venezuela)
+                                </option>
+                                <option value="+1" {% if cliente and cliente.telefono and cliente.telefono.startswith('+1') %}selected{% endif %}>
+                                    🇺🇸 +1 (USA/Canadá)
+                                </option>
+                                <option value="+57" {% if cliente and cliente.telefono and cliente.telefono.startswith('+57') %}selected{% endif %}>
+                                    🇨🇴 +57 (Colombia)
+                                </option>
+                                <option value="+34" {% if cliente and cliente.telefono and cliente.telefono.startswith('+34') %}selected{% endif %}>
+                                    🇪🇸 +34 (España)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="telefono" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Número de Teléfono
+                            </label>
+                            <input type="tel" 
+                                   class="form-control" 
+                                   id="telefono" 
+                                   name="telefono" 
+                                   value="{% if cliente and cliente.telefono %}{{ cliente.telefono[3:] if cliente.telefono.startswith('+') else cliente.telefono }}{% endif %}" 
+                                   pattern="[0-9]{10,11}"
+                                   minlength="10"
+                                   placeholder="4121234567 (sin espacios)"
+                                   required>
+                            <div class="form-text">Mínimo 10 dígitos, sin espacios ni guiones</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="direccion" class="form-label fw-bold">
+                                <span class="text-danger">*</span> Dirección Fiscal Completa
+                            </label>
+                            <textarea class="form-control" 
+                                      id="direccion" 
+                                      name="direccion" 
+                                      rows="3" 
+                                      minlength="10"
+                                      maxlength="500"
+                                      placeholder="Dirección completa con estado, municipio, código postal..."
+                                      required>{{ cliente.direccion if cliente else '' }}</textarea>
+                            <div class="form-text">
+                                <strong>Mínimo 10 caracteres.</strong> Incluya: Calle, número, ciudad, estado, código postal.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-outline-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                                <button type="submit" class="btn btn-primary" id="submit-btn">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    {{ 'Actualizar Cliente SENIAT' if cliente else 'Guardar Cliente SENIAT' }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// JavaScript para validaciones dinámicas SENIAT
+function toggleDigitoVerificador() {
+    const tipoId = document.getElementById('tipo_id').value;
+    const container = document.getElementById('digito-verificador-container');
+    const digitoField = document.getElementById('digito_verificador');
+    
+    if (['J', 'P', 'G'].includes(tipoId)) {
+        container.style.display = 'block';
+        digitoField.required = true;
+    } else {
+        container.style.display = 'none';
+        digitoField.required = false;
+        digitoField.value = '';
+    }
+    updateRifPreview();
+}
+
+function updateRifPreview() {
+    const tipo = document.getElementById('tipo_id').value;
+    const numero = document.getElementById('numero_id').value;
+    const digito = document.getElementById('digito_verificador').value;
+    const preview = document.getElementById('rif-preview');
+    const display = document.getElementById('rif-display');
+    
+    if (tipo && numero && numero.length >= 7) {
+        let rif = tipo + '-' + numero;
+        if (['J', 'P', 'G'].includes(tipo) && digito) {
+            rif += '-' + digito;
+        }
+        display.textContent = rif;
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Actualizar preview del RIF al escribir
+    ['tipo_id', 'numero_id', 'digito_verificador'].forEach(function(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('input', updateRifPreview);
+            element.addEventListener('change', updateRifPreview);
+        }
+    });
+    
+    // Validación del formulario
+    document.getElementById('cliente-form').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando SENIAT...';
+        submitBtn.disabled = true;
+    });
+    
+    // Formatear teléfono automáticamente
+    const telefonoField = document.getElementById('telefono');
+    if (telefonoField) {
+        telefonoField.addEventListener('input', function(e) {
+            // Remover todo excepto números
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+});
+</script>
+
+<style>
+.border-left-info {
+    border-left: 4px solid #3498db !important;
+}
+.text-danger {
+    font-weight: bold;
+}
+.form-label.fw-bold {
+    color: #2c3e50;
+}
+.alert-info {
+    background-color: #e8f4f8;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+</style>
+
+{% endblock %}

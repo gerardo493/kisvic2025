@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Factura #{{ factura.numero }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 8mm 6mm 8mm 6mm;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #0e0e0e;
+            background: #ffffff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 60%;
+            height: 60%;
+            z-index: -1;
+            opacity: 0.02;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .watermark-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.8;
+        }
+        
+        .factura-container {
+            max-width: 190mm;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #ffffff;
+            color: #2c3e50;
+            padding: 18px 30px 14px 30px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid #0d6efd;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        
+        .logo-section {
+            flex: 0 0 auto;
+            text-align: center;
+            margin-right: 16px;
+        }
+        
+        .logo-section img {
+            width: 170px;
+            height: 170px;
+            border-radius: 0;
+            border: none;
+            background: transparent;
+            padding: 0;
+            box-shadow: none;
+            object-fit: contain;
+        }
+        
+        .company-info {
+            flex: 0 1 auto;
+            margin-left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .company-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #0b2e57;
+            text-align: center;
+        }
+        
+        .company-details {
+            font-size: 12px;
+            opacity: 0.9;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .seniat-badge { display: none; }
+        
+        .document-title {
+            text-align: center;
+            background: #f8fbff;
+            color: #0d6efd;
+            padding: 10px 14px;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            position: relative;
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .document-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 2px;
+        }
+        
+        .content-section {
+            padding: 20px 18px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.1);
+        }
+        
+        .info-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-item {
+            margin-bottom: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .info-value {
+            font-weight: 750;
+            color: #111111;
+        }
+        
+        .highlight-value {
+            color: #e74c3c;
+            font-weight: 800;
+        }
+        
+        .success-badge {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .warning-badge {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            table-layout: fixed;
+        }
+        
+        .products-table th {
+            background: #dbe9ff;
+            color: #001937;
+            padding: 12px 10px;
+            font-size: 11.5px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: left;
+            white-space: normal;
+            line-height: 1.15;
+            border-bottom: 2px solid #0d6efd;
+        }
+        
+        .products-table td {
+            padding: 10px;
+            font-size: 11px;
+            border-bottom: 1px solid #c0c7d0;
+            color: #0a0a0a;
+        }
+
+        /* Mejor legibilidad y orden en números */
+        .products-table th, .products-table td { vertical-align: middle; }
+        .products-table th:not(:last-child),
+        .products-table td:not(:last-child) { border-right: 1px solid #d6dee6; }
+        .products-table th:nth-child(3),
+        .products-table th:nth-child(4),
+        .products-table th:nth-child(5),
+        .products-table th:nth-child(6),
+        .products-table td:nth-child(3),
+        .products-table td:nth-child(4),
+        .products-table td:nth-child(5),
+        .products-table td:nth-child(6) {
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+        .text-right { text-align: right; }
+        /* Alineación por columnas (3-6 centradas para coincidir con encabezados) */
+        .products-table th:nth-child(3),
+        .products-table th:nth-child(4),
+        .products-table th:nth-child(5),
+        .products-table th:nth-child(6) { text-align: center; }
+        .products-table td:nth-child(3),
+        .products-table td:nth-child(4),
+        .products-table td:nth-child(5),
+        .products-table td:nth-child(6) {
+            text-align: center;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Destacar la columna de Cantidad (columna 2) */
+        .products-table th:nth-child(2) { text-align: center; color: #0a1f44; font-weight: 900; }
+        .products-table td:nth-child(2) { text-align: center; font-weight: 800; color: #0a1f44; }
+
+        /* Anchos por columna (equilibrio para impresión y espacio a números) */
+        .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 36%; padding-right: 12px; }
+        .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 8%; }
+        .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 14%; }
+        .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 14%; }
+        .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 14%; }
+        .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 14%; }
+        
+        .products-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .product-name {
+            font-weight: 800;
+            color: #0a1f44;
+            font-size: 11.5px;
+        }
+        
+        .product-details {
+            font-size: 8.5px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        
+        .totals-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 20px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            border: 2px solid #0d6efd;
+        }
+        
+        .totals-header {
+            text-align: right;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #0d6efd;
+        }
+        
+        .totals-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #0a1f44;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+        
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .totals-table th {
+            background: #e9f2ff;
+            color: #0b2e57;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: left;
+            border-bottom: 2px solid #0d6efd;
+        }
+        
+        .totals-table td {
+            padding: 12px 15px;
+            font-size: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .totals-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .subtotal-row {
+            background-color: #f8f9fa !important;
+        }
+        
+        .discount-row {
+            background-color: #fff3cd !important;
+        }
+        
+        .tax-row {
+            background-color: #e8f4fd !important;
+        }
+        
+        .total-row {
+            background-color: #d4edda !important;
+            font-weight: 700;
+        }
+        
+        .amount-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .amount-value {
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: right;
+        }
+        
+        .subtotal-amount {
+            color: #495057;
+        }
+        
+        .discount-amount {
+            color: #e74c3c;
+        }
+        
+        .tax-amount {
+            color: #17a2b8;
+        }
+        
+        .main-total {
+            font-size: 16px;
+            font-weight: 800;
+            color: #e74c3c;
+            text-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+        }
+        
+        .secondary-total {
+            font-size: 14px;
+            font-weight: 800;
+            color: #27ae60;
+            text-shadow: 0 1px 2px rgba(39, 174, 96, 0.2);
+        }
+        
+        .exchange-rate {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px 14px;
+            background: #eef5ff;
+            border-radius: 10px;
+            border: 2px solid #0d6efd;
+            box-shadow: 0 3px 10px rgba(13, 110, 253, 0.12);
+        }
+        
+        .exchange-rate-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #0a1f44;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        
+        .exchange-rate-value {
+            font-size: 13px;
+            font-weight: 900;
+            color: #0a1f44;
+            margin-top: 4px;
+        }
+        
+        .notes-section {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .notes-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        
+        .notes-content {
+            font-size: 10px;
+            line-height: 1.5;
+            color: #424242;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 12px 30px;
+            text-align: center;
+            font-size: 10px;
+        }
+        
+        /* Totales compactos al estilo del modelo */
+        .totals-compact {
+            max-width: 70mm;
+            margin-left: auto;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+        .totals-compact .row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #d8e2ef;
+            font-size: 12px;
+        }
+        .totals-compact .row:last-child { border-bottom: 0; }
+        .totals-compact .label { color: #0a1f44; font-weight: 700; }
+        .totals-compact .value { text-align: right; font-weight: 900; color: #111827; }
+        .totals-compact .grand { background: #d1f2e5; font-weight: 900; color: #0f5132; border-left: 4px solid #198754; }
+
+        /* Icono BCV y bloque de tasa */
+        .exchange-rate { display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .bcv-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2a74ff, #0d47a1);
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 4px rgba(13,71,161,0.35);
+        }
+        .bcv-logo {
+            width: 40px; height: 40px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 3px solid #0d6efd;
+            box-shadow: 0 3px 8px rgba(13,71,161,0.3);
+        }
+        
+        @media print {
+            html, body { width: 210mm; margin: 0; }
+            body { font-size: 13.2pt; }
+            .factura-container { box-shadow: none; border-radius: 0; width: 198mm; max-width: 198mm; transform: none !important; margin: 0 auto; }
+            .header { background: #ffffff !important; border-bottom: 2px solid #0d6efd; padding: 10px 14px 8px 14px; }
+            .company-name { font-size: 18pt; }
+            .logo-section { flex-basis: auto; margin-right: 12px; }
+            .logo-section img { width: 115px; height: 115px; border: none; padding: 0; box-shadow: none; }
+            .document-title { background: #f8fbff !important; color: #0d6efd !important; border-color: #0d6efd !important; padding: 12px 14px; font-size: 16pt; }
+            .content-section { padding: 8px 6mm; }
+            .info-card { padding: 16px; }
+            .info-card h3 { font-size: 14pt; margin-bottom: 10px; }
+            .info-item { margin-bottom: 6px; font-size: 11.8pt; }
+            .products-table th { padding: 6px 7px; font-size: 11.5pt; color: #001937 !important; background: #d1e4ff !important; }
+            .products-table td { padding: 5px 7px; font-size: 11.5pt; line-height: 1.35; color: #0a0a0a !important; border-bottom-color: #b9c2cc; }
+            .products-table td:nth-child(3),
+            .products-table td:nth-child(4),
+            .products-table td:nth-child(5),
+            .products-table td:nth-child(6) { font-size: 11.2pt; }
+            .products-table td:nth-child(2) { font-weight: 700 !important; }
+            .product-details { display: none; }
+            .totals-section { padding: 16px; }
+            .totals-compact .row { padding: 8px 14px; font-size: 12pt; }
+            .totals-title { font-size: 16pt; }
+            .bcv-icon { width: 18px; height: 18px; font-size: 9px; }
+            .bcv-logo { width: 30px; height: 30px; border-width: 2px; }
+            .header, .document-title, .info-grid, .totals-section { page-break-inside: avoid; }
+            .products-table { page-break-inside: auto; }
+            .products-table tr { page-break-inside: avoid; page-break-after: auto; }
+        }
+
+        /* Ajustes específicos para Chrome (Blink) en impresión */
+        @media print and (-webkit-min-device-pixel-ratio:0) {
+            /* Ajuste fino para Chrome sin zoom (consistencia en impresoras) */
+            body { font-size: 14.5pt; }
+            .company-name { font-size: 19pt; }
+            .document-title { font-size: 18pt; padding: 12px 16px; }
+            .info-card h3 { font-size: 15pt; }
+            .info-item { font-size: 13.5pt; }
+            .products-table th { font-size: 13.5pt; }
+            .products-table td { font-size: 13.5pt; }
+            .totals-title { font-size: 18pt; }
+            .totals-compact .row { font-size: 13.5pt; }
+        }
+    </style>
+</head>
+<body>
+    {% macro fmt_num(value) %}{{ '{:,.2f}'.format((value or 0)|float)|replace(',', 'X')|replace('.', ',')|replace('X', '.') }}{% endmacro %}
+    <!-- Watermark -->
+    <div class="watermark">
+        <div class="watermark-content">
+            <img src="{{ url_for('static', filename=empresa.logo) if empresa.logo else url_for('static', filename='logo.png') }}" alt="Logo">
+        </div>
+    </div>
+    
+    <div class="factura-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="{{ url_for('static', filename=empresa.logo) if empresa.logo else url_for('static', filename='logo.png') }}" alt="Logo">
+                </div>
+                <div class="company-info">
+                    <div class="company-name">{{ empresa.nombre if empresa.nombre else 'EMPRESA' }}</div>
+                    <div class="company-details">
+                        {{ empresa.direccion if empresa.direccion else 'Dirección de la Empresa' }}<br>
+                        Tel: {{ empresa.telefono if empresa.telefono else 'Teléfono' }} | Email: {{ empresa.email if empresa.email else 'email@empresa.com' }}<br>
+                        RIF: {{ empresa.rif if empresa.rif else 'RIF' }}
+                    </div>
+                    <div class="seniat-badge">SISTEMA HOMOLOGADO SENIAT</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Document Title -->
+        <div class="document-title">FACTURA</div>
+        
+        <!-- Content -->
+        <div class="content-section">
+            <!-- Information Grid -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <h3>DATOS DEL CLIENTE</h3>
+                    {% set cliente = clientes[factura.cliente_id] if factura.cliente_id in clientes else {} %}
+                    {% set cliente_rif = cliente.rif if cliente.rif else cliente.id if cliente.id else factura.cliente_id %}
+                    {% set cliente_nombre = cliente.nombre if cliente.nombre else 'Cliente no encontrado' %}
+                    {% set cliente_direccion = cliente.direccion if cliente.direccion else 'Dirección no registrada' %}
+                    {% set cliente_telefono = cliente.telefono if cliente.telefono else 'Teléfono no registrado' %}
+                    
+                    <div class="info-item">
+                        <span class="info-label">Nombre:</span>
+                        <span class="info-value">{{ cliente_nombre }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">RIF:</span>
+                        <span class="info-value highlight-value">{{ cliente_rif }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Dirección:</span>
+                        <span class="info-value">{{ cliente_direccion }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Teléfono:</span>
+                        <span class="info-value">{{ cliente_telefono }}</span>
+                    </div>
+                    
+                    {% if cliente.validado_seniat %}
+                        <div class="success-badge">✓ Cliente Verificado SENIAT</div>
+                    {% else %}
+                        <div class="warning-badge">⚠ Cliente No Verificado</div>
+                    {% endif %}
+                </div>
+                
+                <div class="info-card">
+                    <h3>DATOS DE LA FACTURA</h3>
+                    <div class="info-item">
+                        <span class="info-label">Número:</span>
+                        <span class="info-value highlight-value">{{ factura.numero }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Fecha:</span>
+                        <span class="info-value">{{ factura.fecha }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Hora:</span>
+                        <span class="info-value">{{ factura.hora if factura.hora else 'N/A' }}</span>
+                    </div>
+                    {% if factura.numero_secuencial %}
+                    <div class="info-item">
+                        <span class="info-label">Secuencial:</span>
+                        <span class="info-value">{{ factura.numero_secuencial }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="info-item">
+                        <span class="info-label">Condición de Pago:</span>
+                        <span class="info-value">{{ factura.condicion_pago|title if factura.condicion_pago else 'Contado' }}</span>
+                    </div>
+                    {% if factura.fecha_vencimiento %}
+                    <div class="info-item">
+                        <span class="info-label">Vencimiento:</span>
+                        <span class="info-value">{{ factura.fecha_vencimiento }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Products Table -->
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>Desc.</th>
+                        <th>Cant.</th>
+                        <th>P. U.<br>USD</th>
+                        <th>P. U.<br>Bs</th>
+                        <th>Subt.<br>Bs</th>
+                        <th>Subt.<br>USD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# INTENTAR ESTRUCTURA SENIAT PRIMERO #}
+                    {% if factura.items and factura.items is iterable and factura.items is not string %}
+                        {# ESTRUCTURA SENIAT (Nueva) - FUNCIONANDO #}
+                        {% for item in factura.items %}
+                        <tr>
+                            <td>
+                                <div class="product-name">{{ item.nombre if item.nombre else 'Producto no disponible' }}</div>
+                                {% if item.categoria %}
+                                    <div class="product-details">{{ item.categoria }}</div>
+                                {% endif %}
+                                {% if item.codigo_barras %}
+                                    <div class="product-details">Código: {{ item.codigo_barras }}</div>
+                                {% endif %}
+                            </td>
+                            <td>{{ item.cantidad or 0 }}</td>
+                            <td>${{ fmt_num(item.precio_unitario_usd) }}</td>
+                            <td>Bs {{ fmt_num(item.precio_unitario_bs) }}</td>
+                            <td>Bs {{ fmt_num(item.subtotal_bs) }}</td>
+                            <td>${{ fmt_num(item.subtotal_usd) }}</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    {# INTENTAR ESTRUCTURA LEGACY #}
+                    {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
+                        {% set productos_list = factura.productos %}
+                        {% set cantidades_list = factura.cantidades if factura.cantidades and factura.cantidades is iterable and factura.cantidades is not string else [] %}
+                        {% set precios_list = factura.precios if factura.precios and factura.precios is iterable and factura.precios is not string else [] %}
+                        
+                        {% if productos_list and cantidades_list %}
+                            {# ESTRUCTURA LEGACY (Compatibilidad) - FUNCIONANDO #}
+                            {% for i in range(productos_list|length) %}
+                            {% if i < cantidades_list|length %}
+                            {% set prod_id = productos_list[i] %}
+                            {% set cantidad = cantidades_list[i]|int if cantidades_list[i] else 0 %}
+                            {% set precio = precios_list[i]|float if precios_list and i < precios_list|length and precios_list[i] else 0 %}
+                            {% set tasa = factura.tasa_bcv|float if factura.tasa_bcv else 36.0 %}
+                            <tr>
+                                <td>
+                                    {% if inventario and prod_id and prod_id in inventario %}
+                                        <div class="product-name">{{ inventario[prod_id].nombre }}</div>
+                                        {% if inventario[prod_id].categoria %}
+                                            <div class="product-details">{{ inventario[prod_id].categoria }}</div>
+                                        {% endif %}
+                                        {% if inventario[prod_id].codigo_barras %}
+                                            <div class="product-details">Código: {{ inventario[prod_id].codigo_barras }}</div>
+                                        {% endif %}
+                                    {% else %}
+                                        <div class="product-name">Producto ID: {{ prod_id if prod_id else 'Desconocido' }}</div>
+                                        <div class="product-details warning-badge">⚠ No encontrado en inventario</div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ cantidad }}</td>
+                                <td>${{ fmt_num(precio) }}</td>
+                                <td>Bs {{ fmt_num(precio * tasa) }}</td>
+                                <td>Bs {{ fmt_num(precio * cantidad * tasa) }}</td>
+                                <td>${{ fmt_num(precio * cantidad) }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            
+                        {% else %}
+                            {# FALLBACK: Sin productos válidos #}
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #e74c3c; padding: 20px;">
+                                    ⚠ No se encontraron productos válidos en esta factura<br>
+                                    <small style="font-size: 9px;">Los datos pueden estar en formato incorrecto</small>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        
+                    {% else %}
+                        {# FALLBACK: Sin productos #}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #e74c3c; padding: 20px;">
+                                ⚠ No hay productos en esta factura<br>
+                                <small style="font-size: 9px;">Contacte al administrador del sistema</small>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            
+            <!-- Totals Section -->
+            <div class="totals-section">
+                <div class="totals-header">
+                    <div class="totals-title">Totales</div>
+                </div>
+                
+                <div class="totals-compact">
+                    <div class="row"><div class="label">Total Exento:</div><div class="value">Bs {{ fmt_num((factura.total_exento_bs or 0) if factura.total_exento_bs is defined else ((factura.subtotal_usd or 0) * (factura.tasa_bcv or 36.0) if (factura.iva_total or 0) == 0 else 0)) }}</div></div>
+                    <div class="row"><div class="label">USD:</div><div class="value">${{ fmt_num(factura.total_usd) }}</div></div>
+                        {% if factura.iva_total and factura.iva_total > 0 %}
+                    <div class="row"><div class="label">IVA ({{ factura.iva or 16 }}%):</div><div class="value">Bs {{ fmt_num((factura.iva_total or 0) * (factura.tasa_bcv or 36.0)) }}</div></div>
+                    {% else %}
+                    <div class="row"><div class="label">IVA (0%):</div><div class="value">Bs 0,00</div></div>
+                        {% endif %}
+                    <div class="row grand"><div class="label">Total a Pagar:</div><div class="value">Bs {{ fmt_num(factura.total_bs or ((factura.total_usd or 0) * (factura.tasa_bcv or 36.0))) }}</div></div>
+                    <div class="row"><div class="label">USD</div><div class="value">${{ fmt_num(factura.total_usd) }}</div></div>
+                </div>
+
+                <div class="exchange-rate" style="margin-top:10px;">
+                    <img class="bcv-logo" src="{{ url_for('static', filename='uploads/capturas/logo_bcv.png') }}" alt="Banco Central de Venezuela" onerror="this.onerror=null; this.src='https://bcv.org.ve/sites/default/files/default_images/logo_bcv-04_2.png'; this.onerror=function(){ this.style.display='none'; }">
+                    <div>
+                        <div class="exchange-rate-label">Tasa de cambio utilizada</div>
+                        <div class="exchange-rate-value">{{ fmt_num(factura.tasa_bcv or 36.0) }} Bs/USD</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes Section (reagregada con textos solicitados) -->
+            <div class="notes-section">
+                <div class="notes-content">
+                    • Documento calculado a la tasa de cambio BCV vigente a la fecha de emisión.<br>
+                    • Si no es pagada de contado, deberá cancelarse al valor de la tasa activa bancaria BCV para la fecha de pago.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer eliminado a solicitud -->
+    </div>
+    <script>
+    // Desactivar cualquier escalado automático previo para que la impresión
+    // respete los tamaños definidos en CSS de impresión.
+    (function() {
+      try {
+        var container = document.querySelector('.factura-container');
+        if (container) {
+          container.style.transform = 'none';
+          container.style.transformOrigin = 'initial';
+          container.style.width = '100%';
+        }
+        // Algunos navegadores disparan beforeprint: asegurar no aplicar escalado.
+        window.addEventListener('beforeprint', function(){
+          if (container) {
+            container.style.transform = 'none';
+            container.style.transformOrigin = 'initial';
+            container.style.width = '100%';
+          }
+        });
+      } catch (e) {}
+    })();
+    </script>
+</body>
+</html>

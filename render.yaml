@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: sistema-facturacion
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      mkdir -p uploads/capturas
+      chmod 777 uploads/capturas
+    startCommand: >-
+      bash -lc '
+      set -e
+      export APP_DIR=/opt/render/project/src
+      mkdir -p "$APP_DIR/storage"
+      cd "$APP_DIR"
+      for d in uploads uploads/capturas facturas_pdf facturas_json cotizaciones_pdf cotizaciones_json reportes_clientes reportes_cuentas reportes_facturas reportes_generales reportes_pagos historial_clientes logs; do
+        mkdir -p "storage/$d";
+        [ -e "$d" ] || ln -s "storage/$d" "$d";
+      done
+      exec gunicorn app:app --workers 2 --threads 2 --timeout 180 --bind 0.0.0.0:$PORT
+      '
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_APP
+        value: app.py
+    healthCheckPath: /
+    autoDeploy: true 
+    disk:
+      name: data
+      mountPath: /opt/render/project/src/storage
+      sizeGB: 2

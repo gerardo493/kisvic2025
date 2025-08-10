@@ -1,0 +1,914 @@
+{% extends "base.html" %}
+
+{% block title %}Mapa Avanzado - Ubicaciones de Clientes{% endblock %}
+
+{% block content %}
+<div class="mapa-avanzado-container">
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h2><i class="fas fa-map-marked-alt me-2"></i>Mapa Avanzado</h2>
+                <p class="subtitle">Visualización y gestión de ubicaciones de clientes</p>
+            </div>
+            <div class="header-right">
+                <button id="toggleFullscreen" class="btn btn-outline-light">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver a Clientes
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="mapa-content">
+        <div class="sidebar-controls">
+            <div class="control-panel">
+                <div class="control-section">
+                    <h5><i class="fas fa-search"></i> Búsqueda</h5>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Buscar cliente o dirección...">
+                        <button id="searchBtn" class="btn btn-primary btn-sm">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h5><i class="fas fa-filter"></i> Filtros</h5>
+                    <div class="filter-group">
+                        <label>Estado de Cliente:</label>
+                        <select id="estadoFilter" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="activo">Activos</option>
+                            <option value="inactivo">Inactivos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Rango de Compras:</label>
+                        <select id="comprasFilter" class="form-select form-select-sm">
+                            <option value="">Todos</option>
+                            <option value="alto">Alto (>$1000)</option>
+                            <option value="medio">Medio ($100-$1000)</option>
+                            <option value="bajo">Bajo (<$100)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h5><i class="fas fa-layer-group"></i> Capas</h5>
+                    <div class="layer-controls">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showMarkers" checked>
+                            <label class="form-check-label" for="showMarkers">
+                                Mostrar Marcadores
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showClusters" checked>
+                            <label class="form-check-label" for="showClusters">
+                                Agrupar Marcadores
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="showHeatmap">
+                            <label class="form-check-label" for="showHeatmap">
+                                Mapa de Calor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h5><i class="fas fa-cog"></i> Configuración</h5>
+                    <div class="config-group">
+                        <label>Tipo de Mapa:</label>
+                        <select id="mapTypeSelector" class="form-select form-select-sm">
+                            <option value="roadmap">Mapa</option>
+                            <option value="satellite">Satélite</option>
+                            <option value="hybrid">Híbrido</option>
+                            <option value="terrain">Terreno</option>
+                        </select>
+                    </div>
+                    <div class="config-group">
+                        <label>Zoom:</label>
+                        <div class="zoom-controls">
+                            <button id="zoomIn" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <span id="zoomLevel">12</span>
+                            <button id="zoomOut" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h5><i class="fas fa-route"></i> Navegación</h5>
+                    <div class="navigation-controls">
+                        <button id="getMyLocation" class="btn btn-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-crosshairs"></i> Mi Ubicación
+                        </button>
+                        <button id="calculateRoute" class="btn btn-success btn-sm w-100 mb-2">
+                            <i class="fas fa-route"></i> Calcular Ruta
+                        </button>
+                        <button id="clearRoute" class="btn btn-warning btn-sm w-100">
+                            <i class="fas fa-times"></i> Limpiar Ruta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mapa-principal">
+            <div id="map"></div>
+            <div class="map-overlay">
+                <div class="status-bar" id="statusBar">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="statusText">Cargando mapa...</span>
+                </div>
+                <div class="coordinates-display" id="coordinatesDisplay">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="coordinatesText">0, 0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            <div class="info-header">
+                <h5><i class="fas fa-info-circle"></i> Información del Cliente</h5>
+                <button class="btn-close" id="closeInfoPanel">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="info-content" id="infoContent">
+                <p class="text-muted">Selecciona un marcador para ver la información del cliente</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_css %}
+<style>
+    .mapa-avanzado-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 1rem 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .header-left h2 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .subtitle {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .mapa-content {
+        display: flex;
+        gap: 1rem;
+        height: calc(100vh - 200px);
+        min-height: 600px;
+    }
+
+    .sidebar-controls {
+        width: 320px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow-y: auto;
+        flex-shrink: 0;
+    }
+
+    .control-panel {
+        padding: 1.5rem;
+    }
+
+    .control-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .control-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .control-section h5 {
+        color: #1a237e;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .search-box input {
+        flex: 1;
+    }
+
+    .filter-group, .config-group {
+        margin-bottom: 1rem;
+    }
+
+    .filter-group label, .config-group label {
+        display: block;
+        font-size: 0.9rem;
+        color: #495057;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .layer-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-check {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-check-label {
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .zoom-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .zoom-controls span {
+        font-weight: 600;
+        color: #1a237e;
+        min-width: 30px;
+        text-align: center;
+    }
+
+    .navigation-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .mapa-principal {
+        flex: 1;
+        position: relative;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+        border-radius: 12px;
+    }
+
+    .map-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 1000;
+    }
+
+    .status-bar {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .coordinates-display {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: monospace;
+    }
+
+    .info-panel {
+        width: 300px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: none;
+        flex-shrink: 0;
+    }
+
+    .info-panel.active {
+        display: block;
+    }
+
+    .info-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .info-header h5 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-close:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .info-content {
+        padding: 1.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .cliente-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .cliente-info h6 {
+        color: #1a237e;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .cliente-info p {
+        margin: 0.25rem 0;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .cliente-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+    }
+
+    .stat-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a237e;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+
+    .cliente-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .cliente-actions .btn {
+        flex: 1;
+        min-width: 120px;
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 1200px) {
+        .mapa-content {
+            flex-direction: column;
+            height: auto;
+        }
+
+        .sidebar-controls {
+            width: 100%;
+            order: 2;
+        }
+
+        .mapa-principal {
+            order: 1;
+            height: 500px;
+        }
+
+        .info-panel {
+            width: 100%;
+            order: 3;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .control-panel {
+            padding: 1rem;
+        }
+
+        .mapa-principal {
+            height: 400px;
+        }
+
+        .status-bar, .coordinates-display {
+            font-size: 0.75rem;
+            padding: 6px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let map, markers = [], markerClusterer, heatmapLayer, directionsService, directionsRenderer;
+let currentPosition = null;
+let selectedMarker = null;
+let clientesData = {{ clientes|tojson }};
+
+function initMap() {
+    // Configuración inicial del mapa
+    map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: { lat: 10.5, lng: -66.9 }, // Centro en Venezuela
+        mapTypeControl: false,
+        streetViewControl: true,
+        fullscreenControl: true,
+        zoomControl: false
+    });
+
+    // Inicializar servicios
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
+
+    // Configurar controles
+    setupControls();
+    
+    // Cargar marcadores de clientes
+    loadClientMarkers();
+    
+    // Obtener ubicación actual
+    getCurrentLocation();
+    
+    // Eventos del mapa
+    map.addListener('click', function(e) {
+        updateCoordinates(e.latLng);
+    });
+    
+    map.addListener('zoom_changed', function() {
+        updateZoomLevel();
+    });
+}
+
+function setupControls() {
+    // Búsqueda
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchInput');
+    
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') performSearch();
+    });
+
+    // Filtros
+    document.getElementById('estadoFilter').addEventListener('change', applyFilters);
+    document.getElementById('comprasFilter').addEventListener('change', applyFilters);
+
+    // Capas
+    document.getElementById('showMarkers').addEventListener('change', toggleMarkers);
+    document.getElementById('showClusters').addEventListener('change', toggleClusters);
+    document.getElementById('showHeatmap').addEventListener('change', toggleHeatmap);
+
+    // Configuración
+    document.getElementById('mapTypeSelector').addEventListener('change', function() {
+        const mapType = this.value;
+        switch(mapType) {
+            case 'satellite':
+                map.setMapTypeId(google.maps.MapTypeId.SATELLITE);
+                break;
+            case 'hybrid':
+                map.setMapTypeId(google.maps.MapTypeId.HYBRID);
+                break;
+            case 'terrain':
+                map.setMapTypeId(google.maps.MapTypeId.TERRAIN);
+                break;
+            default:
+                map.setMapTypeId(google.maps.MapTypeId.ROADMAP);
+        }
+    });
+
+    // Controles de zoom
+    document.getElementById('zoomIn').addEventListener('click', function() {
+        map.setZoom(map.getZoom() + 1);
+    });
+    
+    document.getElementById('zoomOut').addEventListener('click', function() {
+        map.setZoom(map.getZoom() - 1);
+    });
+
+    // Navegación
+    document.getElementById('getMyLocation').addEventListener('click', getCurrentLocation);
+    document.getElementById('calculateRoute').addEventListener('click', calculateRoute);
+    document.getElementById('clearRoute').addEventListener('click', clearRoute);
+
+    // Panel de información
+    document.getElementById('closeInfoPanel').addEventListener('click', closeInfoPanel);
+
+    // Pantalla completa
+    document.getElementById('toggleFullscreen').addEventListener('click', toggleFullscreen);
+}
+
+function loadClientMarkers() {
+    updateStatus('Cargando marcadores de clientes...');
+    
+    const geocoder = new google.maps.Geocoder();
+    let markersLoaded = 0;
+    const totalClientes = Object.keys(clientesData).length;
+
+    Object.keys(clientesData).forEach(function(clienteId) {
+        const cliente = clientesData[clienteId];
+        
+        if (cliente.direccion) {
+            geocoder.geocode({ 'address': cliente.direccion }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                    
+                    const marker = new google.maps.Marker({
+                        position: location,
+                        map: map,
+                        title: cliente.nombre,
+                        icon: {
+                            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                            scaledSize: new google.maps.Size(32, 32)
+                        },
+                        clienteData: cliente
+                    });
+
+                    // Evento click del marcador
+                    marker.addListener('click', function() {
+                        showClientInfo(cliente, location);
+                        selectedMarker = marker;
+                    });
+
+                    markers.push(marker);
+                }
+                
+                markersLoaded++;
+                if (markersLoaded === totalClientes) {
+                    updateStatus('Marcadores cargados: ' + markers.length);
+                    setupMarkerClustering();
+                }
+            });
+        } else {
+            markersLoaded++;
+            if (markersLoaded === totalClientes) {
+                updateStatus('Marcadores cargados: ' + markers.length);
+                setupMarkerClustering();
+            }
+        }
+    });
+}
+
+function setupMarkerClustering() {
+    if (markerClusterer) {
+        markerClusterer.clearMarkers();
+    }
+    
+    markerClusterer = new MarkerClusterer(map, markers, {
+        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
+    });
+}
+
+function showClientInfo(cliente, location) {
+    const infoPanel = document.getElementById('infoPanel');
+    const infoContent = document.getElementById('infoContent');
+    
+    // Calcular estadísticas del cliente
+    const stats = calculateClientStats(cliente);
+    
+    infoContent.innerHTML = `
+        <div class="cliente-info">
+            <h6><i class="fas fa-user"></i> ${cliente.nombre}</h6>
+            <p><i class="fas fa-id-card"></i> <strong>RIF:</strong> ${cliente.id}</p>
+            <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${cliente.email || 'No disponible'}</p>
+            <p><i class="fas fa-phone"></i> <strong>Teléfono:</strong> ${cliente.telefono || 'No disponible'}</p>
+            <p><i class="fas fa-map-marker-alt"></i> <strong>Dirección:</strong> ${cliente.direccion || 'No disponible'}</p>
+        </div>
+        
+        <div class="cliente-stats">
+            <div class="stat-item">
+                <div class="stat-value">${stats.totalFacturas}</div>
+                <div class="stat-label">Facturas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$${stats.totalCompras.toFixed(2)}</div>
+                <div class="stat-label">Total Compras</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$${stats.promedioCompras.toFixed(2)}</div>
+                <div class="stat-label">Promedio</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">${stats.ultimaCompra}</div>
+                <div class="stat-label">Última Compra</div>
+            </div>
+        </div>
+        
+        <div class="cliente-actions">
+            <a href="/clientes/${cliente.id}/historial" class="btn btn-primary btn-sm">
+                <i class="fas fa-history"></i> Historial
+            </a>
+            <a href="/clientes/${cliente.id}/editar" class="btn btn-warning btn-sm">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            ${cliente.email ? `<a href="mailto:${cliente.email}" class="btn btn-success btn-sm">
+                <i class="fas fa-envelope"></i> Email
+            </a>` : ''}
+            ${cliente.telefono ? `<a href="https://wa.me/${cliente.telefono}" target="_blank" class="btn btn-success btn-sm">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>` : ''}
+        </div>
+    `;
+    
+    infoPanel.classList.add('active');
+}
+
+function calculateClientStats(cliente) {
+    // Aquí deberías obtener las estadísticas reales del cliente desde el backend
+    // Por ahora usamos datos de ejemplo
+    return {
+        totalFacturas: Math.floor(Math.random() * 20) + 1,
+        totalCompras: Math.random() * 5000 + 100,
+        promedioCompras: Math.random() * 500 + 50,
+        ultimaCompra: '2024-01-15'
+    };
+}
+
+function closeInfoPanel() {
+    document.getElementById('infoPanel').classList.remove('active');
+    if (selectedMarker) {
+        selectedMarker.setAnimation(null);
+        selectedMarker = null;
+    }
+}
+
+function performSearch() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    if (!searchTerm) {
+        markers.forEach(marker => marker.setMap(map));
+        return;
+    }
+    
+    markers.forEach(marker => {
+        const cliente = marker.clienteData;
+        const matches = cliente.nombre.toLowerCase().includes(searchTerm) ||
+                       cliente.id.toLowerCase().includes(searchTerm) ||
+                       (cliente.direccion && cliente.direccion.toLowerCase().includes(searchTerm));
+        
+        marker.setMap(matches ? map : null);
+    });
+    
+    updateStatus('Búsqueda completada');
+}
+
+function applyFilters() {
+    const estadoFilter = document.getElementById('estadoFilter').value;
+    const comprasFilter = document.getElementById('comprasFilter').value;
+    
+    markers.forEach(marker => {
+        const cliente = marker.clienteData;
+        let show = true;
+        
+        // Aplicar filtros aquí según la lógica de tu aplicación
+        // Por ahora solo mostramos todos
+        marker.setMap(show ? map : null);
+    });
+    
+    updateStatus('Filtros aplicados');
+}
+
+function toggleMarkers() {
+    const show = document.getElementById('showMarkers').checked;
+    markers.forEach(marker => {
+        marker.setMap(show ? map : null);
+    });
+}
+
+function toggleClusters() {
+    const show = document.getElementById('showClusters').checked;
+    if (show) {
+        setupMarkerClustering();
+    } else if (markerClusterer) {
+        markerClusterer.clearMarkers();
+    }
+}
+
+function toggleHeatmap() {
+    const show = document.getElementById('showHeatmap').checked;
+    
+    if (show && !heatmapLayer) {
+        const heatmapData = markers.map(marker => ({
+            location: marker.getPosition(),
+            weight: 1
+        }));
+        
+        heatmapLayer = new google.maps.visualization.HeatmapLayer({
+            data: heatmapData,
+            map: map
+        });
+    } else if (heatmapLayer) {
+        heatmapLayer.setMap(null);
+        heatmapLayer = null;
+    }
+}
+
+function getCurrentLocation() {
+    updateStatus('Obteniendo ubicación actual...');
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                
+                currentPosition = pos;
+                
+                // Crear marcador de ubicación actual
+                new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: 'Tu ubicación',
+                    icon: {
+                        url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                        scaledSize: new google.maps.Size(32, 32)
+                    }
+                });
+                
+                map.setCenter(pos);
+                map.setZoom(15);
+                
+                updateStatus('Ubicación actual obtenida');
+            },
+            function() {
+                updateStatus('No se pudo obtener la ubicación actual');
+            }
+        );
+    } else {
+        updateStatus('Geolocalización no soportada');
+    }
+}
+
+function calculateRoute() {
+    if (!currentPosition || !selectedMarker) {
+        alert('Selecciona un cliente y obtén tu ubicación actual primero');
+        return;
+    }
+    
+    const request = {
+        origin: currentPosition,
+        destination: selectedMarker.getPosition(),
+        travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    directionsService.route(request, function(result, status) {
+        if (status === 'OK') {
+            directionsRenderer.setDirections(result);
+            updateStatus('Ruta calculada');
+        } else {
+            updateStatus('No se pudo calcular la ruta');
+        }
+    });
+}
+
+function clearRoute() {
+    directionsRenderer.setDirections({routes: []});
+    updateStatus('Ruta limpiada');
+}
+
+function updateStatus(message) {
+    document.getElementById('statusText').textContent = message;
+}
+
+function updateCoordinates(latLng) {
+    document.getElementById('coordinatesText').textContent = 
+        latLng.lat().toFixed(6) + ', ' + latLng.lng().toFixed(6);
+}
+
+function updateZoomLevel() {
+    document.getElementById('zoomLevel').textContent = map.getZoom();
+}
+
+function toggleFullscreen() {
+    const container = document.querySelector('.mapa-avanzado-container');
+    
+    if (!document.fullscreenElement) {
+        container.requestFullscreen();
+        document.getElementById('toggleFullscreen').innerHTML = '<i class="fas fa-compress"></i>';
+    } else {
+        document.exitFullscreen();
+        document.getElementById('toggleFullscreen').innerHTML = '<i class="fas fa-expand"></i>';
+    }
+}
+
+function loadGoogleMapsScript() {
+    const script = document.createElement('script');
+    const apiKey = '{{ maps_config.api_key }}';
+    const libraries = '{{ maps_config.libraries|join(",") }}';
+    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey + '&libraries=' + libraries + '&callback=initMap';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadGoogleMapsScript();
+});
+</script>
+{% endblock %}
+{% endblock %}
