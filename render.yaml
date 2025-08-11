@@ -27,7 +27,7 @@ services:
         value: app.py
       - key: SECRET_KEY
         sync: false
-    healthCheckPath: /
+    healthCheckPath: /healthz
     autoDeploy: true 
     disk:
       name: data
