@@ -9,17 +9,20 @@ services:
     startCommand: >-
       bash -lc '
       set -e
+      set -x
       export APP_DIR=/opt/render/project/src
       mkdir -p "$APP_DIR/storage"
       cd "$APP_DIR"
       # Directorios de datos a persistir
+      echo "[render-start] Preparando directorios de datos y symlinks"
       for d in uploads uploads/capturas facturas_pdf facturas_json cotizaciones_pdf cotizaciones_json reportes_clientes reportes_cuentas reportes_facturas reportes_generales reportes_pagos historial_clientes logs documentos_fiscales exportaciones_seniat listas_inventario static/uploads static/imagenes_productos imagenes_productos; do
         mkdir -p "storage/$d"
         # Si existe un directorio real en el repo y no es symlink
         if [ -d "$d" ] && [ ! -L "$d" ]; then
           # Si el destino en storage está vacío pero el repo tiene datos, migrarlos
           if { [ -z "$(ls -A storage/$d 2>/dev/null)" ] || [ "$FORCE_REPO_SYNC" = "1" ]; } && [ -n "$(ls -A $d 2>/dev/null)" ]; then
-            cp -a "$d/." "storage/$d/"
+            echo "[render-start] Copiando contenido de $d -> storage/$d"
+            cp -a "$d/." "storage/$d/" || true
           fi
           rm -rf "$d"
         fi
@@ -27,13 +30,16 @@ services:
       done
 
       # Archivos sueltos en la raíz que deben persistir
+      echo "[render-start] Preparando archivos raíz a persistir"
       mkdir -p storage/_root
       for f in clientes.json inventario.json cuentas_por_cobrar.json ultima_tasa_bcv.json usuarios.json empresa.json bitacora.log; do
         if [ ! -e "storage/_root/$f" ] && [ -e "$f" ]; then
-          cp -a "$f" "storage/_root/$f"
+          echo "[render-start] Copiando $f -> storage/_root/$f"
+          cp -a "$f" "storage/_root/$f" || true
         fi
         if [ "$FORCE_REPO_SYNC" = "1" ] && [ -e "$f" ]; then
-          cp -a "$f" "storage/_root/$f"
+          echo "[render-start] Forzando copia $f -> storage/_root/$f"
+          cp -a "$f" "storage/_root/$f" || true
         fi
         # Reemplazar archivo real por symlink al storage
         if [ -e "$f" ] && [ ! -L "$f" ]; then
