@@ -13,8 +13,16 @@ services:
       mkdir -p "$APP_DIR/storage"
       cd "$APP_DIR"
       for d in uploads uploads/capturas facturas_pdf facturas_json cotizaciones_pdf cotizaciones_json reportes_clientes reportes_cuentas reportes_facturas reportes_generales reportes_pagos historial_clientes logs; do
-        mkdir -p "storage/$d";
-        [ -e "$d" ] || ln -s "storage/$d" "$d";
+        mkdir -p "storage/$d"
+        # Si existe un directorio real en el repo y no es symlink
+        if [ -d "$d" ] && [ ! -L "$d" ]; then
+          # Si el destino en storage está vacío pero el repo tiene datos, migrarlos
+          if [ -z "$(ls -A storage/$d 2>/dev/null)" ] && [ -n "$(ls -A $d 2>/dev/null)" ]; then
+            cp -a "$d/." "storage/$d/"
+          fi
+          rm -rf "$d"
+        fi
+        ln -sfn "storage/$d" "$d"
       done
       exec gunicorn app:app --workers 2 --threads 2 --timeout 180 --bind 0.0.0.0:$PORT
       '
