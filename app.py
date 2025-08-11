@@ -49,18 +49,16 @@ ULTIMA_TASA_BCV_FILE = 'ultima_tasa_bcv.json'
 ALLOWED_EXTENSIONS = {'csv', 'jpg', 'jpeg', 'png', 'gif'}
 BITACORA_FILE = 'bitacora.log'
 
-# --- Configuración de rutas de capturas según entorno ---
-IS_RENDER = os.environ.get('RENDER', False) or os.environ.get('RENDER_EXTERNAL_HOSTNAME', False)
-if IS_RENDER:
-    CAPTURAS_FOLDER = '/data/uploads/capturas'
-    CAPTURAS_URL = '/uploads/capturas'
-else:
-    CAPTURAS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads', 'capturas')
-    CAPTURAS_URL = '/static/uploads/capturas'
+# --- Configuración de rutas de capturas (compatibles con Render y local) ---
+# En Render no podemos escribir en /data. Usamos una carpeta del proyecto
+# que en despliegue se enlaza a un disco persistente (storage) en el start command.
+IS_RENDER = bool(os.environ.get('RENDER') or os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+CAPTURAS_FOLDER = os.path.join(BASE_PATH, 'uploads', 'capturas')
+CAPTURAS_URL = '/uploads/capturas'
 
 # Asegurar que las carpetas de capturas existen
 os.makedirs(CAPTURAS_FOLDER, exist_ok=True)
-os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', 'capturas'), exist_ok=True)
 
 @app.route('/uploads/capturas/<filename>')
 def serve_captura(filename):
