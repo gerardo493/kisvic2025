@@ -4860,16 +4860,6 @@ def webauthn_authenticate_verify():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-# --- Configuración de rutas de capturas según entorno ---
-IS_RENDER = os.environ.get('RENDER', False) or os.environ.get('RENDER_EXTERNAL_HOSTNAME', False)
-if IS_RENDER:
-    CAPTURAS_FOLDER = '/data/uploads/capturas'
-    CAPTURAS_URL = '/uploads/capturas'
-else:
-    CAPTURAS_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'uploads', 'capturas')
-    CAPTURAS_URL = '/static/uploads/capturas'
-
-# Asegurar que las carpetas de capturas existen
-os.makedirs(CAPTURAS_FOLDER, exist_ok=True)
-os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', 'capturas'), exist_ok=True)
+# NOTA: Esta sección se consolidó al inicio del archivo para evitar usar rutas del sistema como /data en Render.
+# Mantener una única definición de CAPTURAS_FOLDER basada en BASE_PATH y enlazada en tiempo de inicio por render.yaml.
 
