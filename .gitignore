@@ -75,8 +75,35 @@ ENV/
 !static/
 !templates/
 !uploads/
+!uploads/**
 !facturas_pdf/
+!facturas_pdf/**
 !cotizaciones_pdf/
+!cotizaciones_pdf/**
 !reportes_*/
+!reportes_clientes/**
+!reportes_cuentas/**
+!reportes_facturas/**
+!reportes_generales/**
+!reportes_pagos/**
 !imagenes_productos/
-!backups/ 
+!imagenes_productos/**
+!backups/
+!backups/**
+
+# Re-incluir datos JSON y otros en directorios de datos
+!facturas_json/**
+!cotizaciones_json/**
+!historial_clientes/**
+!documentos_fiscales/**
+!exportaciones_seniat/**
+!listas_inventario/**
+!static/uploads/**
+!static/imagenes_productos/**
+
+# Re-incluir algunos archivos raíz necesarios
+!clientes.json
+!inventario.json
+!cuentas_por_cobrar.json
+!ultima_tasa_bcv.json
+!bitacora.log
