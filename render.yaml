@@ -25,6 +25,8 @@ services:
         value: production
       - key: FLASK_APP
         value: app.py
+      - key: SECRET_KEY
+        sync: false
     healthCheckPath: /
     autoDeploy: true 
     disk:

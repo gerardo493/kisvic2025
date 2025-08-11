@@ -31,7 +31,8 @@ import re
 
 # --- Inicializar la Aplicación Flask ---
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'  # Cambia esto por una clave secreta segura
+# Usar SECRET_KEY desde variables de entorno en producción
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'unsafe-default-change-me')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 csrf = CSRFProtect(app)
@@ -67,6 +68,25 @@ def serve_captura(filename):
     except Exception as e:
         print(f"Error sirviendo captura {filename}: {str(e)}")
         abort(404)
+
+# --- Healthcheck ---
+@app.route('/healthz')
+def healthcheck():
+    try:
+        now = datetime.utcnow().isoformat() + 'Z'
+        # Verificar que las carpetas críticas existen
+        critical_dirs = [
+            os.path.join(BASE_PATH, 'uploads'),
+            os.path.join(BASE_PATH, 'uploads', 'capturas')
+        ]
+        for d in critical_dirs:
+            os.makedirs(d, exist_ok=True)
+        return jsonify({
+            'status': 'ok',
+            'time': now
+        }), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'detail': str(e)}), 500
 
 # --- Funciones de Utilidad ---
 def allowed_file(filename):
