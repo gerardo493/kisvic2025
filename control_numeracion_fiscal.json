@@ -1,0 +1,46 @@
+{
+  "series": {
+    "FACTURA": {
+      "prefijo": "FAC-",
+      "siguiente_numero": 725,
+      "longitud_numero": 8,
+      "formato": "FAC-{numero:08d}",
+      "activa": true,
+      "fecha_inicio": "2025-07-29T22:51:47.350007",
+      "ultimo_numero_emitido": 724,
+      "total_documentos": 25
+    },
+    "NOTA_CREDITO": {
+      "prefijo": "NC-",
+      "siguiente_numero": 1,
+      "longitud_numero": 8,
+      "formato": "NC-{numero:08d}",
+      "activa": true,
+      "fecha_inicio": "2025-07-29T22:51:47.350007",
+      "ultimo_numero_emitido": 0,
+      "total_documentos": 0
+    },
+    "NOTA_DEBITO": {
+      "prefijo": "ND-",
+      "siguiente_numero": 1,
+      "longitud_numero": 8,
+      "formato": "ND-{numero:08d}",
+      "activa": true,
+      "fecha_inicio": "2025-07-29T22:51:47.350007",
+      "ultimo_numero_emitido": 0,
+      "total_documentos": 0
+    }
+  },
+  "configuracion": {
+    "validar_consecutivos": true,
+    "permitir_saltos": false,
+    "reinicio_anual": false,
+    "longitud_minima": 8,
+    "prefijo_obligatorio": true
+  },
+  "auditoria": {
+    "fecha_creacion": "2025-07-29T22:51:47.350007",
+    "ultima_modificacion": "2025-08-14T22:40:29.274575",
+    "total_documentos_emitidos": 25
+  }
+}

@@ -6,7 +6,7 @@
     <style>
         @page {
             size: A4;
-            margin: 8mm 6mm 8mm 6mm;
+            margin: 5mm 4mm 5mm 4mm; /* Márgenes más pequeños */
         }
         
         * {
@@ -17,10 +17,10 @@
         
         body {
             font-family: 'Helvetica Neue', 'Arial', sans-serif;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 11px;
+            line-height: 1.3;
             color: #0e0e0e;
-            background: #ffffff;
+            background: #f8f9fa;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
@@ -33,7 +33,7 @@
             width: 60%;
             height: 60%;
             z-index: -1;
-            opacity: 0.02;
+            opacity: 0.01;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -43,34 +43,29 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            opacity: 0.8;
+            opacity: 0.5;
         }
         
         .factura-container {
-            max-width: 190mm;
+            max-width: 200mm;
             margin: 0 auto;
-            background: #ffffff;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             border-radius: 8px;
             overflow: hidden;
+            border: 1px solid #e9ecef;
         }
         
         .header {
-            background: #ffffff;
-            color: #2c3e50;
-            padding: 18px 30px 14px 30px;
+            background: #1e3a8a;
+            color: white;
+            padding: 16px 24px 12px 24px;
             position: relative;
-            overflow: hidden;
-            border-bottom: 3px solid #0d6efd;
+            border-bottom: 2px solid #1d4ed8;
         }
         
         .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 0;
+            display: none;
         }
         
         .header-content {
@@ -78,8 +73,6 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
-            position: relative;
-            z-index: 2;
             text-align: center;
         }
         
@@ -90,8 +83,8 @@
         }
         
         .logo-section img {
-            width: 170px;
-            height: 170px;
+            width: 120px;
+            height: 120px;
             border-radius: 0;
             border: none;
             background: transparent;
@@ -111,148 +104,150 @@
         
         .company-name {
             font-size: 18px;
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 6px;
-            color: #0b2e57;
+            color: white;
             text-align: center;
+            letter-spacing: 1px;
         }
         
         .company-details {
-            font-size: 12px;
-            opacity: 0.9;
-            line-height: 1.5;
+            font-size: 11px;
+            line-height: 1.4;
             text-align: center;
+            color: rgba(255,255,255,0.9);
         }
         
-        .seniat-badge { display: none; }
+        .seniat-badge { 
+            display: none; 
+        }
         
         .document-title {
             text-align: center;
-            background: #f8fbff;
-            color: #0d6efd;
-            padding: 10px 14px;
+            background: #059669;
+            color: white;
+            padding: 12px 20px;
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
-            position: relative;
-            border: 2px solid #0d6efd;
+            border: none;
             border-radius: 8px;
-            margin-top: 10px;
+            margin: 16px 20px 0 20px;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
         }
         
         .document-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 3px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 2px;
+            display: none;
         }
         
         .content-section {
-            padding: 20px 18px;
+            padding: 20px 20px;
         }
         
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin-bottom: 24px;
         }
         
         .info-card {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: #1e3a8a;
             border-radius: 12px;
             padding: 20px;
-            border-left: 5px solid #667eea;
-            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.1);
+            border: none;
+            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.15);
+        }
+        
+        .info-card::before {
+            display: none;
         }
         
         .info-card h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 15px;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         
         .info-item {
             margin-bottom: 8px;
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.4;
         }
         
         .info-label {
             font-weight: 600;
-            color: #6c757d;
+            color: rgba(255,255,255,0.8);
         }
         
         .info-value {
-            font-weight: 750;
-            color: #111111;
+            font-weight: 800;
+            color: white;
         }
         
         .highlight-value {
-            color: #e74c3c;
-            font-weight: 800;
+            color: #fbbf24;
+            font-weight: 900;
         }
         
         .success-badge {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            background: #059669;
             color: white;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-block;
             margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
         }
         
         .warning-badge {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            background: #f59e0b;
             color: white;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 10px;
-            font-weight: 600;
+            font-weight: 700;
             display: inline-block;
             margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
         }
         
         .products-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 25px 0;
-            border-radius: 8px;
+            margin: 24px 0;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            table-layout: fixed;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            background: white;
         }
         
         .products-table th {
-            background: #dbe9ff;
-            color: #001937;
-            padding: 12px 10px;
-            font-size: 11.5px;
+            background: #1e3a8a;
+            color: white;
+            padding: 12px 8px;
+            font-size: 11px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.8px;
             text-align: left;
             white-space: normal;
-            line-height: 1.15;
-            border-bottom: 2px solid #0d6efd;
+            line-height: 1.2;
+            border-bottom: 2px solid #1d4ed8;
         }
         
         .products-table td {
-            padding: 10px;
+            padding: 10px 8px;
             font-size: 11px;
-            border-bottom: 1px solid #c0c7d0;
-            color: #0a0a0a;
+            border-bottom: 1px solid #e9ecef;
+            color: #2c3e50;
+            background: white;
         }
 
         /* Mejor legibilidad y orden en números */
@@ -289,50 +284,136 @@
         .products-table th:nth-child(2) { text-align: center; color: #0a1f44; font-weight: 900; }
         .products-table td:nth-child(2) { text-align: center; font-weight: 800; color: #0a1f44; }
 
-        /* Anchos por columna (equilibrio para impresión y espacio a números) */
-        .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 36%; padding-right: 12px; }
-        .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 8%; }
-        .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 14%; }
-        .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 14%; }
-        .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 14%; }
+        /* Anchos por columna optimizados para más productos */
+        .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 40%; padding-right: 8px; }
+        .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 7%; }
+        .products-table th:nth-child(3), .products-table td:nth-child(3) { width: 13%; }
+        .products-table th:nth-child(4), .products-table td:nth-child(4) { width: 13%; }
+        .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 13%; }
         .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 14%; }
         
+        /* Mejorar la tabla de productos */
         .products-table tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background: #f8f9fa;
+        }
+        
+        .products-table tr:hover {
+            background: #e0f2fe;
+            transform: none;
+            transition: none;
+            box-shadow: none;
         }
         
         .product-name {
             font-weight: 800;
-            color: #0a1f44;
-            font-size: 11.5px;
+            color: #2c3e50;
+            font-size: 11px;
         }
         
         .product-details {
-            font-size: 8.5px;
+            font-size: 8px;
             color: #6c757d;
             margin-top: 2px;
+            font-style: italic;
+        }
+        
+        /* Efectos de sombra y profundidad */
+        .factura-container {
+            position: relative;
+        }
+        
+        .factura-container::before {
+            display: none;
+        }
+        
+        /* Animaciones sutiles - DESACTIVADAS para mejor impresión */
+        @keyframes fadeInUp {
+            from {
+                opacity: 1;
+                transform: none;
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+        
+        .info-card, .products-table, .totals-section, .notes-section {
+            animation: none;
+        }
+        
+        .info-card:nth-child(2) {
+            animation-delay: 0s;
+        }
+        
+        .products-table {
+            animation-delay: 0s;
         }
         
         .totals-section {
-            background: #ffffff;
+            animation-delay: 0s;
+        }
+        
+        .notes-section {
+            animation-delay: 0s;
+        }
+        
+        /* Mejorar la legibilidad de los números */
+        .products-table td:nth-child(3),
+        .products-table td:nth-child(4),
+        .products-table td:nth-child(5),
+        .products-table td:nth-child(6) {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        /* Efectos de hover en las tarjetas de información - DESACTIVADOS para impresión */
+        .info-card:hover {
+            transform: none;
+            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.15);
+        }
+        
+        /* Mejorar el logo con efectos - DESACTIVADOS para impresión */
+        .logo-section img {
+            transition: none;
+        }
+        
+        .logo-section img:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Efectos en el título del documento - DESACTIVADOS para impresión */
+        .document-title:hover {
+            transform: none;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+        
+        .totals-section {
+            background: #1e3a8a;
             border-radius: 12px;
-            padding: 18px;
-            margin-top: 20px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-            border: 2px solid #0d6efd;
+            padding: 16px;
+            margin-top: 16px;
+            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.15);
+            border: none;
+        }
+        
+        .totals-section::before {
+            display: none;
         }
         
         .totals-header {
-            text-align: right;
+            text-align: center;
             margin-bottom: 12px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #0d6efd;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
         }
         
         .totals-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 900;
-            color: #0a1f44;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 1.2px;
         }
@@ -340,24 +421,24 @@
         .totals-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
+            margin-bottom: 8px; /* Margen reducido */
         }
         
         .totals-table th {
             background: #e9f2ff;
             color: #0b2e57;
-            padding: 10px 12px;
-            font-size: 11px;
+            padding: 6px 8px; /* Padding reducido */
+            font-size: 9px; /* Texto más pequeño */
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px; /* Espaciado reducido */
             text-align: left;
-            border-bottom: 2px solid #0d6efd;
+            border-bottom: 1px solid #0d6efd; /* Borde más delgado */
         }
         
         .totals-table td {
-            padding: 12px 15px;
-            font-size: 12px;
+            padding: 6px 8px; /* Padding reducido */
+            font-size: 10px; /* Texto más pequeño */
             border-bottom: 1px solid #e9ecef;
         }
         
@@ -406,14 +487,14 @@
         }
         
         .main-total {
-            font-size: 16px;
+            font-size: 12px; /* Texto más pequeño */
             font-weight: 800;
             color: #e74c3c;
             text-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
         }
         
         .secondary-total {
-            font-size: 14px;
+            font-size: 10px; /* Texto más pequeño */
             font-weight: 800;
             color: #27ae60;
             text-shadow: 0 1px 2px rgba(39, 174, 96, 0.2);
@@ -421,147 +502,379 @@
         
         .exchange-rate {
             text-align: center;
-            margin-top: 15px;
-            padding: 12px 14px;
+            margin-top: 8px; /* Margen reducido */
+            padding: 6px 8px; /* Padding reducido */
             background: #eef5ff;
-            border-radius: 10px;
-            border: 2px solid #0d6efd;
-            box-shadow: 0 3px 10px rgba(13, 110, 253, 0.12);
+            border-radius: 4px; /* Radio más pequeño */
+            border: 1px solid #0d6efd; /* Borde más delgado */
+            box-shadow: none; /* Sin sombra para ahorrar espacio */
         }
         
         .exchange-rate-label {
-            font-size: 11px;
-            font-weight: 800;
+            font-size: 8px; /* Texto más pequeño */
+            font-weight: 700;
             color: #0a1f44;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.4px; /* Espaciado reducido */
         }
         
         .exchange-rate-value {
-            font-size: 13px;
+            font-size: 10px; /* Texto más pequeño */
             font-weight: 900;
             color: #0a1f44;
-            margin-top: 4px;
+            margin-top: 2px; /* Margen reducido */
         }
         
         .notes-section {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            background: #059669;
             border-radius: 12px;
-            padding: 20px;
-            margin-top: 25px;
-            border-left: 5px solid #2196f3;
+            padding: 16px 18px;
+            margin-top: 16px;
+            border: none;
+            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .notes-section::before {
+            display: none;
         }
         
         .notes-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1976d2;
-            margin-bottom: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
         }
         
         .notes-content {
             font-size: 10px;
-            line-height: 1.5;
-            color: #424242;
+            line-height: 1.4;
+            color: rgba(255,255,255,0.95);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
         }
         
         .footer {
             background: #2c3e50;
             color: white;
-            padding: 12px 30px;
+            padding: 6px 20px; /* Padding reducido */
             text-align: center;
-            font-size: 10px;
+            font-size: 8px; /* Texto más pequeño */
         }
         
-        /* Totales compactos al estilo del modelo */
+        /* Totales ultra-compactos para ahorrar espacio */
         .totals-compact {
-            max-width: 70mm;
-            margin-left: auto;
-            border: 1px solid #ced4da;
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            border: none;
             border-radius: 8px;
-            background: #ffffff;
+            background: rgba(255,255,255,0.95);
             overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+        
         .totals-compact .row {
             display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            padding: 10px 14px;
-            border-bottom: 1px solid #d8e2ef;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(30, 58, 138, 0.2);
+            font-size: 12px;
+            align-items: center;
+        }
+        
+        .totals-compact .row:last-child { 
+            border-bottom: 0; 
+            border-top: 3px solid #059669;
+        }
+        
+        .totals-compact .label { 
+            color: #2c3e50; 
+            font-weight: 800; 
+            text-align: left;
+            padding-left: 8px;
+        }
+        
+        .totals-compact .value { 
+            text-align: center;
+            font-weight: 900; 
+            color: #2c3e50; 
+            font-variant-numeric: tabular-nums;
+            border-left: 2px solid rgba(30, 58, 138, 0.3);
+            border-right: 2px solid rgba(30, 58, 138, 0.3);
+            padding: 4px 0;
+        }
+        
+        .totals-compact .value-usd {
+            text-align: right;
+            color: #1e3a8a;
+            font-weight: 800;
+            padding-right: 8px;
+        }
+        
+        .totals-compact .grand { 
+            background: #059669;
+            font-weight: 900; 
+            color: white; 
+            border-left: 4px solid #10b981; 
+            font-size: 13px;
+            border-radius: 8px;
+            margin: 8px 0;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+        }
+        
+        .totals-compact .grand .label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .totals-compact .grand .value {
+            color: white;
+            font-size: 13px;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .totals-compact .grand .value-usd {
+            color: white;
+            font-size: 13px;
+        }
+
+        /* Mejorar separación visual entre secciones */
+        .totals-compact .row:not(:last-child) {
+            border-bottom: 1px solid rgba(30, 58, 138, 0.15);
+        }
+
+        /* Destacar el total principal */
+        .totals-compact .grand {
+            margin-top: 8px;
+            border-radius: 8px;
+        }
+
+        /* Hover effect para mejor interactividad */
+        .totals-compact .row:hover {
+            background-color: rgba(30, 58, 138, 0.05);
+            transform: translateX(4px);
+            transition: all 0.3s ease;
+        }
+
+        /* Mejorar la presentación de los totales */
+        .totals-compact .row:nth-child(even) {
+            background-color: rgba(30, 58, 138, 0.02);
+        }
+
+        /* Estilos específicos para cada columna */
+        .totals-compact .row .label {
+            font-weight: 700;
+            color: #0a1f44;
+            padding-left: 5px;
+        }
+
+        .totals-compact .row .value {
+            font-weight: 900;
+            color: #111827;
+            text-align: center;
+            border-left: 1px solid #e9ecef;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .totals-compact .row .value-usd {
+            font-weight: 800;
+            color: #0d6efd;
+            text-align: right;
+            padding-right: 5px;
+        }
+
+        /* Destacar el total principal */
+        .totals-compact .grand {
+            background: linear-gradient(135deg, #d1f2e5 0%, #b8e6d9 100%);
+            border: 2px solid #198754;
+            font-weight: 900;
+        }
+
+        .totals-compact .grand .label {
+            color: #0f5132;
             font-size: 12px;
         }
-        .totals-compact .row:last-child { border-bottom: 0; }
-        .totals-compact .label { color: #0a1f44; font-weight: 700; }
-        .totals-compact .value { text-align: right; font-weight: 900; color: #111827; }
-        .totals-compact .grand { background: #d1f2e5; font-weight: 900; color: #0f5132; border-left: 4px solid #198754; }
 
-        /* Icono BCV y bloque de tasa */
-        .exchange-rate { display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .bcv-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px; height: 22px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #2a74ff, #0d47a1);
-            color: #ffffff;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(13,71,161,0.35);
+        .totals-compact .grand .value {
+            color: #0f5132;
+            font-size: 12px;
+            border-color: #198754;
         }
-        .bcv-logo {
-            width: 40px; height: 40px;
-            object-fit: contain;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 3px solid #0d6efd;
-            box-shadow: 0 3px 8px rgba(13,71,161,0.3);
+
+        .totals-compact .grand .value-usd {
+            color: #0f5132;
+            font-size: 12px;
+        }
+
+        /* Tasa BCV más elegante y alineada */
+        .exchange-rate { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        
+        .exchange-rate-label { 
+            font-size: 11px;
+            font-weight: 800; 
+            color: #1e3a8a;
+            text-transform: none;
+            letter-spacing: 0.5px;
         }
         
         @media print {
-            html, body { width: 210mm; margin: 0; }
-            body { font-size: 13.2pt; }
-            .factura-container { box-shadow: none; border-radius: 0; width: 198mm; max-width: 198mm; transform: none !important; margin: 0 auto; }
-            .header { background: #ffffff !important; border-bottom: 2px solid #0d6efd; padding: 10px 14px 8px 14px; }
-            .company-name { font-size: 18pt; }
+            html, body { 
+                width: 210mm; 
+                margin: 0; 
+                background: white !important;
+            }
+            body { 
+                font-size: 10pt; 
+                background: white !important;
+            }
+            .factura-container { 
+                box-shadow: none; 
+                border-radius: 0; 
+                width: 200mm; 
+                max-width: 200mm; 
+                transform: none !important; 
+                margin: 0 auto; 
+                background: white !important;
+                border: 1px solid #dee2e6;
+            }
+            .header { 
+                background: #1e3a8a !important; 
+                border-bottom: 2px solid #1d4ed8; 
+                padding: 8px 16px 6px 16px; 
+                box-shadow: none;
+            }
+            .company-name { font-size: 16pt; }
             .logo-section { flex-basis: auto; margin-right: 12px; }
-            .logo-section img { width: 115px; height: 115px; border: none; padding: 0; box-shadow: none; }
-            .document-title { background: #f8fbff !important; color: #0d6efd !important; border-color: #0d6efd !important; padding: 12px 14px; font-size: 16pt; }
-            .content-section { padding: 8px 6mm; }
-            .info-card { padding: 16px; }
-            .info-card h3 { font-size: 14pt; margin-bottom: 10px; }
-            .info-item { margin-bottom: 6px; font-size: 11.8pt; }
-            .products-table th { padding: 6px 7px; font-size: 11.5pt; color: #001937 !important; background: #d1e4ff !important; }
-            .products-table td { padding: 5px 7px; font-size: 11.5pt; line-height: 1.35; color: #0a0a0a !important; border-bottom-color: #b9c2cc; }
+            .logo-section img { 
+                width: 100px; 
+                height: 100px; 
+                border: none; 
+                padding: 0; 
+                box-shadow: none;
+                background: transparent;
+            }
+            .document-title { 
+                background: #059669 !important; 
+                color: white !important; 
+                border-color: transparent !important; 
+                padding: 10px 16px; 
+                font-size: 14pt; 
+                box-shadow: none;
+            }
+            .content-section { padding: 6px 4mm; }
+            .info-card { 
+                padding: 12px; 
+                background: #1e3a8a !important;
+                box-shadow: none;
+            }
+            .info-card h3 { font-size: 11pt; margin-bottom: 8px; color: white !important; }
+            .info-item { margin-bottom: 4px; font-size: 10pt; color: white !important; }
+            .products-table { 
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+            }
+            .products-table th { 
+                padding: 6px 6px; 
+                font-size: 10pt; 
+                color: white !important; 
+                background: #1e3a8a !important; 
+                border-bottom: 1px solid #1d4ed8;
+            }
+            .products-table td { 
+                padding: 4px 6px; 
+                font-size: 10pt; 
+                line-height: 1.2; 
+                color: #2c3e50 !important; 
+                border-bottom-color: #dee2e6; 
+                background: white !important;
+            }
+            .products-table tr:nth-child(even) {
+                background: #f8f9fa !important;
+            }
             .products-table td:nth-child(3),
             .products-table td:nth-child(4),
             .products-table td:nth-child(5),
-            .products-table td:nth-child(6) { font-size: 11.2pt; }
+            .products-table td:nth-child(6) { font-size: 10pt; }
             .products-table td:nth-child(2) { font-weight: 700 !important; }
             .product-details { display: none; }
-            .totals-section { padding: 16px; }
-            .totals-compact .row { padding: 8px 14px; font-size: 12pt; }
-            .totals-title { font-size: 16pt; }
-            .bcv-icon { width: 18px; height: 18px; font-size: 9px; }
-            .bcv-logo { width: 30px; height: 30px; border-width: 2px; }
+            .totals-section { 
+                padding: 12px; 
+                background: #1e3a8a !important;
+                box-shadow: none;
+                border: 1px solid #1d4ed8;
+            }
+            .totals-compact { 
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+            }
+            .totals-compact .row { 
+                padding: 8px 16px; 
+                font-size: 10pt; 
+                border-bottom: 1px solid #dee2e6;
+            }
+            .totals-compact .row .label { font-size: 10pt; color: #2c3e50 !important; }
+            .totals-compact .row .value { font-size: 10pt; color: #2c3e50 !important; }
+            .totals-compact .row .value-usd { font-size: 10pt; color: #1e3a8a !important; }
+            .totals-compact .grand {
+                background: #059669 !important;
+                color: white !important;
+            }
+            .totals-compact .grand .label { color: white !important; }
+            .totals-compact .grand .value { color: white !important; }
+            .totals-compact .grand .value-usd { color: white !important; }
+            .totals-title { font-size: 14pt; color: white !important; }
+            .exchange-rate { 
+                padding: 8px 14px; 
+                margin-top: 8px; 
+                background: white !important;
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+            }
+            .exchange-rate-label { font-size: 9pt; color: #1e3a8a !important; }
+            .notes-section { 
+                padding: 10px 12px; 
+                margin-top: 12px; 
+                background: #059669 !important;
+                box-shadow: none;
+            }
+            .notes-content { font-size: 8pt; color: white !important; }
             .header, .document-title, .info-grid, .totals-section { page-break-inside: avoid; }
             .products-table { page-break-inside: auto; }
             .products-table tr { page-break-inside: avoid; page-break-after: auto; }
+            .watermark { display: none; }
         }
 
         /* Ajustes específicos para Chrome (Blink) en impresión */
         @media print and (-webkit-min-device-pixel-ratio:0) {
             /* Ajuste fino para Chrome sin zoom (consistencia en impresoras) */
-            body { font-size: 14.5pt; }
-            .company-name { font-size: 19pt; }
-            .document-title { font-size: 18pt; padding: 12px 16px; }
-            .info-card h3 { font-size: 15pt; }
-            .info-item { font-size: 13.5pt; }
-            .products-table th { font-size: 13.5pt; }
-            .products-table td { font-size: 13.5pt; }
-            .totals-title { font-size: 18pt; }
-            .totals-compact .row { font-size: 13.5pt; }
+            body { font-size: 10pt; }
+            .company-name { font-size: 14pt; }
+            .document-title { font-size: 12pt; padding: 8px 10px; }
+            .info-card h3 { font-size: 10pt; }
+            .info-item { font-size: 9pt; }
+            .products-table th { font-size: 9pt; }
+            .products-table td { font-size: 9pt; }
+            .totals-title { font-size: 12pt; }
+            .totals-compact .row { font-size: 9pt; }
         }
     </style>
 </head>
@@ -760,38 +1073,50 @@
                 </tbody>
             </table>
             
-            <!-- Totals Section -->
+            <!-- Totals Section - Ultra Compacta -->
             <div class="totals-section">
                 <div class="totals-header">
-                    <div class="totals-title">Totales</div>
+                    <div class="totals-title">TOTALES</div>
                 </div>
                 
+                <!-- Totales en formato ultra-compacto y ordenado usando todo el ancho -->
                 <div class="totals-compact">
-                    <div class="row"><div class="label">Total Exento:</div><div class="value">Bs {{ fmt_num((factura.total_exento_bs or 0) if factura.total_exento_bs is defined else ((factura.subtotal_usd or 0) * (factura.tasa_bcv or 36.0) if (factura.iva_total or 0) == 0 else 0)) }}</div></div>
-                    <div class="row"><div class="label">USD:</div><div class="value">${{ fmt_num(factura.total_usd) }}</div></div>
-                        {% if factura.iva_total and factura.iva_total > 0 %}
-                    <div class="row"><div class="label">IVA ({{ factura.iva or 16 }}%):</div><div class="value">Bs {{ fmt_num((factura.iva_total or 0) * (factura.tasa_bcv or 36.0)) }}</div></div>
-                    {% else %}
-                    <div class="row"><div class="label">IVA (0%):</div><div class="value">Bs 0,00</div></div>
-                        {% endif %}
-                    <div class="row grand"><div class="label">Total a Pagar:</div><div class="value">Bs {{ fmt_num(factura.total_bs or ((factura.total_usd or 0) * (factura.tasa_bcv or 36.0))) }}</div></div>
-                    <div class="row"><div class="label">USD</div><div class="value">${{ fmt_num(factura.total_usd) }}</div></div>
+                    <div class="row">
+                        <div class="label">Subtotal:</div>
+                        <div class="value">Bs {{ fmt_num((factura.subtotal_usd or 0) * (factura.tasa_bcv or 36.0)) }}</div>
+                        <div class="value-usd">${{ fmt_num(factura.subtotal_usd or 0) }}</div>
+                    </div>
+                    {% if factura.descuento_total and factura.descuento_total > 0 %}
+                    <div class="row">
+                        <div class="label">Descuento:</div>
+                        <div class="value">Bs {{ fmt_num((factura.descuento_total or 0) * (factura.tasa_bcv or 36.0)) }}</div>
+                        <div class="value-usd">${{ fmt_num(factura.descuento_total or 0) }}</div>
+                    </div>
+                    {% endif %}
+                    {% if factura.iva_total and factura.iva_total > 0 %}
+                    <div class="row">
+                        <div class="label">IVA ({{ factura.iva or 16 }}%):</div>
+                        <div class="value">Bs {{ fmt_num((factura.iva_total or 0) * (factura.tasa_bcv or 36.0)) }}</div>
+                        <div class="value-usd">${{ fmt_num(factura.iva_total or 0) }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="row grand">
+                        <div class="label">TOTAL:</div>
+                        <div class="value">Bs {{ fmt_num(factura.total_bs or ((factura.total_usd or 0) * (factura.tasa_bcv or 36.0))) }}</div>
+                        <div class="value-usd">${{ fmt_num(factura.total_usd) }}</div>
+                    </div>
                 </div>
 
-                <div class="exchange-rate" style="margin-top:10px;">
-                    <img class="bcv-logo" src="{{ url_for('static', filename='uploads/capturas/logo_bcv.png') }}" alt="Banco Central de Venezuela" onerror="this.onerror=null; this.src='https://bcv.org.ve/sites/default/files/default_images/logo_bcv-04_2.png'; this.onerror=function(){ this.style.display='none'; }">
-                    <div>
-                        <div class="exchange-rate-label">Tasa de cambio utilizada</div>
-                        <div class="exchange-rate-value">{{ fmt_num(factura.tasa_bcv or 36.0) }} Bs/USD</div>
-                    </div>
+                <!-- Tasa BCV compacta -->
+                <div class="exchange-rate">
+                    <span class="exchange-rate-label">Tasa: {{ fmt_num(factura.tasa_bcv or 36.0) }} Bs/USD</span>
                 </div>
             </div>
             
-            <!-- Notes Section (reagregada con textos solicitados) -->
+            <!-- Notes Section - Ultra Compacta -->
             <div class="notes-section">
                 <div class="notes-content">
-                    • Documento calculado a la tasa de cambio BCV vigente a la fecha de emisión.<br>
-                    • Si no es pagada de contado, deberá cancelarse al valor de la tasa activa bancaria BCV para la fecha de pago.
+                    Nota: Documento calculado a tasa BCV vigente a la fecha de emisión. Pago a crédito: tasa activa bancaria BCV fecha de pago.
                 </div>
             </div>
         </div>

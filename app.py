@@ -1044,11 +1044,55 @@ def descargar_factura_pdf(id):
         return redirect(url_for('mostrar_facturas'))
     empresa = cargar_empresa()
     
-    # Convertir rutas relativas a absolutas para las imágenes
+    # Resolver rutas de imágenes para wkhtmltopdf (usar file:/// cuando sea posible)
+    def _to_file_uri(static_relative_path: str) -> str:
+        try:
+            # Si ya es absoluta (http, https, file, o ruta absoluta), devolverla
+            if not static_relative_path:
+                return static_relative_path
+            lower_path = str(static_relative_path).lower()
+            if lower_path.startswith('http://') or lower_path.startswith('https://') or lower_path.startswith('file:'):
+                return static_relative_path
+            # Construir ruta absoluta dentro de la carpeta static
+            static_folder = os.path.join(app.root_path, 'static')
+            abs_path = os.path.abspath(
+                static_relative_path if os.path.isabs(static_relative_path) else os.path.join(static_folder, static_relative_path)
+            )
+            if os.path.exists(abs_path):
+                return 'file:///' + abs_path.replace('\\', '/')
+            # Fallback: servir por HTTP
+            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
+        except Exception:
+            # Fallback final
+            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
+
+    empresa_logo_src = None
+    empresa_logo_http = None
+    empresa_logo_file = None
     if empresa.get('logo'):
-        empresa['logo'] = request.url_root.rstrip('/') + url_for('static', filename=empresa['logo'])
+        # Intentar incrustar el logo como data URI para máxima compatibilidad
+        try:
+            import base64, mimetypes
+            static_folder = os.path.join(app.root_path, 'static')
+            candidate_path = empresa['logo']
+            abs_logo_path = os.path.abspath(
+                candidate_path if os.path.isabs(candidate_path) else os.path.join(static_folder, candidate_path)
+            )
+            if os.path.exists(abs_logo_path):
+                mime_type = mimetypes.guess_type(abs_logo_path)[0] or 'image/png'
+                with open(abs_logo_path, 'rb') as f:
+                    b64 = base64.b64encode(f.read()).decode('utf-8')
+                empresa_logo_src = f'data:{mime_type};base64,{b64}'
+        except Exception:
+            empresa_logo_src = None
+        # Rutas alternativas: http absoluta y file:///
+        try:
+            empresa_logo_http = request.url_root.rstrip('/') + url_for('static', filename=empresa['logo'])
+        except Exception:
+            empresa_logo_http = None
+        empresa_logo_file = _to_file_uri(empresa['logo'])
     if empresa.get('membrete'):
-        empresa['membrete'] = request.url_root.rstrip('/') + url_for('static', filename=empresa['membrete'])
+        empresa['membrete'] = _to_file_uri(empresa['membrete'])
     
     rendered = render_template('factura_imprimir.html', 
                              factura=factura, 
@@ -1056,7 +1100,10 @@ def descargar_factura_pdf(id):
                              inventario=inventario,
                              now=datetime.now,
                              empresa=empresa,
-                             zip=zip)
+                             zip=zip,
+                             empresa_logo_src=empresa_logo_src,
+                             empresa_logo_http=empresa_logo_http,
+                             empresa_logo_file=empresa_logo_file)
     try:
         # Intentar diferentes ubicaciones comunes de wkhtmltopdf
         wkhtmltopdf_paths = [
@@ -1076,16 +1123,17 @@ def descargar_factura_pdf(id):
             # Si no se encuentra wkhtmltopdf, intentar usar el comando directamente
             config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf')
             
+        # Alinear con el CSS del template (A4 y márgenes en mm)
         options = {
-            'page-size': 'Letter',
-            'margin-top': '0.75in',
-            'margin-right': '0.75in',
-            'margin-bottom': '0.75in',
-            'margin-left': '0.75in',
+            'page-size': 'A4',
+            'margin-top': '8mm',
+            'margin-right': '6mm',
+            'margin-bottom': '8mm',
+            'margin-left': '6mm',
             'encoding': 'UTF-8',
             'no-outline': None,
             'quiet': '',
-            'print-media-type': '',
+            'print-media-type': None,
             'disable-smart-shrinking': '',
             'dpi': 300,
             'image-quality': 100,
@@ -1093,7 +1141,7 @@ def descargar_factura_pdf(id):
             'footer-right': '[page] de [topage]',
             'footer-font-size': '8',
             'footer-spacing': '5',
-            'javascript-delay': '1000',
+            'javascript-delay': '300',
             'no-stop-slow-scripts': None
         }
         pdf = pdfkit.from_string(rendered, False, configuration=config, options=options)
@@ -1117,7 +1165,59 @@ def imprimir_factura(id):
         flash('Factura no encontrada', 'danger')
         return redirect(url_for('mostrar_facturas'))
     empresa = cargar_empresa()
-    return render_template('factura_imprimir.html', factura=factura, clientes=clientes, inventario=inventario, now=datetime.now, empresa=empresa, zip=zip)
+
+    # Alinear resolución de logo con la ruta de PDF
+    def _to_file_uri(static_relative_path: str) -> str:
+        try:
+            if not static_relative_path:
+                return static_relative_path
+            lower_path = str(static_relative_path).lower()
+            if lower_path.startswith('http://') or lower_path.startswith('https://') or lower_path.startswith('file:'):
+                return static_relative_path
+            static_folder = os.path.join(app.root_path, 'static')
+            abs_path = os.path.abspath(
+                static_relative_path if os.path.isabs(static_relative_path) else os.path.join(static_folder, static_relative_path)
+            )
+            if os.path.exists(abs_path):
+                return 'file:///' + abs_path.replace('\\', '/')
+            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
+        except Exception:
+            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
+
+    empresa_logo_src = None
+    empresa_logo_http = None
+    empresa_logo_file = None
+    if empresa.get('logo'):
+        try:
+            import base64, mimetypes
+            static_folder = os.path.join(app.root_path, 'static')
+            candidate_path = empresa['logo']
+            abs_logo_path = os.path.abspath(
+                candidate_path if os.path.isabs(candidate_path) else os.path.join(static_folder, candidate_path)
+            )
+            if os.path.exists(abs_logo_path):
+                mime_type = mimetypes.guess_type(abs_logo_path)[0] or 'image/png'
+                with open(abs_logo_path, 'rb') as f:
+                    b64 = base64.b64encode(f.read()).decode('utf-8')
+                empresa_logo_src = f'data:{mime_type};base64,{b64}'
+        except Exception:
+            empresa_logo_src = None
+        try:
+            empresa_logo_http = request.url_root.rstrip('/') + url_for('static', filename=empresa['logo'])
+        except Exception:
+            empresa_logo_http = None
+        empresa_logo_file = _to_file_uri(empresa['logo'])
+
+    return render_template('factura_imprimir.html',
+                           factura=factura,
+                           clientes=clientes,
+                           inventario=inventario,
+                           now=datetime.now,
+                           empresa=empresa,
+                           zip=zip,
+                           empresa_logo_src=empresa_logo_src,
+                           empresa_logo_http=empresa_logo_http,
+                           empresa_logo_file=empresa_logo_file)
 
 @app.route('/facturas/<id>/editar', methods=['GET', 'POST'])
 @login_required
@@ -2728,11 +2828,46 @@ def historial_cliente(id):
     
     cliente = clientes[id]
     now = datetime.now()
-    filtro_anio = int(request.args.get('anio', now.year))
-    filtro_mes = request.args.get('mes', '')
+    # Manejo robusto de filtros (evitar ValueError por strings vacíos)
+    anio_param = request.args.get('anio')
+    try:
+        filtro_anio = int(anio_param) if anio_param else now.year
+    except (TypeError, ValueError):
+        filtro_anio = now.year
+    # Mes robusto
+    mes_param = request.args.get('mes', '')
+    try:
+        filtro_mes = int(mes_param) if mes_param else ''
+    except (TypeError, ValueError):
+        filtro_mes = ''
 
-    # Filtrar facturas por cliente
-    facturas_cliente = [f for f in facturas.values() if f.get('cliente_id') == id]
+    # Filtrar facturas por cliente, preservando el ID y calculando pagos/saldos
+    facturas_cliente = []
+    for factura_id, factura_data in facturas.items():
+        if factura_data.get('cliente_id') != id:
+            continue
+        factura_copia = factura_data.copy()
+        factura_copia['id'] = factura_id
+        # Calcular totales de pagos y saldo pendiente (alineado con ver_factura)
+        total_abonado = 0
+        pagos = factura_copia.get('pagos') or []
+        try:
+            pagos_iterables = pagos.values() if isinstance(pagos, dict) else pagos
+        except Exception:
+            pagos_iterables = []
+        for pago in pagos_iterables:
+            try:
+                monto = float(str(pago.get('monto', 0)).replace('$', '').replace(',', ''))
+                total_abonado += monto
+            except Exception:
+                continue
+        try:
+            total_usd_factura = float(str(factura_copia.get('total_usd', factura_copia.get('total', 0))).replace('$', '').replace(',', ''))
+        except Exception:
+            total_usd_factura = 0.0
+        factura_copia['total_abonado'] = total_abonado
+        factura_copia['saldo_pendiente'] = max(total_usd_factura - total_abonado, 0)
+        facturas_cliente.append(factura_copia)
     
     # Filtrar facturas por año y mes seleccionados
     facturas_filtradas = []
@@ -2740,18 +2875,35 @@ def historial_cliente(id):
         fecha = f.get('fecha', '')
         try:
             fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
-            if fecha_dt.year == filtro_anio and (not filtro_mes or fecha_dt.month == int(filtro_mes)):
+            if fecha_dt.year == filtro_anio and (not filtro_mes or fecha_dt.month == filtro_mes):
                 facturas_filtradas.append(f)
         except Exception:
             continue
 
-    # Calcular totales anuales
-    facturas_anio_actual = [f for f in facturas_cliente if datetime.strptime(f.get('fecha', ''), '%Y-%m-%d').year == now.year]
+    # Calcular totales anuales (protegido)
+    facturas_anio_actual = []
+    for f in facturas_cliente:
+        fecha_txt = f.get('fecha', '')
+        try:
+            if fecha_txt:
+                if datetime.strptime(fecha_txt, '%Y-%m-%d').year == now.year:
+                    facturas_anio_actual.append(f)
+        except Exception:
+            continue
     total_anual_usd = sum(float(f.get('total_usd', 0)) for f in facturas_anio_actual)
     total_anual_bs = sum(float(f.get('total_bs', 0)) for f in facturas_anio_actual)
 
-    # Calcular totales mensuales
-    facturas_mes_actual = [f for f in facturas_cliente if datetime.strptime(f.get('fecha', ''), '%Y-%m-%d').year == now.year and datetime.strptime(f.get('fecha', ''), '%Y-%m-%d').month == now.month]
+    # Calcular totales mensuales (protegido)
+    facturas_mes_actual = []
+    for f in facturas_cliente:
+        fecha_txt = f.get('fecha', '')
+        try:
+            if fecha_txt:
+                fecha_dt = datetime.strptime(fecha_txt, '%Y-%m-%d')
+                if fecha_dt.year == now.year and fecha_dt.month == now.month:
+                    facturas_mes_actual.append(f)
+        except Exception:
+            continue
     total_mensual_usd = sum(float(f.get('total_usd', 0)) for f in facturas_mes_actual)
     total_mensual_bs = sum(float(f.get('total_bs', 0)) for f in facturas_mes_actual)
     
@@ -2796,8 +2948,17 @@ def historial_cliente(id):
     # Ordenar productos por valor total
     productos_comprados = dict(sorted(productos_comprados.items(), key=lambda x: x[1]['valor'], reverse=True))
 
-    # Para el formulario de filtro
-    anios_disponibles = sorted({datetime.strptime(f.get('fecha', ''), '%Y-%m-%d').year for f in facturas_cliente if f.get('fecha', '')})
+    # Para el formulario de filtro (protegido)
+    anios_disponibles_set = set()
+    for f in facturas_cliente:
+        fecha_txt = f.get('fecha', '')
+        if not fecha_txt:
+            continue
+        try:
+            anios_disponibles_set.add(datetime.strptime(fecha_txt, '%Y-%m-%d').year)
+        except Exception:
+            continue
+    anios_disponibles = sorted(anios_disponibles_set)
     
     # Calcular promedio por factura (con protección extra)
     try:
@@ -3836,11 +3997,11 @@ def descargar_cotizacion_pdf(id):
             config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf')
             
         options = {
-            'page-size': 'Letter',
-            'margin-top': '0.75in',
-            'margin-right': '0.75in',
-            'margin-bottom': '0.75in',
-            'margin-left': '0.75in',
+            'page-size': 'A4',
+            'margin-top': '20mm',
+            'margin-right': '15mm',
+            'margin-bottom': '20mm',
+            'margin-left': '15mm',
             'encoding': 'UTF-8',
             'no-outline': None,
             'quiet': '',

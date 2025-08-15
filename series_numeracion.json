@@ -1,0 +1,21 @@
+{
+    "series": {
+        "FAC": {
+            "nombre": "Facturas Generales",
+            "prefijo": "FAC-",
+            "siguiente_numero": 1,
+            "longitud_numero": 6,
+            "activa": true,
+            "descripcion": "Serie principal para facturas generales",
+            "tipo": "general",
+            "sucursal": "principal"
+        }
+    },
+    "configuracion": {
+        "serie_default": "FAC",
+        "permitir_edicion_manual": true,
+        "formato_fecha": false,
+        "reiniciar_anual": false,
+        "validar_consecutivos": true
+    }
+}
