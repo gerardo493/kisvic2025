@@ -1,0 +1,624 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard de Factura - {{ factura.numero }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header de la Factura -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="h3 mb-2 text-primary">
+                                <i class="fas fa-file-invoice-dollar me-2"></i>
+                                Factura {{ factura.numero }}
+                            </h1>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-calendar me-1"></i>
+                                {{ factura.fecha }} a las {{ factura.hora }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                <a href="{{ url_for('imprimir_factura', id=factura.id) }}" 
+                                   class="btn btn-outline-primary" target="_blank">
+                                    <i class="fas fa-print me-1"></i> Imprimir
+                                </a>
+                                <a href="{{ url_for('descargar_factura_pdf', id=factura.id) }}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-download me-1"></i> PDF
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Columna Principal -->
+        <div class="col-lg-8">
+            <!-- Estado y Acciones Rápidas -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Estado de la Factura
+                            </h5>
+                            {% set saldo_pendiente = factura.get('saldo_pendiente', 0) %}
+                            {% if saldo_pendiente > 0 %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-warning fs-6 me-2">
+                                        <i class="fas fa-clock me-1"></i>Pendiente
+                                    </span>
+                                    <span class="text-muted">Saldo: ${{ "%.2f"|format(saldo_pendiente) }}</span>
+                                </div>
+                            {% else %}
+                                <div class="d-flex align-items-center mb-3">
+                                    <span class="badge bg-success fs-6 me-2">
+                                        <i class="fas fa-check-circle me-1"></i>Pagada
+                                    </span>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="progress mb-3" style="height: 8px;">
+                                {% set total_factura = factura.get('total_usd', 0) %}
+                                {% set total_abonado = factura.get('total_abonado', 0) %}
+                                {% if total_factura > 0 %}
+                                    {% set porcentaje = (total_abonado / total_factura * 100) | round %}
+                                {% else %}
+                                    {% set porcentaje = 0 %}
+                                {% endif %}
+                                <div class="progress-bar bg-success" style="width: {{ porcentaje }}%"></div>
+                            </div>
+                            <small class="text-muted">
+                                {{ porcentaje }}% pagado (${{ "%.2f"|format(total_abonado) }} de ${{ "%.2f"|format(total_factura) }})
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary mb-3">
+                                <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+                            </h5>
+                            <div class="d-grid gap-2">
+                                {% if saldo_pendiente > 0 %}
+                                    <button class="btn btn-success btn-sm" onclick="registrarPago()">
+                                        <i class="fas fa-plus me-1"></i>Registrar Pago
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="enviarRecordatorio()">
+                                        <i class="fas fa-bell me-1"></i>Enviar Recordatorio
+                                    </button>
+                                {% endif %}
+                                <button class="btn btn-info btn-sm" onclick="duplicarFactura()">
+                                    <i class="fas fa-copy me-1"></i>Duplicar Factura
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Cliente -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-user me-2"></i>Información del Cliente
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if factura.cliente_id in clientes %}
+                        {% set cliente = clientes[factura.cliente_id] %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Nombre:</strong> {{ cliente.nombre }}</p>
+                                <p><strong>RIF:</strong> {{ cliente.rif }}</p>
+                                <p><strong>Teléfono:</strong> {{ cliente.telefono }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Dirección:</strong> {{ cliente.direccion }}</p>
+                                <p><strong>Email:</strong> {{ cliente.email or 'No especificado' }}</p>
+                                <p><strong>Estado:</strong> 
+                                    <span class="badge bg-success">Verificado SENIAT</span>
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-danger">Cliente no encontrado</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Productos de la Factura -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-boxes me-2"></i>Productos Facturados
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if factura.items and factura.items is iterable and factura.items is not string %}
+                                    {% for item in factura.items %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                                         style="width: 32px; height: 32px;">
+                                                        <i class="fas fa-box text-white"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold">{{ item.nombre }}</div>
+                                                        <small class="text-muted">{{ item.codigo_barras or 'Sin código' }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>{{ item.cantidad }}</td>
+                                            <td>${{ "%.2f"|format(item.precio_unitario_usd) }}</td>
+                                            <td>${{ "%.2f"|format(item.subtotal_usd) }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
+                                    {% set productos_list = factura.productos %}
+                                    {% set cantidades_list = factura.cantidades if factura.cantidades and factura.cantidades is iterable and factura.cantidades is not string and factura.cantidades is not callable else [] %}
+                                    {% set precios_list = factura.precios if factura.precios and factura.precios is iterable and factura.precios is not string and factura.precios is not callable else [] %}
+                                    
+                                    {% if productos_list and cantidades_list %}
+                                        {% for i in range(productos_list|length) %}
+                                            {% if i < cantidades_list|length %}
+                                                {% set prod_id = productos_list[i] %}
+                                                {% set cantidad = cantidades_list[i]|int if cantidades_list[i] else 0 %}
+                                                {% set precio = precios_list[i]|float if precios_list and i < precios_list|length and precios_list[i] else 0 %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                                                 style="width: 32px; height: 32px;">
+                                                                <i class="fas fa-box text-white"></i>
+                                                            </div>
+                                                            <div>
+                                                                {% if inventario and prod_id and prod_id in inventario %}
+                                                                    <div class="fw-bold">{{ inventario[prod_id].nombre }}</div>
+                                                                    <small class="text-muted">{{ inventario[prod_id].codigo_barras or 'Sin código' }}</small>
+                                                                {% else %}
+                                                                    <div class="fw-bold">Producto ID: {{ prod_id }}</div>
+                                                                    <small class="text-muted">No encontrado</small>
+                                                                {% endif %}
+                                                            </div>
+                                                        </td>
+                                                    <td>{{ cantidad }}</td>
+                                                    <td>${{ "%.2f"|format(precio) }}</td>
+                                                    <td>${{ "%.2f"|format(precio * cantidad) }}</td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                                            <br>No hay productos registrados
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra Lateral -->
+        <div class="col-lg-4">
+            <!-- Resumen de Pagos -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-credit-card me-2"></i>Historial de Pagos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if factura.pagos and factura.pagos is iterable and factura.pagos is not string %}
+                        <div class="timeline">
+                            {% for pago in factura.pagos %}
+                                <div class="timeline-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                             style="width: 24px; height: 24px;">
+                                            <i class="fas fa-check text-white fa-sm"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold">${{ "%.2f"|format(pago.monto) }}</div>
+                                            <small class="text-muted">{{ pago.fecha }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">
+                            <i class="fas fa-credit-card fa-2x mb-2"></i>
+                            <br>No hay pagos registrados
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Información de la Factura -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-file-alt me-2"></i>Detalles de la Factura
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Número:</strong></div>
+                        <div class="col-6">{{ factura.numero }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Fecha:</strong></div>
+                        <div class="col-6">{{ factura.fecha }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Hora:</strong></div>
+                        <div class="col-6">{{ factura.hora }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Secuencial:</strong></div>
+                        <div class="col-6">{{ factura.numero_secuencial or factura.secuencial or 'N/A' }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Condición:</strong></div>
+                        <div class="col-6">{{ factura.condicion_pago }}</div>
+                    </div>
+                    {% if factura.vencimiento %}
+                        <div class="row mb-2">
+                            <div class="col-6"><strong>Vencimiento:</strong></div>
+                            <div class="col-6">{{ factura.vencimiento }}</div>
+                        </div>
+                    {% endif %}
+                    <hr>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Subtotal:</strong></div>
+                        <div class="col-6">${{ "%.2f"|format(factura.subtotal_usd or factura.subtotal or 0) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>IVA:</strong></div>
+                        <div class="col-6">${{ "%.2f"|format(factura.iva_total or factura.iva or 0) }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6"><strong>Total USD:</strong></div>
+                        <div class="col-6 text-primary fw-bold">${{ "%.2f"|format(factura.total_usd) }}</div>
+                    </div>
+                    {% if factura.tasa_bcv or factura.tasa_cambio %}
+                        <div class="row mb-2">
+                            <div class="col-6"><strong>Tasa:</strong></div>
+                            <div class="col-6">{{ factura.tasa_bcv or factura.tasa_cambio }}</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Análisis de Productos -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Análisis de Productos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if factura.items and factura.items is iterable and factura.items is not string %}
+                        <div class="mb-3">
+                            <canvas id="productosChart" width="200" height="200"></canvas>
+                        </div>
+                        <div class="text-center">
+                            <small class="text-muted">
+                                {{ factura.items|length }} productos facturados
+                            </small>
+                        </div>
+                    {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
+                        <div class="mb-3">
+                            <canvas id="productosChart" width="200" height="200"></canvas>
+                        </div>
+                        <div class="text-center">
+                            <small class="text-muted">
+                                {{ factura.productos|length }} productos facturados
+                            </small>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">
+                            <i class="fas fa-chart-pie fa-2x mb-2"></i>
+                            <br>No hay datos para analizar
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline de Actividad -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-0">
+                    <h5 class="card-title mb-0 text-primary">
+                        <i class="fas fa-history me-2"></i>Timeline de Actividad
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-file-invoice-dollar text-white"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Factura creada</div>
+                                    <div class="text-muted">{{ factura.fecha }} a las {{ factura.hora }}</div>
+                                    <small class="text-muted">Se generó la factura {{ factura.numero }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if factura.pagos and factura.pagos is iterable and factura.pagos is not string %}
+                            {% for pago in factura.pagos %}
+                                <div class="timeline-item mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="fas fa-credit-card text-white"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold">Pago registrado</div>
+                                            <div class="text-muted">{{ pago.fecha }}</div>
+                                            <small class="text-muted">Monto: ${{ "%.2f"|format(pago.monto) }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if saldo_pendiente > 0 %}
+                            <div class="timeline-item mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                         style="width: 40px; height: 40px;">
+                                        <i class="fas fa-clock text-white"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold">Pendiente de pago</div>
+                                        <div class="text-muted">Saldo pendiente: ${{ "%.2f"|format(saldo_pendiente) }}</div>
+                                        <small class="text-muted">Factura vence el {{ factura.vencimiento or 'No especificado' }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Registrar Pago -->
+<div class="modal fade" id="pagoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="pagoForm">
+                    <div class="mb-3">
+                        <label for="montoPago" class="form-label">Monto del Pago</label>
+                        <input type="number" class="form-control" id="montoPago" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fechaPago" class="form-label">Fecha del Pago</label>
+                        <input type="date" class="form-control" id="fechaPago" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notasPago" class="form-label">Notas (opcional)</label>
+                        <textarea class="form-control" id="notasPago" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarPago()">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Configurar fecha actual en el modal
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('fechaPago').value = new Date().toISOString().split('T')[0];
+    
+    // Inicializar gráfico de productos si existe
+    {% if factura.items and factura.items is iterable and factura.items is not string %}
+        const ctx = document.getElementById('productosChart').getContext('2d');
+        const productos = {{ factura.items|tojson }};
+        
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: productos.map(p => p.nombre),
+                datasets: [{
+                    data: productos.map(p => p.subtotal_usd),
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 10 }
+                        }
+                    }
+                }
+            }
+        });
+    {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
+        const ctx = document.getElementById('productosChart').getContext('2d');
+        const productos = {{ factura.productos|tojson }};
+        const cantidades = {{ factura.cantidades|tojson if factura.cantidades else '[]' }};
+        const precios = {{ factura.precios|tojson if factura.precios else '[]' }};
+        
+        // Crear datos para el gráfico usando la estructura legacy
+        const labels = [];
+        const data = [];
+        
+        for (let i = 0; i < productos.length; i++) {
+            if (i < cantidades.length && i < precios.length) {
+                const cantidad = parseInt(cantidades[i]) || 0;
+                const precio = parseFloat(precios[i]) || 0;
+                const total = cantidad * precio;
+                
+                // Obtener nombre del producto desde inventario si está disponible
+                const nombre = 'Producto ' + (i + 1);
+                labels.push(nombre);
+                data.push(total);
+            }
+        }
+        
+        if (data.length > 0) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                            '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#FF6384'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    {% endif %}
+});
+
+// Funciones de acciones rápidas
+function registrarPago() {
+    const modal = new bootstrap.Modal(document.getElementById('pagoModal'));
+    modal.show();
+}
+
+function confirmarPago() {
+    const monto = document.getElementById('montoPago').value;
+    const fecha = document.getElementById('fechaPago').value;
+    const notas = document.getElementById('notasPago').value;
+    
+    if (!monto || !fecha) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+    }
+    
+    // Aquí iría la lógica para enviar el pago al servidor
+    alert(`Pago registrado: $${monto} el ${fecha}`);
+    
+    // Cerrar modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('pagoModal'));
+    modal.hide();
+    
+    // Recargar página para mostrar el nuevo pago
+    location.reload();
+}
+
+function enviarRecordatorio() {
+    alert('Recordatorio enviado al cliente');
+}
+
+function duplicarFactura() {
+    if (confirm('¿Desea duplicar esta factura?')) {
+        // Aquí iría la lógica para duplicar la factura
+        alert('Factura duplicada correctamente');
+    }
+}
+</script>
+
+<style>
+.timeline-item {
+    position: relative;
+}
+
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    bottom: -20px;
+    width: 2px;
+    background-color: #e9ecef;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.progress {
+    background-color: #e9ecef;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn {
+    border-radius: 8px;
+}
+
+.badge {
+    border-radius: 6px;
+}
+</style>
+{% endblock %}Y

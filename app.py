@@ -2,7 +2,7 @@
 import json
 import os
 import urllib3
-import requests
+# import requests  # Temporarily commented out for testing
 import csv
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -259,7 +259,14 @@ def obtener_estadisticas():
     except Exception:
         tasa_bcv = 1.0
     total_cobrar_bs = total_cobrar_usd * tasa_bcv
-    ultimas_facturas = sorted(facturas.values(), key=lambda x: datetime.strptime(x['fecha'], '%Y-%m-%d'), reverse=True)[:5]
+    # Crear lista de facturas con ID incluido para el dashboard
+    facturas_con_id = []
+    for factura_id, factura in facturas.items():
+        factura_copia = factura.copy()
+        factura_copia['id'] = factura_id  # Agregar el ID a la factura
+        facturas_con_id.append(factura_copia)
+    
+    ultimas_facturas = sorted(facturas_con_id, key=lambda x: datetime.strptime(x['fecha'], '%Y-%m-%d'), reverse=True)[:5]
     productos_bajo_stock = [p for p in inventario.values() if int(p.get('cantidad', p.get('stock', 0))) < 10]
     total_pagos_recibidos_usd = 0
     total_pagos_recibidos_bs = 0
@@ -366,7 +373,7 @@ def registrar_bitacora(usuario, accion, detalles='', documento_tipo='', document
     Función mejorada de bitácora que mantiene compatibilidad y agrega funcionalidad SENIAT
     """
     from datetime import datetime
-    import requests
+    # import requests  # Temporarily commented out for testing
     from flask import has_request_context, request, session
     
     # Sistema de bitácora tradicional (para compatibilidad)
@@ -442,9 +449,10 @@ def index():
     promedio_factura_usd = total_facturado_usd / cantidad_facturas if cantidad_facturas > 0 else 0
     # Obtener tasa euro igual que antes
     try:
-        r = requests.get('https://s3.amazonaws.com/dolartoday/data.json', timeout=5)
-        data = r.json()
-        tasa_bcv_eur = float(data['EUR']['promedio']) if 'EUR' in data and 'promedio' in data['EUR'] else None
+        # r = requests.get('https://s3.amazonaws.com/dolartoday/data.json', timeout=5)  # Temporarily commented out
+        # data = r.json()  # Temporarily commented out
+        # tasa_bcv_eur = float(data['EUR']['promedio']) if 'EUR' in data and 'promedio' in data['EUR'] else None  # Temporarily commented out
+        tasa_bcv_eur = 0  # Temporarily set to 0
     except Exception:
         tasa_bcv_eur = 0
     advertencia_tasa = None
@@ -1005,30 +1013,68 @@ def mostrar_facturas():
     )
 
 @app.route('/facturas/<id>')
+@login_required
 def ver_factura(id):
     """Muestra los detalles de una factura."""
-    facturas = cargar_datos(ARCHIVO_FACTURAS)
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
-    factura = facturas.get(id)
-    if not factura:
-        flash('Factura no encontrada', 'danger')
+    print(f"=== DEBUG: Función ver_factura llamada con ID: {id} ===")
+    print(f"=== DEBUG: URL actual: {request.url} ===")
+    print(f"=== DEBUG: Template a usar: factura_dashboard.html ===")
+    
+    try:
+        print(f"DEBUG: Accediendo a factura con ID: {id}")
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        
+        if not facturas:
+            print("DEBUG: No se pudieron cargar las facturas")
+            flash('Error al cargar las facturas', 'danger')
+            return redirect(url_for('mostrar_facturas'))
+            
+        factura = facturas.get(id)
+        print(f"DEBUG: Factura encontrada: {factura is not None}")
+        
+        if not factura:
+            print(f"DEBUG: Factura con ID {id} no encontrada")
+            flash('Factura no encontrada', 'danger')
+            return redirect(url_for('mostrar_facturas'))
+        
+        # Calcular totales de pagos
+        total_abonado = 0
+        if 'pagos' in factura and factura['pagos']:
+            for pago in factura['pagos']:
+                try:
+                    monto = float(str(pago.get('monto', 0)).replace('$', '').replace(',', ''))
+                    total_abonado += monto
+                except Exception:
+                    continue
+        factura['total_abonado'] = total_abonado
+        factura['saldo_pendiente'] = max(factura.get('total_usd', 0) - total_abonado, 0)
+        
+        empresa = cargar_empresa()
+        print(f"DEBUG: Renderizando template factura_dashboard.html para factura {id}")
+        print(f"DEBUG: Datos de factura: {factura}")
+        print(f"DEBUG: Datos de clientes: {list(clientes.keys())[:5]}...")
+        print(f"DEBUG: Datos de empresa: {empresa}")
+        
+        # Forzar recarga del template
+        app.jinja_env.cache.clear()
+        
+        print("DEBUG: Llamando a render_template...")
+        resultado = render_template('factura_dashboard.html', 
+                                  factura=factura, 
+                                  clientes=clientes, 
+                                  inventario=inventario, 
+                                  empresa=empresa, 
+                                  zip=zip,
+                                  now=datetime.now)
+        print("DEBUG: render_template completado exitosamente")
+        return resultado
+        
+    except Exception as e:
+        print(f"ERROR en ver_factura: {str(e)}")
+        flash(f'Error al mostrar la factura: {str(e)}', 'danger')
         return redirect(url_for('mostrar_facturas'))
-    
-    # Calcular totales de pagos
-    total_abonado = 0
-    if 'pagos' in factura and factura['pagos']:
-        for pago in factura['pagos']:
-            try:
-                monto = float(str(pago.get('monto', 0)).replace('$', '').replace(',', ''))
-                total_abonado += monto
-            except Exception:
-                continue
-    factura['total_abonado'] = total_abonado
-    factura['saldo_pendiente'] = max(factura.get('total_usd', 0) - total_abonado, 0)
-    
-    empresa = cargar_empresa()
-    return render_template('factura_detalle.html', factura=factura, clientes=clientes, inventario=inventario, empresa=empresa, zip=zip)
 
 @app.route('/facturas/<id>/pdf')
 def descargar_factura_pdf(id):
