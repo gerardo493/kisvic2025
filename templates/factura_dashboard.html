@@ -86,21 +86,23 @@
                             </h5>
                             <div class="d-grid gap-2">
                                 {% if saldo_pendiente > 0 %}
-                                    <button class="btn btn-success btn-sm" onclick="registrarPago()">
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#modalPago" data-factura-id="{{ factura._id }}">
                                         <i class="fas fa-plus me-1"></i>Registrar Pago
                                     </button>
-                                                                    <button class="btn btn-warning btn-sm" onclick="enviarRecordatorio()">
-                                    <i class="fas fa-bell me-1"></i>Enviar Recordatorio
-                                </button>
-                                <button class="btn btn-info btn-sm" onclick="probarRecordatorio()">
-                                    <i class="fas fa-bug me-1"></i>Probar Sistema
-                                </button>
+                                    
+                                    <!-- Sistema de Recordatorios WhatsApp -->
+                                    <button class="btn btn-warning btn-sm" onclick="mostrarSelectorTipoMensaje('{{ factura.cliente_id }}', '{{ clientes[factura.cliente_id].nombre if factura.cliente_id in clientes else 'Cliente' }}')">
+                                        <i class="fab fa-whatsapp me-1"></i>Enviar Recordatorio
+                                    </button>
+                                    
+                                    <!-- Botón de prueba -->
+                                    <button class="btn btn-danger btn-sm" onclick="probarRecordatorioDirecto()">
+                                        <i class="fas fa-bug me-1"></i>Probar Recordatorio
+                                    </button>
                                 {% endif %}
+                                
                                 <button class="btn btn-info btn-sm" onclick="duplicarFactura()">
                                     <i class="fas fa-copy me-1"></i>Duplicar Factura
-                                </button>
-                                <button class="btn btn-primary btn-sm" onclick="enviarInformeFacturasPagadas()">
-                                    <i class="fas fa-chart-line me-1"></i>Enviar Informe WhatsApp
                                 </button>
                             </div>
                         </div>
@@ -421,33 +423,127 @@
     </div>
 </div>
 
-<!-- Modal para Registrar Pago -->
-<div class="modal fade" id="pagoModal" tabindex="-1">
-    <div class="modal-dialog">
+<!-- Modal Registrar Pago Global -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formPago" method="post" enctype="multipart/form-data" onsubmit="return validarMontoPago()">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalPagoLabel">Registrar Pago</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="monto_pago" class="form-label">Monto</label>
+            <input type="number" step="0.01" min="0" class="form-control" id="monto_pago" name="monto_pago" required>
+            <div id="conversion_monto" class="form-text mt-1"></div>
+            <div id="error_monto" class="text-danger mt-1" style="display: none;"></div>
+          </div>
+          <div class="mb-3">
+            <label for="moneda_pago" class="form-label">Moneda</label>
+            <select class="form-select" id="moneda_pago" name="moneda_pago" required>
+              <option value="USD">USD</option>
+              <option value="Bs">Bs</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="metodo_pago" class="form-label">Método</label>
+            <select class="form-select" id="metodo_pago" name="metodo_pago" required>
+              <option value="efectivo_usd">Efectivo USD</option>
+              <option value="efectivo_bs">Efectivo Bs</option>
+              <option value="pago_movil">Pago Móvil</option>
+              <option value="transferencia">Transferencia</option>
+            </select>
+          </div>
+          <div id="banco_container" style="display: none;">
+            <div class="mb-3">
+              <label for="banco" class="form-label">Banco</label>
+              <select class="form-select" id="banco" name="banco">
+                <option value="">Seleccionar banco</option>
+                <option value="banesco">Banesco</option>
+                <option value="mercantil">Mercantil</option>
+                <option value="provincial">Provincial</option>
+                <option value="bancaribe">Bancaribe</option>
+                <option value="banco_venezuela">Banco de Venezuela</option>
+                <option value="bbva">BBVA Provincial</option>
+                <option value="banesco_panama">Banesco Panamá</option>
+                <option value="mercantil_panama">Mercantil Panamá</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="referencia_pago" class="form-label">Referencia (opcional)</label>
+            <input type="text" class="form-control" id="referencia_pago" name="referencia_pago" placeholder="Número de referencia o comprobante">
+          </div>
+          <div class="mb-3">
+            <label for="captura_transaccion" class="form-label">Captura de Transacción (opcional)</label>
+            <input type="file" class="form-control" id="captura_transaccion" name="captura" accept="image/*,.pdf">
+            <div class="form-text">Formatos: JPG, PNG, PDF. Máximo 5MB</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Registrar Pago</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para Recordatorios WhatsApp -->
+<div class="modal fade" id="whatsappModalCuentas" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Pago</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-chart-line me-2"></i>Recordatorio de Pago Preparado para WhatsApp
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="pagoForm">
-                    <div class="mb-3">
-                        <label for="montoPago" class="form-label">Monto del Pago</label>
-                        <input type="number" class="form-control" id="montoPago" step="0.01" required>
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6 class="text-warning mb-3">
+                            <i class="fas fa-check-circle me-2"></i>Recordatorio preparado exitosamente
+                        </h6>
+                        <p><strong>Cliente:</strong> <span id="cliente_nombre_modal">N/A</span></p>
+                        <p><strong>Teléfono:</strong> <span id="telefono_modal">N/A</span></p>
+                        <p><strong>Total de facturas:</strong> <span id="facturas_pendientes_modal">0</span></p>
+                        <p><strong>Total facturado:</strong> $<span id="total_facturado_modal">0</span></p>
+                        <p><strong>Total abonado:</strong> $<span id="total_abonado_modal">0</span></p>
+                        <p><strong>Saldo pendiente:</strong> $<span id="total_pendiente_modal">0</span></p>
+                        <p><strong>Mensaje del recordatorio:</strong></p>
+                        <div class="border rounded p-3 bg-light">
+                            <pre id="mensaje_modal" style="white-space: pre-wrap; font-size: 0.9em;">Mensaje no disponible</pre>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="fechaPago" class="form-label">Fecha del Pago</label>
-                        <input type="date" class="form-control" id="fechaPago" required>
+                    <div class="col-md-4 text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-chart-line text-warning" style="font-size: 4rem;"></i>
+                        </div>
+                        <p class="text-muted">Haz clic en un botón para abrir WhatsApp</p>
                     </div>
-                    <div class="mb-3">
-                        <label for="notasPago" class="form-label">Notas (opcional)</label>
-                        <textarea class="form-control" id="notasPago" rows="3"></textarea>
-                    </div>
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="confirmarPago()">Registrar Pago</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-warning me-2" id="btnProbarEmojis">
+                    <i class="fas fa-bug me-2"></i>Probar Emojis
+                </button>
+                <button type="button" class="btn btn-info me-2" id="btnCopiarMensaje">
+                    <i class="fas fa-copy me-2"></i>Copiar Mensaje
+                </button>
+                <button type="button" class="btn btn-dark me-2" id="btnProbarEnlaces">
+                    <i class="fas fa-link me-2"></i>Probar Enlaces
+                </button>
+                <a href="#" id="enlace_whatsapp_web" target="_blank" class="btn btn-success" onclick="console.log('🌐 Abriendo WhatsApp Web:', '${enlaceWeb}')">
+                    <i class="fab fa-whatsapp me-2"></i>Abrir WhatsApp Web
+                </a>
+                <a href="#" id="enlace_whatsapp_app" target="_blank" class="btn btn-warning btn-lg" onclick="console.log('📱 Abriendo WhatsApp App:', '${enlaceApp}')">
+                    <i class="fab fa-whatsapp me-2"></i>Abrir App
+                </a>
             </div>
         </div>
     </div>
@@ -456,13 +552,119 @@
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Configurar fecha actual en el modal
+// Variables globales
+let saldoPendiente = {{ factura.get('saldo_pendiente', 0) }};
+let tasaBCV = {{ factura.get('tasa_bcv', 36.0) }};
+const facturaId = '{{ factura._id }}';
+
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('fechaPago').value = new Date().toISOString().split('T')[0];
+    // Configurar modal de pago
+    configurarModalPago();
     
     // Inicializar gráfico de productos si existe
+    inicializarGraficoProductos();
+});
+
+// Configurar modal de pago
+function configurarModalPago() {
+    const modalPago = document.getElementById('modalPago');
+    modalPago.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const facturaId = button.getAttribute('data-factura-id');
+        const form = document.getElementById('formPago');
+        form.action = '/facturas/' + facturaId + '/registrar_pago';
+        
+        // Obtener saldo pendiente
+        fetch('/facturas/' + facturaId + '/saldo')
+            .then(response => response.json())
+            .then(data => {
+                saldoPendiente = parseFloat(data.saldo_pendiente);
+                tasaBCV = parseFloat(data.tasa_bcv) || tasaBCV;
+                document.getElementById('monto_pago').placeholder = `Máximo: $${saldoPendiente.toFixed(2)} USD`;
+                actualizarConversion();
+            });
+        
+        form.reset();
+        document.getElementById('error_monto').style.display = 'none';
+    });
+
+    // Mostrar/ocultar selector de banco según método de pago
+    document.getElementById('metodo_pago').addEventListener('change', function() {
+        const bancoContainer = document.getElementById('banco_container');
+        const bancoSelect = document.getElementById('banco');
+        const metodo = this.value;
+        if (metodo === 'pago_movil' || metodo === 'transferencia') {
+            bancoContainer.style.display = 'block';
+            bancoSelect.required = true;
+        } else {
+            bancoContainer.style.display = 'none';
+            bancoSelect.required = false;
+        }
+    });
+
+    // Validar tamaño de archivo
+    document.getElementById('captura_transaccion').addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) { // 5MB
+                alert('El archivo es demasiado grande. El tamaño máximo permitido es 5MB.');
+                this.value = '';
+            }
+        }
+    });
+}
+
+// Actualizar conversión de moneda
+function actualizarConversion() {
+    const monto = parseFloat(document.getElementById('monto_pago').value) || 0;
+    const moneda = document.getElementById('moneda_pago').value;
+    const conversionDiv = document.getElementById('conversion_monto');
+    
+    if (moneda === 'Bs' && monto > 0) {
+        const montoUSD = monto / tasaBCV;
+        conversionDiv.innerHTML = `Equivale a: $${montoUSD.toFixed(2)} USD`;
+    } else if (moneda === 'USD' && monto > 0) {
+        const montoBs = monto * tasaBCV;
+        conversionDiv.innerHTML = `Equivale a: ${montoBs.toFixed(2)} Bs`;
+    } else {
+        conversionDiv.innerHTML = '';
+    }
+}
+
+// Validar monto del pago
+function validarMontoPago() {
+    const monto = parseFloat(document.getElementById('monto_pago').value);
+    const moneda = document.getElementById('moneda_pago').value;
+    const errorDiv = document.getElementById('error_monto');
+    
+    if (moneda === 'Bs') {
+        const montoUSD = monto / tasaBCV;
+        if (montoUSD > saldoPendiente) {
+            errorDiv.textContent = `El monto excede el saldo pendiente. Máximo: ${(saldoPendiente * tasaBCV).toFixed(2)} Bs`;
+            errorDiv.style.display = 'block';
+            return false;
+        }
+    } else {
+        if (monto > saldoPendiente) {
+            errorDiv.textContent = `El monto excede el saldo pendiente. Máximo: $${saldoPendiente.toFixed(2)} USD`;
+            errorDiv.style.display = 'block';
+            return false;
+        }
+    }
+    
+    errorDiv.style.display = 'none';
+    return true;
+}
+
+// Inicializar gráfico de productos
+function inicializarGraficoProductos() {
+    const chartElement = document.getElementById('productosChart');
+    if (!chartElement) return;
+    
+    const ctx = chartElement.getContext('2d');
+    
     {% if factura.items and factura.items is iterable and factura.items is not string %}
-        const ctx = document.getElementById('productosChart').getContext('2d');
         const productos = {{ factura.items|tojson }};
         
         new Chart(ctx, {
@@ -491,7 +693,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
-        const ctx = document.getElementById('productosChart').getContext('2d');
         const productos = {{ factura.productos|tojson }};
         const cantidades = {{ factura.cantidades|tojson if factura.cantidades else '[]' }};
         const precios = {{ factura.precios|tojson if factura.precios else '[]' }};
@@ -541,159 +742,82 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     {% endif %}
-});
+}
 
 // Funciones de acciones rápidas
 function registrarPago() {
-    const modal = new bootstrap.Modal(document.getElementById('pagoModal'));
+    const modal = new bootstrap.Modal(document.getElementById('modalPago'));
     modal.show();
 }
 
-function confirmarPago() {
-    const monto = document.getElementById('montoPago').value;
-    const fecha = document.getElementById('fechaPago').value;
-    const notas = document.getElementById('notasPago').value;
+function enviarRecordatorioCuentasPorCobrar(clienteId, clienteNombre, tipoMensaje = null) {
+    console.log('🔍 Función llamada con:', { clienteId, clienteNombre, tipoMensaje });
     
-    if (!monto || !fecha) {
-        alert('Por favor complete todos los campos requeridos');
+    if (!clienteId) {
+        alert('Error: No se pudo identificar al cliente');
         return;
     }
     
-    // Aquí iría la lógica para enviar el pago al servidor
-    alert(`Pago registrado: $${monto} el ${fecha}`);
-    
-    // Cerrar modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('pagoModal'));
-    modal.hide();
-    
-    // Recargar página para mostrar el nuevo pago
-    location.reload();
-}
-
-function enviarRecordatorio() {
-    if (!confirm('¿Desea preparar un recordatorio de pago por WhatsApp al cliente?')) {
+    // Confirmar envío
+    if (!confirm(`¿Deseas enviar un recordatorio de cuentas por cobrar por WhatsApp a ${clienteNombre}?`)) {
         return;
     }
-
-    const btn = event.target;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
+    
+    // Mostrar indicador de carga
+    const btn = event.target.closest('button');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     btn.disabled = true;
-
-    try {
-        const clienteId = '{{ factura.cliente_id }}';
-        const cliente = {{ clientes|tojson }}[clienteId] || {};
-        const clienteNombre = cliente.nombre || '{{ factura.cliente_nombre or "Cliente" }}';
-        const telefonoRaw = String(cliente.telefono || '').trim();
-        const saldoPendiente = {{ (factura.get('saldo_pendiente', 0) or 0) }};
-        const numeroFactura = '{{ factura.numero }}';
-
-        // Formatear teléfono simple
-        let telefono = telefonoRaw.replace(/\D/g, '');
-        if (telefono.startsWith('00')) telefono = telefono.slice(2);
-        if (telefono.startsWith('0')) telefono = telefono.slice(1);
-        if (!telefono.startsWith('58')) telefono = '58' + telefono;
-
-        if (!telefono) {
-            alert('El cliente no tiene teléfono registrado.');
-            return;
+    
+    const url = `/cuentas-por-cobrar/enviar_recordatorio_whatsapp`;
+    console.log('📡 Enviando solicitud a:', url);
+    
+    // Preparar datos del request
+    const requestData = { cliente_id: clienteId };
+    if (tipoMensaje && tipoMensaje !== 'AUTO') {
+        requestData.tipo_mensaje = tipoMensaje;
+    }
+    
+    // Enviar solicitud al servidor
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-
-        // Mensaje simple basado en esta factura
-        const mensaje = `Hola ${clienteNombre}, le recordamos que la factura ${numeroFactura} presenta un saldo pendiente de $${saldoPendiente.toFixed(2)} USD. Por favor, contáctenos para coordinar el pago. Gracias.`;
-        const enlaceWhatsapp = `https://web.whatsapp.com/send?phone=${telefono}&text=${encodeURIComponent(mensaje)}`;
-
-        // Mostrar modal previo al envío
-        mostrarModalWhatsApp({
-            success: true,
-            cliente_nombre: clienteNombre,
-            telefono: telefonoRaw || telefono,
-            mensaje,
-            enlace_whatsapp: enlaceWhatsapp,
-            facturas_pendientes: 1,
-            total_pendiente: saldoPendiente
-        });
-    } catch (e) {
-        console.error('Error preparando recordatorio en cliente:', e);
-        alert('Error inesperado al preparar el recordatorio en el navegador.');
-    } finally {
-        btn.innerHTML = originalText;
+        return response.json();
+    })
+    .then(data => {
+        console.log('📊 Datos recibidos:', data);
+        if (data.success) {
+            // Mostrar modal de WhatsApp
+            mostrarModalWhatsAppCuentasPorCobrar(data);
+        } else {
+            alert(`❌ Error: ${data.error || 'No se pudo preparar el recordatorio'}`);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error en la solicitud:', error);
+        alert(`❌ Error de conexión: ${error.message}`);
+    })
+    .finally(() => {
+        // Restaurar botón
+        btn.innerHTML = originalContent;
         btn.disabled = false;
-    }
-}
-
-function mostrarModalWhatsApp(data) {
-    console.log('🎯 Mostrando modal con datos:', data);
-    
-    // Validar datos requeridos
-    if (!data.enlace_whatsapp) {
-        console.error('❌ Falta enlace_whatsapp en los datos:', data);
-        alert('Error: No se pudo generar el enlace de WhatsApp');
-        return;
-    }
-    
-    // Crear modal dinámicamente
-    const modalHTML = `
-        <div class="modal fade" id="whatsappModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title">
-                            <i class="fab fa-whatsapp me-2"></i>Recordatorio Preparado para WhatsApp
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h6 class="text-success mb-3">
-                                    <i class="fas fa-check-circle me-2"></i>Recordatorio preparado exitosamente
-                                </h6>
-                                <p><strong>Cliente:</strong> ${data.cliente_nombre || 'N/A'}</p>
-                                <p><strong>Teléfono:</strong> ${data.telefono || 'N/A'}</p>
-                                <p><strong>Facturas pendientes:</strong> ${data.facturas_pendientes || 0}</p>
-                                <p><strong>Total pendiente:</strong> $${data.total_pendiente || 0}</p>
-                                <p><strong>Mensaje:</strong></p>
-                                <div class="border rounded p-3 bg-light">
-                                    <pre style="white-space: pre-wrap; font-size: 0.9em;">${data.mensaje || 'Mensaje no disponible'}</pre>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="mb-3">
-                                    <i class="fab fa-whatsapp text-success" style="font-size: 4rem;"></i>
-                                </div>
-                                <p class="text-muted">Haz clic en el botón para abrir WhatsApp</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <a href="${data.enlace_whatsapp}" 
-                           target="_blank" 
-                           class="btn btn-success btn-lg">
-                            <i class="fab fa-whatsapp me-2"></i>Abrir WhatsApp
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Agregar modal al DOM
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('whatsappModal'));
-    modal.show();
-    
-    // Limpiar modal cuando se cierre
-    document.getElementById('whatsappModal').addEventListener('hidden.bs.modal', function() {
-        this.remove();
     });
 }
 
-function mostrarModalInformeWhatsApp(data) {
-    console.log('🎯 Mostrando modal de informe con datos:', data);
+function mostrarModalWhatsAppCuentasPorCobrar(data) {
+    console.log('🎯 Mostrando modal de recordatorio con datos:', data);
     
     // Validar datos requeridos
     if (!data.enlace_whatsapp) {
@@ -703,48 +827,66 @@ function mostrarModalInformeWhatsApp(data) {
     }
     
     // Crear modal dinámicamente
+    const enlaceApp = data.enlace_whatsapp;
+    const enlaceWeb = data.enlace_web;
+    
+    console.log('🎯 Modal - Enlace App:', enlaceApp);
+    console.log('🎯 Modal - Enlace Web:', enlaceWeb);
+    
+    // Crear modal HTML
     const modalHTML = `
-        <div class="modal fade" id="informeWhatsappModal" tabindex="-1">
+        <div class="modal fade" id="informeWhatsappModalCuentas" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title">
-                            <i class="fas fa-chart-line me-2"></i>Informe de Facturas Preparado para WhatsApp
+                    <div class="modal-header bg-${data.tipo_mensaje === 'URGENTE' ? 'danger' : data.tipo_mensaje === 'MEDIO' ? 'warning' : 'success'} text-white">
+                        <h5 class="modal-title" id="modalLabel">
+                            <i class="fas fa-chart-line me-2"></i>Recordatorio ${data.tipo_mensaje || 'FLEXIBLE'} - WhatsApp
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-8">
-                                <h6 class="text-primary mb-3">
-                                    <i class="fas fa-check-circle me-2"></i>Informe preparado exitosamente
+                                <h6 class="text-warning mb-3">
+                                    <i class="fas fa-check-circle me-2"></i>Recordatorio ${data.tipo_mensaje || 'FLEXIBLE'} preparado exitosamente
                                 </h6>
                                 <p><strong>Cliente:</strong> ${data.cliente_nombre || 'N/A'}</p>
                                 <p><strong>Teléfono:</strong> ${data.telefono || 'N/A'}</p>
-                                <p><strong>Factura:</strong> ${data.numero_factura || 'N/A'}</p>
-                                <p><strong>Saldo pendiente:</strong> $${data.saldo_pendiente || 0}</p>
-                                <p><strong>Mensaje del informe:</strong></p>
+                                <p><strong>Tipo de Recordatorio:</strong> <span class="badge bg-${data.tipo_mensaje === 'URGENTE' ? 'danger' : data.tipo_mensaje === 'MEDIO' ? 'warning' : 'success'}">${data.emoji_principal || '💼'} ${data.tipo_mensaje || 'FLEXIBLE'}</span></p>
+                                <p><strong>Total de facturas:</strong> ${data.total_facturas || 0}</p>
+                                <p><strong>Total facturado:</strong> $${data.total_facturado || 0}</p>
+                                <p><strong>Total abonado:</strong> $${data.total_abonado || 0}</p>
+                                <p><strong>Saldo pendiente:</strong> $${data.total_pendiente || 0}</p>
+                                <p><strong>Días de vencimiento:</strong> ${data.dias_vencimiento || 0} días</p>
+                                ${data.total_facturas_vencidas > 0 ? `<p><strong>Facturas vencidas:</strong> <span class="badge bg-danger">${data.total_facturas_vencidas} facturas vencidas</span></p>` : ''}
+                                <p><strong>Mensaje del recordatorio:</strong></p>
                                 <div class="border rounded p-3 bg-light">
                                     <pre style="white-space: pre-wrap; font-size: 0.9em;">${data.mensaje || 'Mensaje no disponible'}</pre>
                                 </div>
                             </div>
                             <div class="col-md-4 text-center">
                                 <div class="mb-3">
-                                    <i class="fas fa-chart-line text-primary" style="font-size: 4rem;"></i>
+                                    <i class="fas fa-chart-line text-warning" style="font-size: 4rem;"></i>
                                 </div>
-                                <p class="text-muted">Haz clic en el botón para abrir WhatsApp</p>
+                                <p class="text-muted">Haz clic en un botón para abrir WhatsApp</p>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-info me-2" onclick="copiarMensajeAlPortapapeles('${data.mensaje.replace(/'/g, "\\'")}')">
+                        <button type="button" class="btn btn-warning me-2" id="btnProbarEmojis">
+                            <i class="fas fa-bug me-2"></i>Probar Emojis
+                        </button>
+                        <button type="button" class="btn btn-info me-2" id="btnCopiarMensaje">
                             <i class="fas fa-copy me-2"></i>Copiar Mensaje
                         </button>
-                        <a href="${data.enlace_web || data.enlace_whatsapp}" target="_blank" class="btn btn-success">
+                        <button type="button" class="btn btn-dark me-2" id="btnProbarEnlaces">
+                            <i class="fas fa-link me-2"></i>Probar Enlaces
+                        </button>
+                        <a href="${enlaceWeb}" target="_blank" class="btn btn-success">
                             <i class="fab fa-whatsapp me-2"></i>Abrir WhatsApp Web
                         </a>
-                        <a href="${data.enlace_whatsapp}" target="_blank" class="btn btn-primary btn-lg">
+                        <a href="${enlaceApp}" target="_blank" class="btn btn-primary btn-lg">
                             <i class="fab fa-whatsapp me-2"></i>Abrir App
                         </a>
                     </div>
@@ -753,158 +895,114 @@ function mostrarModalInformeWhatsApp(data) {
         </div>
     `;
     
+    // Remover modal anterior si existe
+    const modalAnterior = document.getElementById('informeWhatsappModalCuentas');
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+    
     // Agregar modal al DOM
     document.body.insertAdjacentHTML('beforeend', modalHTML);
     
+    // Obtener referencia al modal
+    const modalElement = document.getElementById('informeWhatsappModalCuentas');
+    
+    // Configurar event listeners para los botones
+    const btnProbarEmojis = modalElement.querySelector('#btnProbarEmojis');
+    const btnCopiarMensaje = modalElement.querySelector('#btnCopiarMensaje');
+    const btnProbarEnlaces = modalElement.querySelector('#btnProbarEnlaces');
+    
+    btnProbarEmojis.addEventListener('click', function() {
+        probarEmojis(data.mensaje);
+    });
+    
+    btnCopiarMensaje.addEventListener('click', function() {
+        copiarMensajeAlPortapapeles(data.mensaje);
+    });
+    
+    btnProbarEnlaces.addEventListener('click', function() {
+        probarEnlaces(data.enlace_whatsapp, data.enlace_web, data.mensaje);
+    });
+    
+    // Crear y mostrar modal
+    const modal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    
     // Mostrar modal
-    const modal = new bootstrap.Modal(document.getElementById('informeWhatsappModal'));
     modal.show();
     
     // Limpiar modal cuando se cierre
-    document.getElementById('informeWhatsappModal').addEventListener('hidden.bs.modal', function() {
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        console.log('🔒 Modal cerrado, removiendo del DOM');
         this.remove();
+    });
+    
+    console.log('✅ Modal creado y mostrado exitosamente');
+}
+
+
+
+// ===== FUNCIÓN DE DUPLICAR FACTURA =====
+
+function duplicarFactura() {
+    if (!confirm('¿Deseas duplicar esta factura? Se creará una copia con un nuevo número.')) {
+        return;
+    }
+    
+    mostrarNotificacion('📋 Duplicando factura...', 'info');
+    
+    // Preparar datos para duplicar
+    const datosFactura = {
+        cliente_id: '{{ factura.cliente_id }}',
+        fecha: new Date().toISOString().split('T')[0],
+        hora: new Date().toTimeString().split(' ')[0],
+        tasa_bcv: {{ factura.get('tasa_bcv', 36.0) }},
+        condicion_pago: '{{ factura.get('condicion_pago', 'contado') }}',
+        iva: {{ factura.get('iva', 16) }},
+        items: {{ factura.items|tojson if factura.items and factura.items is iterable and factura.items is not string else '[]' }},
+        productos: {{ factura.productos|tojson if factura.productos and factura.productos is iterable and factura.productos is not string else '[]' }},
+        cantidades: {{ factura.cantidades|tojson if factura.cantidades and factura.cantidades is iterable and factura.cantidades is not string else '[]' }},
+        precios: {{ factura.precios|tojson if factura.precios and factura.precios is iterable and factura.precios is not string else '[]' }},
+        descuento: '{{ factura.get('descuento', '0') }}',
+        tipo_descuento: '{{ factura.get('tipo_descuento', 'bs') }}'
+    };
+    
+    // Enviar solicitud para duplicar
+    fetch('/facturas/duplicar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(datosFactura)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarNotificacion('✅ Factura duplicada correctamente', 'success');
+            setTimeout(() => {
+                // Redirigir a la nueva factura
+                window.location.href = `/facturas/${data.factura_id}`;
+            }, 1500);
+        } else {
+            mostrarNotificacion(`❌ Error: ${data.error || 'No se pudo duplicar la factura'}`, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error duplicando factura:', error);
+        mostrarNotificacion('❌ Error de conexión al duplicar factura', 'danger');
     });
 }
 
-function enviarInformeFacturasPagadas() {
-    // Obtener el ID del cliente desde la factura
-    const clienteId = '{{ factura.cliente_id }}';
-    const cliente = {{ clientes|tojson }}[clienteId] || {};
-    const clienteNombre = cliente.nombre || '{{ factura.cliente_nombre or "Cliente" }}';
-    
-    if (!clienteId) {
-        alert('❌ Error: No se pudo identificar al cliente');
-        return;
-    }
-    
-    // Confirmar envío
-    if (!confirm(`¿Deseas enviar un informe de facturas pagadas por WhatsApp a ${clienteNombre}?\n\nEste informe incluirá:\n• Facturas completamente cobradas\n• Facturas con abonos\n• Facturas pendientes\n• Resumen de pagos`)) {
-        return;
-    }
-    
-    // Mostrar indicador de carga
-    const btn = event.target;
-    const originalContent = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
-    btn.disabled = true;
-    
-    try {
-        // Generar informe en el frontend
-        const telefonoRaw = String(cliente.telefono || '').trim();
-        
-        // Formatear teléfono simple
-        let telefono = telefonoRaw.replace(/\D/g, '');
-        if (telefono.startsWith('00')) telefono = telefono.slice(2);
-        if (telefono.startsWith('0')) telefono = telefono.slice(1);
-        if (!telefono.startsWith('58')) telefono = '58' + telefono;
-        
-        if (!telefono) {
-            alert('El cliente no tiene teléfono registrado.');
-            return;
-        }
-        
-        // Generar mensaje del informe
-        const mensaje = `Hola ${clienteNombre}, aquí tienes tu informe de facturas:\n\n` +
-                       `📊 RESUMEN DE FACTURAS:\n` +
-                       `• Factura actual: {{ factura.numero }}\n` +
-                       `• Estado: {{ "Pendiente" if factura.get("saldo_pendiente", 0) > 0 else "Pagada" }}\n` +
-                       `• Saldo: ${{ "%.2f"|format(factura.get("saldo_pendiente", 0)) }} USD\n\n` +
-                       `💡 Para más detalles o coordinar pagos, contáctanos. Gracias.`;
-        
-        // Crear enlaces de WhatsApp con codificación correcta
-        const mensajeCodificado = encodeURIComponent(mensaje);
-        console.log('📱 Mensaje completo:', mensaje);
-        console.log('🔗 Mensaje codificado:', mensajeCodificado);
-        
-        // Enlace para app móvil
-        const enlaceApp = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
-        // Enlace para WhatsApp Web
-        const enlaceWeb = `https://web.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
-        
-        // Mostrar modal con el informe
-        mostrarModalInformeWhatsApp({
-            success: true,
-            cliente_nombre: clienteNombre,
-            telefono: telefonoRaw || telefono,
-            mensaje,
-            enlace_whatsapp: enlaceApp,
-            enlace_web: enlaceWeb,
-            numero_factura: '{{ factura.numero }}',
-            saldo_pendiente: {{ factura.get('saldo_pendiente', 0) or 0 }}
-        });
-        
-    } catch (e) {
-        console.error('Error preparando informe en cliente:', e);
-        alert('Error inesperado al preparar el informe en el navegador.');
-    } finally {
-        // Restaurar botón
-        btn.innerHTML = originalContent;
-        btn.disabled = false;
-    }
-}
-
-function duplicarFactura() {
-    if (confirm('¿Desea duplicar esta factura?')) {
-        // Aquí iría la lógica para duplicar la factura
-        alert('Factura duplicada correctamente');
-    }
-}
-
-function probarRecordatorio() {
-    // Obtener el ID de la factura desde la URL
-    const urlParts = window.location.pathname.split('/');
-    const facturaId = urlParts[urlParts.length - 1];
-    
-    console.log('🧪 Probando sistema de recordatorio para factura:', facturaId);
-    
-    // Mostrar indicador de carga
-    const btn = event.target;
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Probando...';
-    btn.disabled = true;
-    
-    // Llamar a la ruta de prueba
-    fetch(`/probar-recordatorio-whatsapp/${facturaId}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('📊 Resultado de la prueba:', data);
-            
-            if (data.success) {
-                alert('✅ Sistema funcionando correctamente!\n\n' +
-                      'Factura encontrada: Sí\n' +
-                      'Cliente encontrado: Sí\n' +
-                      'Teléfono disponible: Sí\n' +
-                      'Mensaje generado: Sí\n' +
-                      'Enlace generado: Sí');
-            } else {
-                let errorMsg = '❌ Problemas encontrados:\n\n';
-                if (data.errores && data.errores.length > 0) {
-                    data.errores.forEach(error => {
-                        errorMsg += `• ${error}\n`;
-                    });
-                } else {
-                    errorMsg += '• Error desconocido\n';
-                }
-                alert(errorMsg);
-            }
-        })
-        .catch(error => {
-            console.error('❌ Error en la prueba:', error);
-            alert('❌ Error al probar el sistema:\n' + error.message);
-        })
-        .finally(() => {
-            // Restaurar botón
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        });
-}
+// ===== FUNCIÓN DE COPIAR MENSAJE =====
 
 function copiarMensajeAlPortapapeles(mensaje) {
     try {
-        // El mensaje ya viene decodificado, solo copiarlo
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(mensaje).then(() => {
-                alert('✅ Mensaje copiado al portapapeles con emojis');
+                mostrarNotificacion('✅ Mensaje copiado al portapapeles', 'success');
                 console.log('📋 Mensaje copiado:', mensaje);
             }).catch(err => {
                 console.error('Error copiando al portapapeles:', err);
@@ -915,7 +1013,7 @@ function copiarMensajeAlPortapapeles(mensaje) {
         }
     } catch (e) {
         console.error('Error procesando mensaje para copiar:', e);
-        alert('❌ Error al copiar el mensaje');
+        fallbackCopyTextToClipboard(mensaje);
     }
 }
 
@@ -932,14 +1030,256 @@ function fallbackCopyTextToClipboard(text) {
     
     try {
         document.execCommand('copy');
-        alert('✅ Mensaje copiado al portapapeles');
+        mostrarNotificacion('✅ Mensaje copiado al portapapeles', 'success');
         console.log('📋 Mensaje copiado (fallback):', text);
     } catch (err) {
         console.error('Error en fallback copy:', err);
-        alert('❌ Error al copiar el mensaje');
+        mostrarNotificacion('❌ Error al copiar el mensaje', 'danger');
     }
     
     document.body.removeChild(textArea);
+}
+
+// ===== FUNCIÓN DE PROBAR EMOJIS =====
+
+function probarEmojis(mensaje) {
+    try {
+        // Crear un mensaje de prueba con emojis
+        const mensajeConEmojis = `🧪 PRUEBA DE EMOJIS:\n\n${mensaje}\n\n✅ Emojis funcionando correctamente\n🎉 Sistema operativo`;
+        
+        // Mostrar en consola
+        console.log('🧪 Mensaje con emojis:', mensajeConEmojis);
+        
+        // Mostrar notificación
+        mostrarNotificacion('🧪 Emojis probados exitosamente', 'success');
+        
+        // Copiar al portapapeles para que el usuario pueda probar
+        copiarMensajeAlPortapapeles(mensajeConEmojis);
+        
+    } catch (e) {
+        console.error('❌ Error probando emojis:', e);
+        mostrarNotificacion('❌ Error probando emojis', 'danger');
+    }
+}
+
+// ===== FUNCIÓN DE PROBAR ENLACES =====
+
+function probarEnlaces(enlaceApp, enlaceWeb, mensaje) {
+    try {
+        console.log('🔗 Probando enlaces:');
+        console.log('📱 App:', enlaceApp);
+        console.log('🌐 Web:', enlaceWeb);
+        console.log('💬 Mensaje:', mensaje);
+        
+        // Verificar que los enlaces sean válidos
+        if (enlaceApp && enlaceApp.startsWith('https://wa.me/')) {
+            console.log('✅ Enlace App válido');
+        } else {
+            console.log('❌ Enlace App inválido');
+        }
+        
+        if (enlaceWeb && enlaceWeb.startsWith('https://web.whatsapp.com/')) {
+            console.log('✅ Enlace Web válido');
+        } else {
+            console.log('❌ Enlace Web inválido');
+        }
+        
+        // Mostrar notificación
+        mostrarNotificacion('🔗 Enlaces probados exitosamente', 'success');
+        
+        // Abrir enlaces en nuevas pestañas para prueba
+        if (enlaceApp) window.open(enlaceApp, '_blank');
+        if (enlaceWeb) window.open(enlaceWeb, '_blank');
+        
+    } catch (e) {
+        console.error('❌ Error probando enlaces:', e);
+        mostrarNotificacion('❌ Error probando enlaces', 'danger');
+    }
+}
+
+// ===== FUNCIÓN DE NOTIFICACIONES =====
+
+function mostrarNotificacion(mensaje, tipo = 'info') {
+    const notificacion = `
+        <div class="alert alert-${tipo} alert-dismissible fade show position-fixed" 
+             style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+            <i class="fas fa-${tipo === 'success' ? 'check-circle' : tipo === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', notificacion);
+    
+    // Auto-ocultar después de 5 segundos
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
+// ===== FUNCIÓN PARA SELECCIONAR TIPO DE MENSAJE =====
+
+function mostrarSelectorTipoMensaje(clienteId, clienteNombre) {
+    console.log('🎯 Mostrando selector de tipo de mensaje para:', { clienteId, clienteNombre });
+    
+    // Crear modal de selección
+    const modalHTML = `
+        <div class="modal fade" id="selectorTipoMensajeModal" tabindex="-1" aria-labelledby="selectorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="selectorModalLabel">
+                            <i class="fas fa-comment-dots me-2"></i>Seleccionar Tipo de Recordatorio
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Cliente:</strong> ${clienteNombre}</p>
+                        <p class="text-muted">Selecciona el tipo de recordatorio que deseas enviar:</p>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-success">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <span style="font-size: 3rem;">💼</span>
+                                        </div>
+                                        <h6 class="card-title text-success">FLEXIBLE</h6>
+                                        <p class="card-text small">Mensaje amigable y cordial</p>
+                                        <button class="btn btn-outline-success btn-sm" onclick="enviarRecordatorioConTipo('${clienteId}', '${clienteNombre}', 'FLEXIBLE')">
+                                            Seleccionar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-warning">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <span style="font-size: 3rem;">⚠️</span>
+                                        </div>
+                                        <h6 class="card-title text-warning">MEDIO</h6>
+                                        <p class="card-text small">Mensaje de advertencia</p>
+                                        <button class="btn btn-outline-warning btn-sm" onclick="enviarRecordatorioConTipo('${clienteId}', '${clienteNombre}', 'MEDIO')">
+                                            Seleccionar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100 border-danger">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <span style="font-size: 3rem;">🚨</span>
+                                        </div>
+                                        <h6 class="card-title text-danger">URGENTE</h6>
+                                        <p class="card-text small">Mensaje de emergencia</p>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="enviarRecordatorioConTipo('${clienteId}', '${clienteNombre}', 'URGENTE')">
+                                            Seleccionar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button class="btn btn-secondary" onclick="enviarRecordatorioConTipo('${clienteId}', '${clienteNombre}', 'AUTO')">
+                                <i class="fas fa-magic me-2"></i>Determinar Automáticamente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remover modal anterior si existe
+    const modalAnterior = document.getElementById('selectorTipoMensajeModal');
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('selectorTipoMensajeModal'));
+    modal.show();
+    
+    // Limpiar modal cuando se cierre
+    document.getElementById('selectorTipoMensajeModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+function enviarRecordatorioConTipo(clienteId, clienteNombre, tipoMensaje) {
+    console.log('🎯 Enviando recordatorio con tipo:', tipoMensaje);
+    
+    // Cerrar modal de selección
+    const modal = bootstrap.Modal.getInstance(document.getElementById('selectorTipoMensajeModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Llamar a la función original con el tipo seleccionado
+    enviarRecordatorioCuentasPorCobrar(clienteId, clienteNombre, tipoMensaje);
+}
+
+// ===== FUNCIÓN DE PRUEBA DIRECTA =====
+
+function probarRecordatorioDirecto() {
+    console.log('🧪 Probando recordatorio directamente...');
+    
+    // Datos de prueba
+    const clienteId = '{{ factura.cliente_id }}';
+    const clienteNombre = '{{ clientes[factura.cliente_id].nombre if factura.cliente_id in clientes else 'Cliente' }}';
+    
+    console.log('🧪 Cliente ID:', clienteId);
+    console.log('🧪 Cliente Nombre:', clienteNombre);
+    
+    // Hacer solicitud directa
+    fetch('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ cliente_id: clienteId })
+    })
+    .then(response => {
+        console.log('🧪 Respuesta del servidor:', response.status, response.statusText);
+        console.log('🧪 Headers:', response.headers);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('🧪 Datos recibidos:', data);
+        if (data.success) {
+            alert('✅ Recordatorio preparado exitosamente!');
+            mostrarModalWhatsAppCuentasPorCobrar(data);
+        } else {
+            alert(`❌ Error: ${data.error || 'No se pudo preparar el recordatorio'}`);
+        }
+    })
+    .catch(error => {
+        console.error('🧪 Error en la solicitud:', error);
+        alert(`🧪 Error de conexión: ${error.message}`);
+        
+        // Mostrar más detalles del error
+        console.log('🧪 Error completo:', error);
+        console.log('🧪 Error name:', error.name);
+        console.log('🧪 Error message:', error.message);
+        console.log('🧪 Error stack:', error.stack);
+    });
 }
 </script>
 

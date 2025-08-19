@@ -7126,9 +7126,50 @@
         "iva_total": 0.0,
         "total_usd": 223.9,
         "total_bs": 22056.389000000003,
-        "pagos": [],
-        "total_abonado": 0,
-        "saldo_pendiente": 223.9,
+        "pagos": [
+            {
+                "id": "31406731-ef8d-46ff-a4ca-316e549d769f",
+                "monto": 223.24,
+                "moneda": "USD",
+                "metodo": "efectivo_usd",
+                "referencia": "",
+                "banco": "",
+                "captura_path": null,
+                "fecha": "2025-08-18 23:09:39"
+            },
+            {
+                "id": "b281e6b5-397f-4dc5-85a4-e41b199090aa",
+                "monto": 0.5,
+                "moneda": "USD",
+                "metodo": "pago_movil",
+                "referencia": "555",
+                "banco": "0102",
+                "captura_path": null,
+                "fecha": "2025-08-18 23:11:02"
+            },
+            {
+                "id": "00ac2a41-a82f-468a-a3b8-12823926d5f5",
+                "monto": 0.1,
+                "moneda": "USD",
+                "metodo": "efectivo_usd",
+                "referencia": "",
+                "banco": "",
+                "captura_path": null,
+                "fecha": "2025-08-18 23:11:37"
+            },
+            {
+                "id": "ac20efe9-801b-4637-be14-71c1ffcd4927",
+                "monto": 0.06,
+                "moneda": "USD",
+                "metodo": "efectivo_usd",
+                "referencia": "",
+                "banco": "",
+                "captura_path": null,
+                "fecha": "2025-08-18 23:13:49"
+            }
+        ],
+        "total_abonado": 223.9,
+        "saldo_pendiente": 0.0,
         "items": [
             {
                 "id_producto": "3",

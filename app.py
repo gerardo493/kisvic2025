@@ -1492,9 +1492,7 @@ def ver_factura(id):
             factura=factura, 
             clientes=clientes, 
             inventario=inventario, 
-            empresa=empresa, 
-            zip=zip,
-            now=datetime.now,
+            empresa=empresa
         )
         print("DEBUG: render_template completado exitosamente")
         return resultado
@@ -1678,6 +1676,110 @@ def editar_factura(id):
     inventario_disponible = {k: v for k, v in inventario.items() if int(v.get('cantidad', 0)) > 0 or k in facturas[id].get('productos', [])}
     empresa = cargar_empresa()
     return render_template('factura_form.html', factura=facturas[id], clientes=clientes, inventario=inventario_disponible, editar=True, zip=zip, empresa=empresa)
+
+@app.route('/facturas/duplicar', methods=['POST'])
+@login_required
+def duplicar_factura():
+    """Duplica una factura existente con un nuevo número."""
+    try:
+        # Obtener datos de la factura a duplicar
+        datos = request.get_json()
+        
+        # Generar nuevo número de factura
+        usuario_actual = session.get('usuario', 'SISTEMA')
+        numero_fiscal, numero_secuencial = control_numeracion.obtener_siguiente_numero('FACTURA', usuario_actual)
+        
+        # Crear nueva factura
+        nueva_factura = {
+            'id': str(uuid.uuid4()),
+            'numero': numero_fiscal,
+            'numero_secuencial': numero_secuencial,
+            'fecha': datos.get('fecha', datetime.now().strftime('%Y-%m-%d')),
+            'hora': datos.get('hora', datetime.now().strftime('%H:%M:%S')),
+            'cliente_id': datos.get('cliente_id'),
+            'tasa_bcv': float(datos.get('tasa_bcv', 36.0)),
+            'condicion_pago': datos.get('condicion_pago', 'contado'),
+            'iva': float(datos.get('iva', 16)),
+            'descuento': datos.get('descuento', '0'),
+            'tipo_descuento': datos.get('tipo_descuento', 'bs'),
+            'pagos': [],
+            'estado': 'pendiente',
+            'total_abonado': 0,
+            'saldo_pendiente': 0
+        }
+        
+        # Copiar productos (estructura SENIAT)
+        if datos.get('items'):
+            nueva_factura['items'] = datos['items']
+            # Calcular totales desde items
+            subtotal_usd = sum(float(item.get('subtotal_usd', 0)) for item in datos['items'])
+            nueva_factura['subtotal_usd'] = subtotal_usd
+            nueva_factura['subtotal_bs'] = subtotal_usd * nueva_factura['tasa_bcv']
+        else:
+            # Estructura legacy
+            nueva_factura['productos'] = datos.get('productos', [])
+            nueva_factura['cantidades'] = datos.get('cantidades', [])
+            nueva_factura['precios'] = datos.get('precios', [])
+            
+            # Calcular totales desde productos/cantidades/precios
+            productos = datos.get('productos', [])
+            cantidades = datos.get('cantidades', [])
+            precios = datos.get('precios', [])
+            
+            subtotal_usd = 0
+            for i in range(len(productos)):
+                if i < len(cantidades) and i < len(precios):
+                    cantidad = int(cantidades[i]) if cantidades[i] else 0
+                    precio = float(precios[i]) if precios[i] else 0
+                    subtotal_usd += cantidad * precio
+            
+            nueva_factura['subtotal_usd'] = subtotal_usd
+            nueva_factura['subtotal_bs'] = subtotal_usd * nueva_factura['tasa_bcv']
+        
+        # Calcular descuentos e IVA
+        descuento = float(datos.get('descuento', 0))
+        if datos.get('tipo_descuento') == 'bs':
+            descuento_usd = descuento / nueva_factura['tasa_bcv']
+        else:
+            descuento_usd = descuento
+        
+        nueva_factura['descuento_total'] = descuento_usd
+        
+        base_imponible = subtotal_usd - descuento_usd
+        iva_total = base_imponible * (nueva_factura['iva'] / 100)
+        nueva_factura['iva_total'] = iva_total
+        
+        # Totales finales
+        total_usd = base_imponible + iva_total
+        total_bs = total_usd * nueva_factura['tasa_bcv']
+        nueva_factura['total_usd'] = total_usd
+        nueva_factura['total_bs'] = total_bs
+        nueva_factura['saldo_pendiente'] = total_usd
+        
+        # Guardar nueva factura
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        facturas[nueva_factura['id']] = nueva_factura
+        guardar_datos(ARCHIVO_FACTURAS, facturas)
+        
+        # Registrar en bitácora
+        try:
+            registrar_bitacora('duplicacion_factura', f"Factura {nueva_factura['numero']} duplicada desde factura original por {session.get('usuario', 'SISTEMA')}")
+        except Exception as e:
+            print(f"Error registrando en bitácora: {e}")
+        
+        return jsonify({
+            'success': True,
+            'factura_id': str(nueva_factura['id']),
+            'numero': str(nueva_factura['numero']),
+            'message': 'Factura duplicada correctamente'
+        })
+        
+    except Exception as e:
+        print(f"Error duplicando factura: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/facturas/nueva', methods=['GET', 'POST'])
 @login_required
@@ -3550,6 +3652,241 @@ def es_number(value, decimales=2):
         return formatted
     except Exception:
         return str(value) if value is not None else "0"
+
+# ===== RUTA PARA RECORDATORIOS WHATSAPP MEJORADA =====
+@app.route('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', methods=['POST'])
+def enviar_recordatorio_cuentas_por_cobrar_body():
+    """Endpoint que recibe cliente_id por body JSON y genera recordatorio inteligente con diferentes niveles de urgencia."""
+    print(f"🔍 RUTA REGISTRADA: /cuentas-por-cobrar/enviar_recordatorio_whatsapp")
+    print(f"🔍 Endpoint llamado - Método: {request.method}")
+    
+    try:
+        # Obtener datos del body
+        data = request.get_json(silent=True)
+        print(f"🔍 JSON recibido: {data}")
+        
+        if not data:
+            data = request.form.to_dict()
+            print(f"🔍 Form data recibido: {data}")
+        
+        cliente_id = str(data.get('cliente_id') or '').strip()
+        print(f"🔍 Cliente ID extraído: '{cliente_id}'")
+        
+        if not cliente_id:
+            return jsonify({'error': 'Falta cliente_id en la solicitud'}), 400
+        
+        # Cargar datos directamente aquí
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono:
+            return jsonify({'error': 'El cliente no tiene teléfono registrado'}), 400
+        
+        # Filtrar facturas pendientes
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'fecha': factura.get('fecha', 'N/A'),
+                        'total': total_factura,
+                        'abonado': total_abonado,
+                        'saldo': saldo_pendiente
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        if not facturas_pendientes:
+            return jsonify({
+                'success': True,
+                'message': 'El cliente no tiene facturas pendientes de pago',
+                'total_facturas': 0,
+                'total_pendiente': 0
+            })
+        
+        # Formatear teléfono
+        telefono_limpio = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+        if not telefono_limpio.startswith('58'):
+            telefono_limpio = '58' + telefono_limpio.lstrip('0')
+        
+        # Determinar nivel de urgencia basado en el monto y antigüedad
+        from datetime import datetime, date, timedelta
+        hoy = date.today()
+        factura_mas_antigua = None
+        dias_vencimiento = 0
+        facturas_vencidas = []
+        
+        for factura in facturas_pendientes:
+            try:
+                fecha_factura = datetime.strptime(factura['fecha'], '%Y-%m-%d').date()
+                dias = (hoy - fecha_factura).days
+                
+                # Calcular fecha de vencimiento si es a crédito
+                condicion_pago = factura.get('condicion_pago', 'contado')
+                if condicion_pago in ['credito', 'crédito', '30 dias', '30 días', '60 dias', '60 días']:
+                    if '30' in condicion_pago:
+                        fecha_vencimiento = fecha_factura + timedelta(days=30)
+                    elif '60' in condicion_pago:
+                        fecha_vencimiento = fecha_factura + timedelta(days=60)
+                    else:
+                        fecha_vencimiento = fecha_factura + timedelta(days=30)  # Por defecto 30 días
+                    
+                    dias_vencimiento_factura = (hoy - fecha_vencimiento).days
+                    if dias_vencimiento_factura > 0:
+                        facturas_vencidas.append({
+                            'numero': factura['numero'],
+                            'dias_vencido': dias_vencimiento_factura,
+                            'fecha_vencimiento': fecha_vencimiento.strftime('%Y-%m-%d')
+                        })
+                
+                if dias > dias_vencimiento:
+                    dias_vencimiento = dias
+                    factura_mas_antigua = factura
+            except:
+                continue
+        
+        # Obtener tipo de mensaje del request (si se envía) o determinar automáticamente
+        tipo_mensaje_solicitado = data.get('tipo_mensaje', '').upper()
+        
+        if tipo_mensaje_solicitado in ['URGENTE', 'MEDIO', 'FLEXIBLE']:
+            # Usar el tipo solicitado por el usuario
+            tipo_mensaje = tipo_mensaje_solicitado
+        else:
+            # Determinar automáticamente según urgencia
+            if total_pendiente > 1000 or dias_vencimiento > 60:
+                tipo_mensaje = "URGENTE"
+            elif total_pendiente > 500 or dias_vencimiento > 30:
+                tipo_mensaje = "MEDIO"
+            else:
+                tipo_mensaje = "FLEXIBLE"
+        
+        # Asignar emoji y tono según el tipo
+        if tipo_mensaje == "URGENTE":
+            emoji_principal = "🚨"
+            tono = "urgente"
+        elif tipo_mensaje == "MEDIO":
+            emoji_principal = "⚠️"
+            tono = "medio"
+        else:  # FLEXIBLE
+            emoji_principal = "💼"
+            tono = "flexible"
+        
+        # Crear mensaje personalizado según el tipo
+        if tipo_mensaje == "URGENTE":
+            mensaje = f"""{emoji_principal} *RECORDATORIO URGENTE DE PAGO* {emoji_principal}
+
+👋 Hola {cliente.get('nombre', 'Cliente')}
+
+🚨 *ATENCIÓN INMEDIATA REQUERIDA*
+
+📊 *Resumen de Facturas Pendientes:*
+• Total de facturas: {len(facturas_pendientes)}
+• Monto pendiente: *${total_pendiente:.2f} USD*
+• Factura más antigua: {factura_mas_antigua['numero'] if factura_mas_antigua else 'N/A'} ({dias_vencimiento} días)
+{f"• Facturas vencidas: {len(facturas_vencidas)} facturas" if facturas_vencidas else ""}
+
+⏰ *Este recordatorio requiere acción inmediata*
+
+🏢 *PRODUCTOS NATURALES KISVIC 1045, C.A.*
+📍 Centro Comercial Caña de Azúcar (Antiguo Merbumar)
+   Nave A, Locales 154-156, Maracay-Edo. Aragua
+📧 kisvic1045@gmail.com
+📱 0424-728-6225
+🆔 RIF: J-404373818
+
+📞 *Por favor contacta urgentemente para coordinar el pago*
+
+🙏 *Tu pronta respuesta es muy importante*"""
+            
+        elif tipo_mensaje == "MEDIO":
+            mensaje = f"""{emoji_principal} *Recordatorio de Pago* {emoji_principal}
+
+👋 Hola {cliente.get('nombre', 'Cliente')}
+
+📋 *Recordatorio de Facturas Pendientes:*
+• Total de facturas: {len(facturas_pendientes)}
+• Monto pendiente: *${total_pendiente:.2f} USD*
+• Días transcurridos: {dias_vencimiento} días
+{f"• Facturas vencidas: {len(facturas_vencidas)} facturas" if facturas_vencidas else ""}
+
+🏢 *PRODUCTOS NATURALES KISVIC 1045, C.A.*
+📍 Centro Comercial Caña de Azúcar (Antiguo Merbumar)
+   Nave A, Locales 154-156, Maracay-Edo. Aragua
+📧 kisvic1045@gmail.com
+📱 0424-728-6225
+🆔 RIF: J-404373818
+
+📞 *Te invitamos a contactar para coordinar el pago*
+
+⏰ *Es importante regularizar esta situación*"""
+            
+        else:  # FLEXIBLE
+            mensaje = f"""{emoji_principal} *Recordatorio Amigable* {emoji_principal}
+
+👋 Hola {cliente.get('nombre', 'Cliente')}
+
+📋 *Información de Facturas Pendientes:*
+• Total de facturas: {len(facturas_pendientes)}
+• Monto pendiente: *${total_pendiente:.2f} USD*
+{f"• Facturas vencidas: {len(facturas_vencidas)} facturas" if facturas_vencidas else ""}
+
+🏢 *PRODUCTOS NATURALES KISVIC 1045, C.A.*
+📍 Centro Comercial Caña de Azúcar (Antiguo Merbumar)
+   Nave A, Locales 154-156, Maracay-Edo. Aragua
+📧 kisvic1045@gmail.com
+📱 0424-728-6225
+🆔 RIF: J-404373818
+
+📞 *Cuando puedas, contáctanos para coordinar el pago*
+
+🙏 *Gracias por tu atención*"""
+        
+        # Generar enlaces
+        mensaje_codificado = urllib.parse.quote(mensaje)
+        enlace_whatsapp = f"https://wa.me/{telefono_limpio}?text={mensaje_codificado}"
+        enlace_web = f"https://web.whatsapp.com/send?phone={telefono_limpio}&text={mensaje_codificado}"
+        
+        resultado = {
+            'success': True,
+            'message': f'Recordatorio {tipo_mensaje.lower()} preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'enlace_web': enlace_web,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'total_facturas': len(facturas_pendientes),
+            'total_facturado': sum(f['total'] for f in facturas_pendientes),
+            'total_abonado': sum(f['abonado'] for f in facturas_pendientes),
+            'total_pendiente': total_pendiente,
+            'tipo_mensaje': tipo_mensaje,
+            'dias_vencimiento': dias_vencimiento,
+            'emoji_principal': emoji_principal,
+            'tono': tono,
+            'facturas_vencidas': facturas_vencidas,
+            'total_facturas_vencidas': len(facturas_vencidas)
+        }
+        
+        print(f"✅ Recordatorio {tipo_mensaje} preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        return jsonify(resultado)
+        
+    except Exception as e:
+        print(f"❌ Error en endpoint: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Error: {str(e)}'}), 500
 
 @app.route('/cuentas-por-cobrar')
 @login_required
@@ -6244,9 +6581,9 @@ def test_whatsapp_no_login(cliente_id):
         print(f"❌ Error en test no login: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/cuentas-por-cobrar/<path:cliente_id>/enviar_recordatorio_whatsapp', methods=['POST'])
-@csrf.exempt
-def enviar_recordatorio_cuentas_por_cobrar(cliente_id):
+# RUTA CON PARÁMETROS - COMENTADA TEMPORALMENTE PARA EVITAR CONFLICTOS
+# @app.route('/cuentas-por-cobrar/<path:cliente_id>/enviar_recordatorio_whatsapp', methods=['POST'])
+# def enviar_recordatorio_cuentas_por_cobrar_con_parametros(cliente_id):
     """Envía un recordatorio de WhatsApp con todas las facturas pendientes de un cliente."""
     try:
         # Verificar autenticación manualmente para mejor manejo de errores
@@ -6430,21 +6767,222 @@ def enviar_recordatorio_cuentas_por_cobrar(cliente_id):
             }
         }), 500
 
-@app.route('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', methods=['POST'])
-@csrf.exempt
-def enviar_recordatorio_cuentas_por_cobrar_body():
-    """Endpoint alternativo que recibe cliente_id por body JSON y delega al principal."""
+# Función auxiliar para enviar recordatorios
+def enviar_recordatorio_cuentas_por_cobrar(cliente_id):
+    """Envía un recordatorio de WhatsApp con todas las facturas pendientes de un cliente."""
     try:
-        print(f"🔍 Endpoint alternativo llamado - Método: {request.method}")
-        print(f"🔍 Headers: {dict(request.headers)}")
-        print(f"🔍 Content-Type: {request.content_type}")
+        # Verificar autenticación manualmente para mejor manejo de errores
+        if 'usuario' not in session:
+            print("❌ Usuario no autenticado")
+            return jsonify({
+                'error': 'Usuario no autenticado',
+                'redirect': url_for('login')
+            }), 401
         
-        # Intentar obtener datos del body
+        print(f"🔍 Iniciando envío de recordatorio WhatsApp para cliente: {cliente_id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        print(f"📊 Facturas cargadas: {len(facturas)}")
+        print(f"👥 Clientes cargados: {len(clientes)}")
+        
+        if cliente_id not in clientes:
+            print(f"❌ Cliente {cliente_id} no encontrado")
+            return jsonify({
+                'error': 'Cliente no encontrado',
+                'debug_info': {
+                    'cliente_id_buscado': cliente_id,
+                    'clientes_disponibles': list(clientes.keys())[:10]
+                }
+            }), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        print(f"👤 Cliente: {cliente.get('nombre', 'N/A')}")
+        print(f"📱 Teléfono: '{telefono}' (tipo: {type(telefono)})")
+        
+        if not telefono or str(telefono).strip() == '':
+            print(f"❌ Cliente {cliente_id} no tiene teléfono o está vacío")
+            return jsonify({
+                'error': 'El cliente no tiene número de teléfono registrado o está vacío',
+                'debug_info': {
+                    'cliente_id': cliente_id,
+                    'cliente_nombre': cliente.get('nombre', 'N/A'),
+                    'telefono_valor': telefono,
+                    'telefono_tipo': str(type(telefono))
+                }
+            }), 400
+        
+        # Filtrar facturas pendientes del cliente
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                # Calcular saldo pendiente
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'fecha': factura.get('fecha', 'N/A'),
+                        'total': total_factura,
+                        'abonado': total_abonado,
+                        'saldo': saldo_pendiente,
+                        'vencimiento': factura.get('fecha_vencimiento', 'No especificado')
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        if not facturas_pendientes:
+            print(f"✅ Cliente {cliente_id} no tiene facturas pendientes")
+            return jsonify({
+                'success': True,
+                'message': 'El cliente no tiene facturas pendientes de pago',
+                'facturas_pendientes': 0,
+                'total_pendiente': 0
+            })
+        
+        print(f"📋 Facturas pendientes encontradas: {len(facturas_pendientes)}")
+        print(f"💰 Total pendiente: ${total_pendiente:.2f}")
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_original = telefono
+        print(f"📱 Teléfono original recibido: '{telefono}' (tipo: {type(telefono)})")
+        
+        try:
+            # Formateo simple y directo
+            telefono = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            if not telefono.startswith('58'):
+                telefono = '58' + telefono.lstrip('0')
+            print(f"📱 Teléfono formateado exitosamente: {telefono}")
+        except Exception as e:
+            print(f"❌ Error formateando teléfono: {e}")
+            return jsonify({
+                'error': f'Error formateando número de teléfono: {str(e)}',
+                'debug_info': {
+                    'telefono_original': telefono_original,
+                    'tipo_telefono': str(type(telefono_original)),
+                    'cliente_id': cliente_id,
+                    'cliente_nombre': cliente.get('nombre', 'N/A')
+                }
+            }), 400
+        
+        if not telefono or len(str(telefono)) < 8:
+            print(f"❌ Teléfono formateado no válido: {telefono}")
+            return jsonify({
+                'error': 'El número de teléfono no es válido después del formateo',
+                'debug_info': {
+                    'telefono_formateado': telefono,
+                    'longitud': len(str(telefono)) if telefono else 0,
+                    'cliente_id': cliente_id
+                }
+            }), 400
+        
+        # Crear mensaje personalizado para cuentas por cobrar
+        try:
+            # Mensaje simple y directo
+            mensaje = f"Hola {cliente.get('nombre', 'Cliente')}, tienes {len(facturas_pendientes)} facturas pendientes por un total de ${total_pendiente:.2f} USD. Por favor contacta para coordinar el pago."
+            print(f"💬 Mensaje creado exitosamente: {len(mensaje)} caracteres")
+            print(f"💬 Mensaje completo: {mensaje}")
+        except Exception as e:
+            print(f"❌ Error creando mensaje: {e}")
+            return jsonify({'error': f'Error creando mensaje: {str(e)}'}), 400
+        
+        # Generar enlace de WhatsApp
+        try:
+            # Enlace simple y directo
+            telefono_limpio = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            print(f"🔗 Teléfono limpio: {telefono_limpio}")
+            if not telefono_limpio.startswith('58'):
+                telefono_limpio = '58' + telefono_limpio.lstrip('0')
+                print(f"🔗 Teléfono con prefijo 58: {telefono_limpio}")
+            # Usar urllib.parse.quote para codificar el mensaje correctamente
+            mensaje_codificado = urllib.parse.quote(mensaje)
+            enlace_whatsapp = f"https://wa.me/{telefono_limpio}?text={mensaje_codificado}"
+            enlace_web = f"https://web.whatsapp.com/send?phone={telefono_limpio}&text={mensaje_codificado}"
+            print(f"🔗 Enlace WhatsApp generado exitosamente: {enlace_whatsapp}")
+            print(f"🔗 Enlace Web generado exitosamente: {enlace_web}")
+        except Exception as e:
+            print(f"❌ Error generando enlace: {e}")
+            return jsonify({'error': f'Error generando enlace: {str(e)}'}), 400
+        
+        # Registrar en la bitácora (opcional, no fallar si hay error)
+        try:
+            # Registro simple en consola
+            print(f"📝 REGISTRO: Usuario {session.get('usuario', 'Sistema')} envió recordatorio WhatsApp a {cliente.get('nombre', 'N/A')} - {len(facturas_pendientes)} facturas pendientes - Total: ${total_pendiente:.2f}")
+        except Exception as e:
+            print(f"⚠️ Error registrando en bitácora (no crítico): {e}")
+        
+        resultado = {
+            'success': True,
+            'message': 'Recordatorio de cuentas por cobrar preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'enlace_web': enlace_web,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'total_facturas': len(facturas_pendientes),
+            'total_facturado': sum(f['total'] for f in facturas_pendientes),
+            'total_abonado': sum(f['abonado'] for f in facturas_pendientes),
+            'total_pendiente': total_pendiente,
+        }
+        
+        print(f"✅ Recordatorio preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        print(f"📱 Teléfono: {telefono}")
+        print(f"🔗 Enlace: {enlace_whatsapp}")
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        error_msg = f"Error al enviar recordatorio de cuentas por cobrar: {str(e)}"
+        print(f"❌ {error_msg}")
+        import traceback
+        print(f"🔍 Traceback completo:")
+        traceback.print_exc()
+        
+        return jsonify({
+            'success': False,
+            'error': f'Error al preparar el recordatorio: {str(e)}',
+            'debug_info': {
+                'cliente_id': cliente_id,
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        }), 500
+
+# Ruta de prueba para verificar que funciona
+@app.route('/test-recordatorio', methods=['GET'])
+def test_recordatorio():
+    return jsonify({'message': 'Ruta de prueba funcionando', 'status': 'success'})
+
+# Ruta de prueba para verificar que funciona
+@app.route('/test-simple', methods=['GET'])
+def test_simple():
+    return jsonify({'message': 'Ruta simple funcionando', 'status': 'success'})
+
+# Ruta de prueba para verificar que funciona
+@app.route('/test-post', methods=['POST'])
+def test_post():
+    return jsonify({'message': 'Ruta POST funcionando', 'status': 'success'})
+
+@app.route('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', methods=['POST'])
+def enviar_recordatorio_cuentas_por_cobrar_body():
+    """Endpoint que recibe cliente_id por body JSON y genera recordatorio."""
+    print(f"🔍 RUTA REGISTRADA: /cuentas-por-cobrar/enviar_recordatorio_whatsapp")
+    print(f"🔍 Endpoint llamado - Método: {request.method}")
+    
+    try:
+        # Obtener datos del body
         data = request.get_json(silent=True)
         print(f"🔍 JSON recibido: {data}")
         
         if not data:
-            # Intentar form data
             data = request.form.to_dict()
             print(f"🔍 Form data recibido: {data}")
         
@@ -6452,35 +6990,85 @@ def enviar_recordatorio_cuentas_por_cobrar_body():
         print(f"🔍 Cliente ID extraído: '{cliente_id}'")
         
         if not cliente_id:
-            print("❌ Cliente ID vacío o faltante")
+            return jsonify({'error': 'Falta cliente_id en la solicitud'}), 400
+        
+        # Cargar datos directamente aquí
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono:
+            return jsonify({'error': 'El cliente no tiene teléfono registrado'}), 400
+        
+        # Filtrar facturas pendientes
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'fecha': factura.get('fecha', 'N/A'),
+                        'total': total_factura,
+                        'abonado': total_abonado,
+                        'saldo': saldo_pendiente
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        if not facturas_pendientes:
             return jsonify({
-                'error': 'Falta cliente_id en la solicitud',
-                'debug_info': {
-                    'json_data': request.get_json(silent=True),
-                    'form_data': request.form.to_dict(),
-                    'headers': dict(request.headers)
-                }
-            }), 400
+                'success': True,
+                'message': 'El cliente no tiene facturas pendientes de pago',
+                'total_facturas': 0,
+                'total_pendiente': 0
+            })
         
-        print(f"📩 Cliente ID válido recibido: {cliente_id}")
-        print(f"📩 Llamando a función principal...")
+        # Formatear teléfono
+        telefono_limpio = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+        if not telefono_limpio.startswith('58'):
+            telefono_limpio = '58' + telefono_limpio.lstrip('0')
         
-        # Llamar a la función principal
-        resultado = enviar_recordatorio_cuentas_por_cobrar(cliente_id)
-        print(f"📩 Resultado de función principal: {resultado}")
-        return resultado
+        # Crear mensaje
+        mensaje = f"Hola {cliente.get('nombre', 'Cliente')}, tienes {len(facturas_pendientes)} facturas pendientes por un total de ${total_pendiente:.2f} USD. Por favor contacta para coordinar el pago."
+        
+        # Generar enlaces
+        mensaje_codificado = urllib.parse.quote(mensaje)
+        enlace_whatsapp = f"https://wa.me/{telefono_limpio}?text={mensaje_codificado}"
+        enlace_web = f"https://web.whatsapp.com/send?phone={telefono_limpio}&text={mensaje_codificado}"
+        
+        resultado = {
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'enlace_web': enlace_web,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'total_facturas': len(facturas_pendientes),
+            'total_facturado': sum(f['total'] for f in facturas_pendientes),
+            'total_abonado': sum(f['abonado'] for f in facturas_pendientes),
+            'total_pendiente': total_pendiente,
+        }
+        
+        print(f"✅ Recordatorio preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        return jsonify(resultado)
         
     except Exception as e:
-        print(f"❌ Error en endpoint alternativo (body): {e}")
+        print(f"❌ Error en endpoint: {e}")
         import traceback
         traceback.print_exc()
-        return jsonify({
-            'error': f'Error en endpoint alternativo: {str(e)}',
-            'debug_info': {
-                'error_type': type(e).__name__,
-                'error_details': str(e)
-            }
-        }), 500
+        return jsonify({'error': f'Error: {str(e)}'}), 500
 
 @app.route('/facturas/<path:cliente_id>/enviar_informe_facturas_pagadas', methods=['POST'])
 @csrf.exempt
