@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WhatsApp Routes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { padding: 12px 20px; margin: 8px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn:hover { background: #0056b3; transform: translateY(-1px); }
+        .btn:disabled { background: #6c757d; cursor: not-allowed; }
+        .result { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #dee2e6; }
+        .error { background: #f8d7da; color: #721c24; border-left-color: #dc3545; }
+        .success { background: #d4edda; color: #155724; border-left-color: #28a745; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #333; margin-bottom: 10px; }
+        .status { padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test de Rutas WhatsApp</h1>
+            <p>Página de diagnóstico para verificar el funcionamiento de las rutas de WhatsApp</p>
+        </div>
+        
+        <div class="status info">
+            <strong>📋 Instrucciones:</strong> Prueba cada ruta en orden para identificar dónde está el problema
+        </div>
+        
+        <div class="test-section">
+            <h3>1. Test Ruta Simple (GET, sin login)</h3>
+            <p>Prueba básica para verificar que el cliente existe y se puede acceder a los datos</p>
+            <button class="btn" onclick="testSimpleRoute()">Probar /test-whatsapp-simple/V-13.058.545</button>
+            <div id="result1" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Test Debug (GET, sin login)</h3>
+            <p>Información detallada del cliente y sus facturas</p>
+            <button class="btn" onclick="testDebugRoute()">Probar /debug-whatsapp/V-13.058.545</button>
+            <div id="result2" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Test WhatsApp Button (GET, sin login)</h3>
+            <p>Simula la lógica del botón de WhatsApp</p>
+            <button class="btn" onclick="testWhatsAppButton()">Probar /test-whatsapp-button/V-13.058.545</button>
+            <div id="result3" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Test WhatsApp Sin Login (POST)</h3>
+            <p>Ruta POST sin autenticación para diagnosticar problemas</p>
+            <button class="btn" onclick="testWhatsAppNoLogin()">Probar /test-whatsapp-no-login/V-13.058.545</button>
+            <div id="result4" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. Test WhatsApp Working (POST, sin login)</h3>
+            <p>Nueva ruta simplificada que debería funcionar siempre</p>
+            <button class="btn" onclick="testWhatsAppWorking()">Probar /test-whatsapp-working/V-13.058.545</button>
+            <div id="result5" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>6. Test Ruta Principal (POST, requiere login)</h3>
+            <p>La ruta principal que está dando error 404</p>
+            <button class="btn" onclick="testMainRoute()">Probar /cuentas-por-cobrar/V-13.058.545/enviar_recordatorio_whatsapp</button>
+            <div id="result6" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔍 Diagnóstico Automático</h3>
+            <p>Ejecuta todas las pruebas en secuencia para identificar el problema</p>
+            <button class="btn" onclick="runAllTests()" style="background: #28a745;">🚀 Ejecutar Todas las Pruebas</button>
+            <div id="diagnostico" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${isError ? 'error' : 'success'}`;
+            element.innerHTML = `<strong>${isError ? '❌ Error:' : '✅ Resultado:'}</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        function showLoading(elementId) {
+            const element = document.getElementById(elementId);
+            element.className = 'result';
+            element.innerHTML = '<strong>⏳ Probando...</strong>';
+        }
+
+        async function testSimpleRoute() {
+            showLoading('result1');
+            try {
+                const response = await fetch('/test-whatsapp-simple/V-13.058.545');
+                const data = await response.json();
+                showResult('result1', data, !response.ok);
+            } catch (error) {
+                showResult('result1', { error: error.message }, true);
+            }
+        }
+
+        async function testDebugRoute() {
+            showLoading('result2');
+            try {
+                const response = await fetch('/debug-whatsapp/V-13.058.545');
+                const data = await response.json();
+                showResult('result2', data, !response.ok);
+            } catch (error) {
+                showResult('result2', { error: error.message }, true);
+            }
+        }
+
+        async function testWhatsAppButton() {
+            showLoading('result3');
+            try {
+                const response = await fetch('/test-whatsapp-button/V-13.058.545');
+                const data = await response.json();
+                showResult('result3', data, !response.ok);
+            } catch (error) {
+                showResult('result3', { error: error.message }, true);
+            }
+        }
+
+        async function testWhatsAppNoLogin() {
+            showLoading('result4');
+            try {
+                const response = await fetch('/test-whatsapp-no-login/V-13.058.545', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await response.json();
+                showResult('result4', data, !response.ok);
+            } catch (error) {
+                showResult('result4', { error: error.message }, true);
+            }
+        }
+
+        async function testWhatsAppWorking() {
+            showLoading('result5');
+            try {
+                const response = await fetch('/test-whatsapp-working/V-13.058.545', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await response.json();
+                showResult('result5', data, !response.ok);
+            } catch (error) {
+                showResult('result5', { error: error.message }, true);
+            }
+        }
+
+        async function testMainRoute() {
+            showLoading('result6');
+            try {
+                const response = await fetch('/cuentas-por-cobrar/V-13.058.545/enviar_recordatorio_whatsapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                showResult('result6', data, !response.ok);
+            } catch (error) {
+                showResult('result6', { error: error.message }, true);
+            }
+        }
+
+        async function runAllTests() {
+            const diagnostico = document.getElementById('diagnostico');
+            diagnostico.innerHTML = '<strong>🚀 Iniciando diagnóstico automático...</strong>';
+            
+            const tests = [
+                { name: 'Ruta Simple', func: testSimpleRoute, resultId: 'result1' },
+                { name: 'Debug', func: testDebugRoute, resultId: 'result2' },
+                { name: 'WhatsApp Button', func: testWhatsAppButton, resultId: 'result3' },
+                { name: 'WhatsApp No Login', func: testWhatsAppNoLogin, resultId: 'result4' },
+                { name: 'WhatsApp Working', func: testWhatsAppWorking, resultId: 'result5' },
+                { name: 'Ruta Principal', func: testMainRoute, resultId: 'result6' }
+            ];
+            
+            let resultados = [];
+            
+            for (const test of tests) {
+                try {
+                    diagnostico.innerHTML = `<strong>⏳ Probando: ${test.name}...</strong>`;
+                    
+                    // Simular la llamada a la función
+                    if (test.name === 'Ruta Simple') {
+                        const response = await fetch('/test-whatsapp-simple/V-13.058.545');
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    } else if (test.name === 'Debug') {
+                        const response = await fetch('/debug-whatsapp/V-13.058.545');
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    } else if (test.name === 'WhatsApp Button') {
+                        const response = await fetch('/test-whatsapp-button/V-13.058.545');
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    } else if (test.name === 'WhatsApp No Login') {
+                        const response = await fetch('/test-whatsapp-no-login/V-13.058.545', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    } else if (test.name === 'WhatsApp Working') {
+                        const response = await fetch('/test-whatsapp-working/V-13.058.545', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    } else if (test.name === 'Ruta Principal') {
+                        const response = await fetch('/cuentas-por-cobrar/V-13.058.545/enviar_recordatorio_whatsapp', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                            credentials: 'same-origin'
+                        });
+                        const data = await response.json();
+                        resultados.push({ test: test.name, success: response.ok, status: response.status, data });
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Pausa entre tests
+                    
+                } catch (error) {
+                    resultados.push({ test: test.name, success: false, error: error.message });
+                }
+            }
+            
+            // Mostrar resumen
+            const exitosos = resultados.filter(r => r.success).length;
+            const total = resultados.length;
+            
+            diagnostico.innerHTML = `
+                <strong>📊 Diagnóstico Completado</strong><br>
+                <strong>✅ Exitosos:</strong> ${exitosos}/${total}<br>
+                <strong>❌ Fallidos:</strong> ${total - exitosos}/${total}<br><br>
+                <strong>📋 Detalles:</strong><br>
+                <pre>${JSON.stringify(resultados, null, 2)}</pre>
+            `;
+            
+            if (exitosos === total) {
+                diagnostico.className = 'result success';
+            } else if (exitosos === 0) {
+                diagnostico.className = 'result error';
+            } else {
+                diagnostico.className = 'result';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -2481,7 +2481,7 @@
     "13": {
         "nombre": "CHANCA PIEDRA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 252,
+        "cantidad": 202,
         "categoria": "Calculo Renal",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -2788,6 +2788,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000719",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000719"
+            },
+            {
+                "fecha": "2025-08-16 22:56:58",
+                "tipo": "salida",
+                "cantidad": 50,
+                "motivo": "Venta por factura fiscal FAC-00000725",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000725"
             }
         ]
     },
@@ -3056,7 +3064,7 @@
     "16": {
         "nombre": "COLON CLEANSER X 60 CAP",
         "precio": 3.0,
-        "cantidad": 495,
+        "cantidad": 492,
         "categoria": "Limpieza De colon",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3267,6 +3275,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-08-18 13:03:30",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000726",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000726"
             }
         ]
     },
@@ -3528,7 +3544,7 @@
     "18": {
         "nombre": "DIENTE DE LEON X 60 CAP",
         "precio": 3.0,
-        "cantidad": 935,
+        "cantidad": 933,
         "categoria": "Protector Hepatico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3651,13 +3667,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000015",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000015"
+            },
+            {
+                "fecha": "2025-08-18 13:03:30",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000726",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000726"
             }
         ]
     },
     "19": {
         "nombre": "ESCOBA DE CARNICERO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 818,
+        "cantidad": 816,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3886,13 +3910,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000722",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000722"
+            },
+            {
+                "fecha": "2025-08-18 13:03:30",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000726",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000726"
             }
         ]
     },
     "20": {
         "nombre": "GINKGO C/ GINSENG X 60 CAP",
         "precio": 3.0,
-        "cantidad": 956,
+        "cantidad": 953,
         "categoria": "Oxigenante/ Energizante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3999,6 +4031,14 @@
                 "motivo": "Venta por factura N°000713",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000713"
+            },
+            {
+                "fecha": "2025-08-18 13:03:30",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000726",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000726"
             }
         ]
     },
@@ -6372,7 +6412,7 @@
     "36": {
         "nombre": "VENA CLEASNER X 60 CAP",
         "precio": 3.0,
-        "cantidad": 961,
+        "cantidad": 959,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6483,6 +6523,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-08-18 13:03:30",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000726",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000726"
             }
         ]
     },

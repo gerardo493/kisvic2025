@@ -1190,6 +1190,9 @@
                         <small class="d-block text-muted" style="font-size:0.8rem;" id="ultima-actualizacion-dashboard">
                             <i class="fas fa-sync-alt fa-spin"></i> Actualizando...
                         </small>
+                        <button class="btn btn-sm btn-outline-warning mt-2" onclick="forzarActualizacionTasaBCV()" id="btn-actualizar-tasa">
+                            <i class="fas fa-sync-alt"></i> Actualizar Tasa BCV
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1240,7 +1243,7 @@
                 <div class="card-body">
                     <div class="list-group">
                         {% for factura in ultimas_facturas %}
-                        <a href="/facturas/{{ factura.id }}" class="list-group-item list-group-item-action">
+                        <a href="{{ url_for('ver_factura', id=factura.id) }}" class="list-group-item list-group-item-action">
                                 <div class="d-flex w-100 justify-content-between align-items-center">
                                     <div>
                                 <h6 class="mb-1">Factura #{{ factura.numero }}</h6>
@@ -1371,5 +1374,80 @@
     setInterval(spinHeaderRefresh, 3 * 60 * 1000);
     // Animación inicial al cargar
     spinHeaderRefresh();
+    </script>
+
+    <script>
+    // Función para forzar la actualización de la tasa BCV
+    function forzarActualizacionTasaBCV() {
+        const btn = document.getElementById('btn-actualizar-tasa');
+        const ultimaActualizacion = document.getElementById('ultima-actualizacion-dashboard');
+        
+        // Deshabilitar botón y mostrar estado
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+        ultimaActualizacion.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Forzando actualización...';
+        
+        // Llamar a la API de forzar actualización
+        fetch('/forzar-actualizacion-tasa-bcv')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar el valor mostrado
+                    const tasaElement = document.getElementById('tasa-bcv-valor');
+                    if (tasaElement) {
+                        tasaElement.textContent = data.tasa_nueva.toLocaleString('es-ES', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+                    }
+                    
+                    // Mostrar mensaje de éxito
+                    ultimaActualizacion.innerHTML = `<i class="fas fa-check-circle text-success"></i> ¡Tasa actualizada! ${data.tasa_nueva}`;
+                    
+                    // Mostrar notificación
+                    mostrarNotificacion('success', 'Tasa BCV Actualizada', `Nueva tasa: ${data.tasa_nueva} Bs/USD`);
+                    
+                    // Recargar tasas del dashboard después de 2 segundos
+                    setTimeout(() => {
+                        actualizarTasasDashboard();
+                    }, 2000);
+                } else {
+                    ultimaActualizacion.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> Error: ${data.message}`;
+                    mostrarNotificacion('error', 'Error al Actualizar', data.message);
+                }
+            })
+            .catch(error => {
+                ultimaActualizacion.innerHTML = `<i class="fas fa-exclamation-circle text-danger"></i> Error de conexión`;
+                mostrarNotificacion('error', 'Error de Conexión', 'No se pudo conectar con el servidor');
+                console.error('Error:', error);
+            })
+            .finally(() => {
+                // Restaurar botón
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar Tasa BCV';
+            });
+    }
+    
+    // Función para mostrar notificaciones
+    function mostrarNotificacion(tipo, titulo, mensaje) {
+        // Crear notificación Bootstrap
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${tipo === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            <strong>${titulo}</strong><br>
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
     </script>
     {% endblock %} 

@@ -2,7 +2,8 @@
 import json
 import os
 import urllib3
-# import requests  # Temporarily commented out for testing
+import urllib.parse
+import requests
 import csv
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
@@ -10,7 +11,6 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from werkzeug.utils import secure_filename
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
-from auth import login_required, admin_required, verify_password
 from config_maps import get_maps_config
 from seguridad_fiscal import seguridad_fiscal
 from numeracion_fiscal import control_numeracion
@@ -23,6 +23,9 @@ except ImportError:
 from functools import wraps
 import re
 import uuid
+import io
+import zipfile
+from io import StringIO
 from uuid import uuid4
 from flask_sqlalchemy import SQLAlchemy
 import base64
@@ -31,11 +34,6 @@ import re
 
 # --- Inicializar la Aplicación Flask ---
 app = Flask(__name__)
-# Usar SECRET_KEY desde variables de entorno en producción
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'unsafe-default-change-me')
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
-csrf = CSRFProtect(app)
 
 # --- Constantes ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -49,6 +47,661 @@ ARCHIVO_CUENTAS = 'cuentas_por_cobrar.json'
 ULTIMA_TASA_BCV_FILE = 'ultima_tasa_bcv.json'
 ALLOWED_EXTENSIONS = {'csv', 'jpg', 'jpeg', 'png', 'gif'}
 BITACORA_FILE = 'bitacora.log'
+
+# --- Funciones de Utilidad ---
+def cargar_datos(nombre_archivo):
+    """Carga datos desde un archivo JSON."""
+    try:
+        # Asegurar que el directorio existe
+        directorio = os.path.dirname(nombre_archivo)
+        if directorio:  # Si hay un directorio en la ruta
+            os.makedirs(directorio, exist_ok=True)
+            
+        if not os.path.exists(nombre_archivo):
+            print(f"Archivo {nombre_archivo} no existe. Creando nuevo archivo.")
+            with open(nombre_archivo, 'w', encoding='utf-8') as f:
+                json.dump({}, f, ensure_ascii=False, indent=4)
+            return {}
+            
+        with open(nombre_archivo, 'r', encoding='utf-8') as f:
+            contenido = f.read()
+            if not contenido.strip():
+                print(f"Archivo {nombre_archivo} está vacío.")
+                return {}
+            try:
+                return json.loads(contenido)
+            except json.JSONDecodeError as e:
+                print(f"Error decodificando JSON en {nombre_archivo}: {e}")
+                return {}
+    except Exception as e:
+        print(f"Error leyendo {nombre_archivo}: {e}")
+        return {}
+
+def guardar_datos(nombre_archivo, datos):
+    """Guarda datos en un archivo JSON."""
+    try:
+        # Asegurar que el directorio existe
+        directorio = os.path.dirname(nombre_archivo)
+        if directorio:  # Si hay un directorio en la ruta
+            try:
+                os.makedirs(directorio, exist_ok=True)
+                print(f"Directorio {directorio} creado/verificado exitosamente")
+            except Exception as e:
+                print(f"Error creando directorio {directorio}: {e}")
+                return False
+        
+        # Verificar que los datos son serializables
+        try:
+            json.dumps(datos)
+        except Exception as e:
+            print(f"Error serializando datos: {e}")
+            return False
+        
+        # Intentar guardar con manejo de errores específico
+        try:
+            # Primero intentamos escribir en un archivo temporal
+            temp_file = nombre_archivo + '.tmp'
+            with open(temp_file, 'w', encoding='utf-8') as f:
+                json.dump(datos, f, ensure_ascii=False, indent=4)
+            
+            # Si la escritura temporal fue exitosa, reemplazamos el archivo original
+            if os.path.exists(nombre_archivo):
+                os.remove(nombre_archivo)
+            os.rename(temp_file, nombre_archivo)
+            
+            print(f"Datos guardados exitosamente en {nombre_archivo}")
+            return True
+        except Exception as e:
+            print(f"Error escribiendo en archivo {nombre_archivo}: {e}")
+            # Limpiar archivo temporal si existe
+            if os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass
+            return False
+    except Exception as e:
+        print(f"Error general guardando {nombre_archivo}: {e}")
+        return False
+
+def guardar_ultima_tasa_bcv(tasa):
+    try:
+        # Guardar tasa con fecha de actualización
+        data = {
+            'tasa': tasa,
+            'fecha': datetime.now().isoformat(),
+            'ultima_actualizacion': datetime.now().isoformat()
+        }
+        
+        try:
+            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f)
+            
+            print(f"Tasa BCV guardada exitosamente: {tasa}")
+            
+            # Registrar en bitácora si hay sesión activa
+            try:
+                from flask import has_request_context
+                if has_request_context() and 'usuario' in session:
+                    registrar_bitacora(session['usuario'], 'Actualizar tasa BCV', f'Tasa: {tasa}')
+                else:
+                    registrar_bitacora('Sistema', 'Actualizar tasa BCV', f'Tasa: {tasa}')
+            except Exception as e:
+                print(f"Error registrando en bitácora: {e}")
+                
+        except Exception as e:
+            print(f"Error guardando última tasa BCV: {e}")
+            
+    except Exception as e:
+        print(f"Error general en guardar_ultima_tasa_bcv: {e}")
+
+def cargar_ultima_tasa_bcv():
+    try:
+        # Verificar si el archivo existe
+        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+            print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
+            return None
+        
+        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            tasa = float(data.get('tasa', 0))
+            if tasa > 10:
+                print(f"Tasa BCV cargada desde archivo: {tasa}")
+                return tasa
+            else:
+                print(f"Tasa BCV en archivo no válida: {tasa}")
+                return None
+    except FileNotFoundError:
+        print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error decodificando archivo de tasa BCV: {e}")
+        return None
+    except Exception as e:
+        print(f"Error inesperado cargando tasa BCV: {e}")
+        return None
+
+def obtener_ultima_tasa_del_sistema():
+    """Busca la tasa más reciente en facturas y otros archivos del sistema."""
+    try:
+        # Buscar en facturas recientes
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        tasas_encontradas = []
+        
+        for factura in facturas.values():
+            if factura.get('tasa_bcv'):
+                try:
+                    tasa = float(factura['tasa_bcv'])
+                    if tasa > 10:
+                        tasas_encontradas.append(tasa)
+                except:
+                    continue
+        
+        # Buscar en cotizaciones si existen
+        try:
+            cotizaciones = cargar_datos(ARCHIVO_COTIZACIONES)
+            for cotizacion in cotizaciones.values():
+                if cotizacion.get('tasa_bcv'):
+                    try:
+                        tasa = float(cotizacion['tasa_bcv'])
+                        if tasa > 10:
+                            tasas_encontradas.append(tasa)
+                    except:
+                        continue
+        except:
+            pass
+        
+        # Buscar en cuentas por cobrar si existen
+        try:
+            cuentas = cargar_datos(ARCHIVO_CUENTAS)
+            for cuenta in cuentas.values():
+                if cuenta.get('tasa_bcv'):
+                    try:
+                        tasa = float(cuenta['tasa_bcv'])
+                        if tasa > 10:
+                            tasas_encontradas.append(tasa)
+                    except:
+                        continue
+        except:
+            pass
+        
+        if tasas_encontradas:
+            # Usar la tasa más alta (más reciente) del sistema
+            tasa_mas_reciente = max(tasas_encontradas)
+            print(f"Tasa encontrada en el sistema: {tasa_mas_reciente}")
+            return tasa_mas_reciente
+        
+        return None
+        
+    except Exception as e:
+        print(f"Error buscando tasa en el sistema: {e}")
+        return None
+
+def inicializar_archivos_por_defecto():
+    """Inicializa archivos necesarios si no existen."""
+    try:
+        # Crear archivo de tasa BCV por defecto si no existe
+        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+            # Intentar obtener la tasa más reciente del sistema
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            
+            if tasa_sistema and tasa_sistema > 10:
+                tasa_default = tasa_sistema
+                print(f"Usando tasa del sistema: {tasa_default}")
+            else:
+                # Solo usar tasa por defecto si no hay ninguna en el sistema
+                tasa_default = 135.0  # Tasa más reciente conocida
+                print(f"Usando tasa por defecto del sistema: {tasa_default}")
+            
+            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
+                json.dump({'tasa': tasa_default, 'fecha': datetime.now().isoformat()}, f)
+            print(f"Archivo de tasa BCV creado con tasa: {tasa_default}")
+    except Exception as e:
+        print(f"Error inicializando archivos por defecto: {e}")
+
+def actualizar_tasa_bcv_automaticamente():
+    """Actualiza la tasa BCV automáticamente si han pasado más de 24 horas."""
+    try:
+        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+            print("Archivo de tasa BCV no existe, creando...")
+            inicializar_archivos_por_defecto()
+            return
+        
+        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            ultima_actualizacion = data.get('fecha', '')
+        
+        if ultima_actualizacion:
+            try:
+                ultima_fecha = datetime.fromisoformat(ultima_actualizacion)
+                tiempo_transcurrido = datetime.now() - ultima_fecha
+                
+                # Actualizar si han pasado más de 24 horas
+                if tiempo_transcurrido.total_seconds() > 24 * 3600:
+                    print("🔄 Han pasado más de 24 horas, actualizando tasa BCV automáticamente...")
+                    nueva_tasa = obtener_tasa_bcv_dia()
+                    if nueva_tasa and nueva_tasa > 10:
+                        print(f"✅ Tasa BCV actualizada automáticamente: {nueva_tasa}")
+                    else:
+                        print("❌ No se pudo actualizar la tasa BCV automáticamente")
+                        # Intentar usar tasa del sistema como fallback
+                        tasa_sistema = obtener_ultima_tasa_del_sistema()
+                        if tasa_sistema and tasa_sistema > 10:
+                            print(f"⚠️ Usando tasa del sistema como fallback: {tasa_sistema}")
+                            guardar_ultima_tasa_bcv(tasa_sistema)
+                else:
+                    print(f"⏰ Tasa BCV actualizada recientemente, no es necesario actualizar")
+                    # Aún así, verificar si hay una tasa más reciente disponible
+                    print("🔍 Verificando si hay tasa más reciente disponible...")
+                    tasa_web = obtener_tasa_bcv_dia()
+                    if tasa_web and tasa_web > 0:
+                        print(f"🎯 Tasa más reciente encontrada: {tasa_web}")
+                        guardar_ultima_tasa_bcv(tasa_web)
+            except Exception as e:
+                print(f"Error verificando fecha de actualización: {e}")
+        else:
+            # Si no hay fecha, verificar si la tasa actual es válida
+            tasa_actual = data.get('tasa', 0)
+            if not tasa_actual or tasa_actual <= 10:
+                print("Tasa BCV no válida, buscando en el sistema...")
+                tasa_sistema = obtener_ultima_tasa_del_sistema()
+                if tasa_sistema and tasa_sistema > 10:
+                    print(f"Actualizando con tasa del sistema: {tasa_sistema}")
+                    guardar_ultima_tasa_bcv(tasa_sistema)
+        
+    except Exception as e:
+        print(f"Error en actualización automática de tasa BCV: {e}")
+        # En caso de error, intentar usar tasa del sistema
+        try:
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            if tasa_sistema and tasa_sistema > 10:
+                print(f"Usando tasa del sistema después de error: {tasa_sistema}")
+                guardar_ultima_tasa_bcv(tasa_sistema)
+        except:
+            pass
+
+def registrar_bitacora(usuario, accion, detalles='', documento_tipo='', documento_numero=''):
+    """
+    Función mejorada de bitácora que mantiene compatibilidad y agrega funcionalidad SENIAT
+    """
+    from datetime import datetime
+    from flask import has_request_context, request, session
+    
+    # Sistema de bitácora tradicional (para compatibilidad)
+    ip = ''
+    ubicacion = ''
+    lat = ''
+    lon = ''
+    
+    try:
+        if has_request_context():
+            ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+            if ip == '127.0.0.1':
+                ip = '190.202.123.123'  # IP pública de Venezuela para pruebas
+        # Usar ubicación precisa si está en session
+        if has_request_context() and 'ubicacion_precisa' in session:
+            lat = session['ubicacion_precisa'].get('lat', '')
+            lon = session['ubicacion_precisa'].get('lon', '')
+            ubicacion = session['ubicacion_precisa'].get('texto', '')
+        elif has_request_context():
+            resp = requests.get(f'http://ip-api.com/json/{ip}', timeout=3)
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get('status') == 'success':
+                    lat = data.get('lat', '')
+                    lon = data.get('lon', '')
+                    ubicacion = ', '.join([v for v in [data.get('city', ''), data.get('regionName', ''), data.get('country', '')] if v])
+                else:
+                    ubicacion = f"API sin datos: {data}"
+            else:
+                ubicacion = f"API status: {resp.status_code}"
+    except Exception as e:
+        # Si hay algún error al acceder a Flask objects o API, usar valores por defecto
+        print(f"Error en registrar_bitacora: {e}")
+        ip = 'N/A'
+        ubicacion = 'N/A'
+        lat = ''
+        lon = ''
+    
+    # Bitácora tradicional
+    linea = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Usuario: {usuario} | Acción: {accion} | Detalles: {detalles} | IP: {ip} | Ubicación: {ubicacion} | Coordenadas: {lat},{lon}\n"
+    with open(BITACORA_FILE, 'a', encoding='utf-8') as f:
+        f.write(linea)
+    
+    # Sistema de auditoría fiscal SENIAT (cuando aplique)
+    if documento_tipo or documento_numero or 'factura' in accion.lower() or 'fiscal' in accion.lower():
+        try:
+            seguridad_fiscal.registrar_log_fiscal(
+                usuario=usuario,
+                accion=accion,
+                documento_tipo=documento_tipo or 'GENERAL',
+                documento_numero=documento_numero or 'N/A',
+                ip_externa=ip,
+                detalles=detalles
+            )
+        except Exception as e:
+            # En caso de error en logs fiscales, registrar en bitácora tradicional
+            error_linea = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ERROR_LOG_FISCAL: {str(e)}\n"
+            with open(BITACORA_FILE, 'a', encoding='utf-8') as f:
+                f.write(error_linea)
+    
+    # Retornar éxito
+    return True
+
+# Decorador para requerir login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario' not in session:
+            return redirect(url_for('login'))
+        # Verificar si es admin (puedes ajustar esta lógica según tu sistema)
+        if session.get('usuario') != 'admin':
+            flash('No tiene permisos de administrador para acceder a esta página', 'danger')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def verify_password(username, password):
+    """Verifica la contraseña de un usuario."""
+    try:
+        usuarios = cargar_datos('usuarios.json')
+        if username in usuarios:
+            return check_password_hash(usuarios[username]['password'], password)
+        else:
+            return False
+    except Exception as e:
+        print(f"Error verificando contraseña: {e}")
+        return False
+
+def obtener_estadisticas():
+    """Obtiene estadísticas para el dashboard."""
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    facturas = cargar_datos(ARCHIVO_FACTURAS)
+    mes_actual = datetime.now().month
+    total_clientes = len(clientes)
+    total_productos = len(inventario)
+    facturas_mes = sum(1 for f in facturas.values() if datetime.strptime(f['fecha'], '%Y-%m-%d').month == mes_actual)
+    total_cobrar_usd = 0
+    for f in facturas.values():
+        total_facturado = float(f.get('total_usd', 0))
+        total_abonado = float(f.get('total_abonado', 0))
+        saldo = max(0, total_facturado - total_abonado)
+        if saldo > 0:  # Considerar cualquier saldo mayor a 0
+            total_cobrar_usd += saldo
+    # Asegura que tasa_bcv sea float y no Response
+    tasa_bcv = obtener_tasa_bcv()
+    if hasattr(tasa_bcv, 'json'):
+        # Si es un Response, extrae el valor
+        try:
+            tasa_bcv = tasa_bcv.json.get('tasa', 1.0)
+        except Exception:
+            tasa_bcv = 1.0
+    try:
+        tasa_bcv = float(tasa_bcv)
+    except Exception:
+        tasa_bcv = 1.0
+    total_cobrar_bs = total_cobrar_usd * tasa_bcv
+    # Crear lista de facturas con ID incluido para el dashboard
+    facturas_con_id = []
+    for factura_id, factura in facturas.items():
+        factura_copia = factura.copy()
+        factura_copia['id'] = factura_id  # Agregar el ID a la factura
+        facturas_con_id.append(factura_copia)
+    
+    ultimas_facturas = sorted(facturas_con_id, key=lambda x: datetime.strptime(x['fecha'], '%Y-%m-%d'), reverse=True)[:5]
+    productos_bajo_stock = [p for p in inventario.values() if int(p.get('cantidad', p.get('stock', 0))) < 10]
+    total_pagos_recibidos_usd = 0
+    total_pagos_recibidos_bs = 0
+    for f in facturas.values():
+        if 'pagos' in f and f['pagos']:
+            for pago in f['pagos']:
+                fecha_factura = f.get('fecha', '')
+                try:
+                    if fecha_factura and datetime.strptime(fecha_factura, '%Y-%m-%d').month == mes_actual:
+                        monto = float(pago.get('monto', 0))
+                        total_pagos_recibidos_usd += monto
+                        total_pagos_recibidos_bs += monto * float(f.get('tasa_bcv', tasa_bcv))
+                except Exception:
+                    continue
+    return {
+        'total_clientes': total_clientes,
+        'total_productos': total_productos,
+        'facturas_mes': facturas_mes,
+        'total_cobrar': f"{total_cobrar_usd:,.2f}",
+        'total_cobrar_usd': total_cobrar_usd,
+        'total_cobrar_bs': total_cobrar_bs,
+        'tasa_bcv': tasa_bcv,
+        'ultimas_facturas': ultimas_facturas,
+        'productos_bajo_stock': productos_bajo_stock,
+        'total_pagos_recibidos_usd': total_pagos_recibidos_usd,
+        'total_pagos_recibidos_bs': total_pagos_recibidos_bs
+    }
+
+def obtener_tasa_bcv():
+    try:
+        # Usar la constante definida
+        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+            print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
+            # Buscar en el sistema antes de usar tasa por defecto
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            if tasa_sistema and tasa_sistema > 10:
+                print(f"Usando tasa del sistema: {tasa_sistema}")
+                return tasa_sistema
+            else:
+                print("No se encontró tasa válida en el sistema")
+                return None
+        
+        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            tasa = float(data.get('tasa', 0))
+            if tasa > 10:
+                print(f"Tasa BCV obtenida del archivo: {tasa}")
+                return tasa
+            else:
+                print(f"Tasa BCV en archivo no válida: {tasa}")
+                # Buscar en el sistema como fallback
+                tasa_sistema = obtener_ultima_tasa_del_sistema()
+                if tasa_sistema and tasa_sistema > 10:
+                    print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
+                    return tasa_sistema
+                return None
+    except FileNotFoundError:
+        print(f"Archivo de tasa BCV no encontrado")
+        # Buscar en el sistema
+        tasa_sistema = obtener_ultima_tasa_del_sistema()
+        if tasa_sistema and tasa_sistema > 10:
+            print(f"Usando tasa del sistema: {tasa_sistema}")
+            return tasa_sistema
+        return None
+    except json.JSONDecodeError as e:
+        print(f"Error decodificando archivo de tasa BCV: {e}")
+        # Buscar en el sistema como fallback
+        tasa_sistema = obtener_ultima_tasa_del_sistema()
+        if tasa_sistema and tasa_sistema > 10:
+            print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
+            return tasa_sistema
+        return None
+    except Exception as e:
+        print(f"Error inesperado obteniendo tasa BCV: {e}")
+        # Buscar en el sistema como último recurso
+        tasa_sistema = obtener_ultima_tasa_del_sistema()
+        if tasa_sistema and tasa_sistema > 10:
+            print(f"Usando tasa del sistema como último recurso: {tasa_sistema}")
+            return tasa_sistema
+        return None
+
+def obtener_tasa_bcv_dia():
+    """Obtiene la tasa oficial USD/BS del BCV desde la web. Devuelve float o None si falla."""
+    try:
+        # SIEMPRE intentar obtener desde la web primero (no usar tasa local)
+        url = 'https://www.bcv.org.ve/glosario/cambio-oficial'
+        print(f"🔍 Obteniendo tasa BCV ACTUAL desde: {url}")
+        
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        resp = requests.get(url, timeout=20, verify=False)
+        
+        if resp.status_code != 200:
+            print(f"❌ Error HTTP al obtener tasa BCV: {resp.status_code}")
+            return None
+        
+        print(f"✅ Página BCV obtenida exitosamente, analizando contenido...")
+        soup = BeautifulSoup(resp.text, 'html.parser')
+        tasa = None
+        
+        # Método 1: Buscar por id='dolar' (método principal)
+        dolar_div = soup.find('div', id='dolar')
+        if dolar_div:
+            strong = dolar_div.find('strong')
+            if strong:
+                txt = strong.text.strip().replace('.', '').replace(',', '.')
+                try:
+                    posible = float(txt)
+                    if posible > 10:
+                        tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por ID 'dolar': {tasa}")
+                except:
+                    pass
+        
+        # Método 2: Buscar por id='usd' (alternativo)
+        if not tasa:
+            usd_div = soup.find('div', id='usd')
+            if usd_div:
+                strong = usd_div.find('strong')
+                if strong:
+                    txt = strong.text.strip().replace('.', '').replace(',', '.')
+                    try:
+                        posible = float(txt)
+                        if posible > 10:
+                            tasa = posible
+                            print(f"🎯 Tasa BCV encontrada por ID 'usd': {tasa}")
+                    except:
+                        pass
+        
+        # Método 3: Buscar por strong con texto que parezca una tasa
+        if not tasa:
+            for strong in soup.find_all('strong'):
+                txt = strong.text.strip().replace('.', '').replace(',', '.')
+                try:
+                    posible = float(txt)
+                    if posible > 10 and posible < 1000:  # Rango razonable
+                        tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por strong: {tasa}")
+                        break
+                except:
+                    continue
+        
+        # Método 4: Buscar por span con clase específica
+        if not tasa:
+            for span in soup.find_all('span', class_='centrado'):
+                txt = span.text.strip().replace('.', '').replace(',', '.')
+                try:
+                    posible = float(txt)
+                    if posible > 10 and posible < 1000:
+                        tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por span: {tasa}")
+                        break
+                except:
+                    continue
+        
+        # Método 5: Buscar por regex más específico
+        if not tasa:
+            import re
+            # Buscar patrones como 36,50 o 36.50 (más específico)
+            matches = re.findall(r'(\d{2,}[.,]\d{2,})', resp.text)
+            for m in matches:
+                try:
+                    posible = float(m.replace('.', '').replace(',', '.'))
+                    if posible > 10 and posible < 1000:
+                        tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por regex: {tasa}")
+                        break
+                except:
+                    continue
+        
+        # Método 6: Buscar en tablas específicas
+        if not tasa:
+            for table in soup.find_all('table'):
+                for row in table.find_all('tr'):
+                    for cell in row.find_all(['td', 'th']):
+                        txt = cell.text.strip().replace('.', '').replace(',', '.')
+                        try:
+                            posible = float(txt)
+                            if posible > 10 and posible < 1000:
+                                tasa = posible
+                                print(f"🎯 Tasa BCV encontrada en tabla: {tasa}")
+                                break
+                        except:
+                            continue
+                    if tasa:
+                        break
+                if tasa:
+                    break
+        
+        # Método 7: Buscar por texto que contenga "USD" o "Dólar"
+        if not tasa:
+            for element in soup.find_all(['div', 'span', 'p']):
+                if 'USD' in element.text or 'Dólar' in element.text or 'dólar' in element.text:
+                    txt = element.text.strip()
+                    # Extraer números del texto
+                    import re
+                    numbers = re.findall(r'(\d+[.,]\d+)', txt)
+                    for num in numbers:
+                        try:
+                            posible = float(num.replace('.', '').replace(',', '.'))
+                            if posible > 10 and posible < 1000:
+                                tasa = posible
+                                print(f"🎯 Tasa BCV encontrada por texto USD: {tasa}")
+                                break
+                        except:
+                            continue
+                    if tasa:
+                        break
+        
+        if tasa and tasa > 10:
+            # Guardar la tasa en el archivo
+            guardar_ultima_tasa_bcv(tasa)
+            print(f"💾 Tasa BCV ACTUAL guardada exitosamente: {tasa}")
+            return tasa
+        else:
+            print("❌ No se pudo encontrar una tasa BCV válida en la página")
+            # Solo como último recurso, usar tasa local
+            tasa_local = cargar_ultima_tasa_bcv()
+            if tasa_local and tasa_local > 10:
+                print(f"⚠️ Usando tasa BCV local como fallback: {tasa_local}")
+                return tasa_local
+            return None
+            
+    except Exception as e:
+        print(f"❌ Error obteniendo tasa BCV: {e}")
+        # Solo como último recurso, usar tasa local
+        try:
+            tasa_fallback = cargar_ultima_tasa_bcv()
+            if tasa_fallback and tasa_fallback > 10:
+                print(f"⚠️ Usando tasa BCV de fallback después de error: {tasa_fallback}")
+                return tasa_fallback
+        except:
+            pass
+        return None
+
+# Llamar inicialización
+inicializar_archivos_por_defecto()
+
+# Ejecutar actualización automática al iniciar
+actualizar_tasa_bcv_automaticamente()
+# Usar SECRET_KEY desde variables de entorno en producción
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'unsafe-default-change-me')
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
+csrf = CSRFProtect(app)
 
 # --- Configuración de rutas de capturas (compatibles con Render y local) ---
 # En Render no podemos escribir en /data. Usamos una carpeta del proyecto
@@ -155,146 +808,6 @@ def cargar_productos_desde_csv(archivo_csv):
         print(f"Error cargando productos desde CSV: {e}")
         return False
 
-def cargar_datos(nombre_archivo):
-    """Carga datos desde un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            os.makedirs(directorio, exist_ok=True)
-            
-        if not os.path.exists(nombre_archivo):
-            print(f"Archivo {nombre_archivo} no existe. Creando nuevo archivo.")
-            with open(nombre_archivo, 'w', encoding='utf-8') as f:
-                json.dump({}, f, ensure_ascii=False, indent=4)
-            return {}
-            
-        with open(nombre_archivo, 'r', encoding='utf-8') as f:
-            contenido = f.read()
-            if not contenido.strip():
-                print(f"Archivo {nombre_archivo} está vacío.")
-                return {}
-            try:
-                return json.loads(contenido)
-            except json.JSONDecodeError as e:
-                print(f"Error decodificando JSON en {nombre_archivo}: {e}")
-                return {}
-    except Exception as e:
-        print(f"Error leyendo {nombre_archivo}: {e}")
-        return {}
-
-def guardar_datos(nombre_archivo, datos):
-    """Guarda datos en un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            try:
-                os.makedirs(directorio, exist_ok=True)
-                print(f"Directorio {directorio} creado/verificado exitosamente")
-            except Exception as e:
-                print(f"Error creando directorio {directorio}: {e}")
-                return False
-        
-        # Verificar que los datos son serializables
-        try:
-            json.dumps(datos)
-        except Exception as e:
-            print(f"Error serializando datos: {e}")
-            return False
-        
-        # Intentar guardar con manejo de errores específico
-        try:
-            # Primero intentamos escribir en un archivo temporal
-            temp_file = nombre_archivo + '.tmp'
-            with open(temp_file, 'w', encoding='utf-8') as f:
-                json.dump(datos, f, ensure_ascii=False, indent=4)
-            
-            # Si la escritura temporal fue exitosa, reemplazamos el archivo original
-            if os.path.exists(nombre_archivo):
-                os.remove(nombre_archivo)
-            os.rename(temp_file, nombre_archivo)
-            
-            print(f"Datos guardados exitosamente en {nombre_archivo}")
-            return True
-        except Exception as e:
-            print(f"Error escribiendo en archivo {nombre_archivo}: {e}")
-            # Limpiar archivo temporal si existe
-            if os.path.exists(temp_file):
-                try:
-                    os.remove(temp_file)
-                except:
-                    pass
-            return False
-    except Exception as e:
-        print(f"Error general guardando {nombre_archivo}: {e}")
-        return False
-
-def obtener_estadisticas():
-    """Obtiene estadísticas para el dashboard."""
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
-    facturas = cargar_datos(ARCHIVO_FACTURAS)
-    mes_actual = datetime.now().month
-    total_clientes = len(clientes)
-    total_productos = len(inventario)
-    facturas_mes = sum(1 for f in facturas.values() if datetime.strptime(f['fecha'], '%Y-%m-%d').month == mes_actual)
-    total_cobrar_usd = 0
-    for f in facturas.values():
-        total_facturado = float(f.get('total_usd', 0))
-        total_abonado = float(f.get('total_abonado', 0))
-        saldo = max(0, total_facturado - total_abonado)
-        if saldo > 0:  # Considerar cualquier saldo mayor a 0
-            total_cobrar_usd += saldo
-    # Asegura que tasa_bcv sea float y no Response
-    tasa_bcv = obtener_tasa_bcv()
-    if hasattr(tasa_bcv, 'json'):
-        # Si es un Response, extrae el valor
-        try:
-            tasa_bcv = tasa_bcv.json.get('tasa', 1.0)
-        except Exception:
-            tasa_bcv = 1.0
-    try:
-        tasa_bcv = float(tasa_bcv)
-    except Exception:
-        tasa_bcv = 1.0
-    total_cobrar_bs = total_cobrar_usd * tasa_bcv
-    # Crear lista de facturas con ID incluido para el dashboard
-    facturas_con_id = []
-    for factura_id, factura in facturas.items():
-        factura_copia = factura.copy()
-        factura_copia['id'] = factura_id  # Agregar el ID a la factura
-        facturas_con_id.append(factura_copia)
-    
-    ultimas_facturas = sorted(facturas_con_id, key=lambda x: datetime.strptime(x['fecha'], '%Y-%m-%d'), reverse=True)[:5]
-    productos_bajo_stock = [p for p in inventario.values() if int(p.get('cantidad', p.get('stock', 0))) < 10]
-    total_pagos_recibidos_usd = 0
-    total_pagos_recibidos_bs = 0
-    for f in facturas.values():
-        if 'pagos' in f and f['pagos']:
-            for pago in f['pagos']:
-                fecha_factura = f.get('fecha', '')
-                try:
-                    if fecha_factura and datetime.strptime(fecha_factura, '%Y-%m-%d').month == mes_actual:
-                        monto = float(pago.get('monto', 0))
-                        total_pagos_recibidos_usd += monto
-                        total_pagos_recibidos_bs += monto * float(f.get('tasa_bcv', tasa_bcv))
-                except Exception:
-                    continue
-    return {
-        'total_clientes': total_clientes,
-        'total_productos': total_productos,
-        'facturas_mes': facturas_mes,
-        'total_cobrar': f"{total_cobrar_usd:,.2f}",
-        'total_cobrar_usd': total_cobrar_usd,
-        'total_cobrar_bs': total_cobrar_bs,
-        'tasa_bcv': tasa_bcv,
-        'ultimas_facturas': ultimas_facturas,
-        'productos_bajo_stock': productos_bajo_stock,
-        'total_pagos_recibidos_usd': total_pagos_recibidos_usd,
-        'total_pagos_recibidos_bs': total_pagos_recibidos_bs
-    }
-
 def limpiar_valor_monetario(valor):
     """Limpia y convierte un valor monetario a float."""
     if valor is None:
@@ -310,36 +823,6 @@ def limpiar_valor_monetario(valor):
         return float(valor)
     except (ValueError, TypeError):
         return 0.0
-
-def guardar_ultima_tasa_bcv(tasa):
-    try:
-        with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
-            json.dump({'tasa': tasa}, f)
-        # Registrar en bitácora
-        usuario = session['usuario'] if 'usuario' in session else 'sistema'
-        registrar_bitacora(usuario, 'Actualizar tasa BCV', f'Tasa: {tasa}')
-    except Exception as e:
-        print(f"Error guardando última tasa BCV: {e}")
-
-def cargar_ultima_tasa_bcv():
-    try:
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            tasa = float(data.get('tasa', 0))
-            if tasa > 10:
-                return tasa
-            else:
-                return None
-    except Exception:
-        return None
-
-def obtener_tasa_bcv():
-    try:
-        with open('ultima_tasa_bcv.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            return float(data.get('tasa', 0))
-    except Exception:
-        return 0
 
 def cargar_empresa():
     try:
@@ -367,75 +850,6 @@ def limpiar_monto(monto):
     if not monto:
         return 0.0
     return float(str(monto).replace('$', '').replace('Bs', '').replace(',', '').strip())
-
-def registrar_bitacora(usuario, accion, detalles='', documento_tipo='', documento_numero=''):
-    """
-    Función mejorada de bitácora que mantiene compatibilidad y agrega funcionalidad SENIAT
-    """
-    from datetime import datetime
-    # import requests  # Temporarily commented out for testing
-    from flask import has_request_context, request, session
-    
-    # Sistema de bitácora tradicional (para compatibilidad)
-    ip = ''
-    ubicacion = ''
-    lat = ''
-    lon = ''
-    if has_request_context():
-        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
-        if ip == '127.0.0.1':
-            ip = '190.202.123.123'  # IP pública de Venezuela para pruebas
-    # Usar ubicación precisa si está en session
-    if 'ubicacion_precisa' in session:
-        lat = session['ubicacion_precisa'].get('lat', '')
-        lon = session['ubicacion_precisa'].get('lon', '')
-        ubicacion = session['ubicacion_precisa'].get('texto', '')
-    elif has_request_context():
-        try:
-            resp = requests.get(f'http://ip-api.com/json/{ip}', timeout=3)
-            if resp.status_code == 200:
-                data = resp.json()
-                if data.get('status') == 'success':
-                    lat = data.get('lat', '')
-                    lon = data.get('lon', '')
-                    ubicacion = ', '.join([v for v in [data.get('city', ''), data.get('regionName', ''), data.get('country', '')] if v])
-                else:
-                    ubicacion = f"API sin datos: {data}"
-            else:
-                ubicacion = f"API status: {resp.status_code}"
-        except Exception as e:
-            ubicacion = f"Error API: {e}"
-    
-    # Bitácora tradicional
-    linea = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Usuario: {usuario} | Acción: {accion} | Detalles: {detalles} | IP: {ip} | Ubicación: {ubicacion} | Coordenadas: {lat},{lon}\n"
-    with open(BITACORA_FILE, 'a', encoding='utf-8') as f:
-        f.write(linea)
-    
-    # Sistema de auditoría fiscal SENIAT (cuando aplique)
-    if documento_tipo or documento_numero or 'factura' in accion.lower() or 'fiscal' in accion.lower():
-        try:
-            seguridad_fiscal.registrar_log_fiscal(
-                usuario=usuario,
-                accion=accion,
-                documento_tipo=documento_tipo or 'GENERAL',
-                documento_numero=documento_numero or 'N/A',
-                ip_externa=ip,
-                detalles=detalles
-            )
-        except Exception as e:
-            # En caso de error en logs fiscales, registrar en bitácora tradicional
-            error_linea = f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] ERROR_LOG_FISCAL: {str(e)}\n"
-            with open(BITACORA_FILE, 'a', encoding='utf-8') as f:
-                f.write(error_linea)
-
-# Decorador para requerir login
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'usuario' not in session:
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 # --- Rutas protegidas ---
 @app.route('/')
@@ -1022,6 +1436,7 @@ def ver_factura(id):
     
     try:
         print(f"DEBUG: Accediendo a factura con ID: {id}")
+
         facturas = cargar_datos(ARCHIVO_FACTURAS)
         clientes = cargar_datos(ARCHIVO_CLIENTES)
         inventario = cargar_datos(ARCHIVO_INVENTARIO)
@@ -1052,6 +1467,17 @@ def ver_factura(id):
         factura['saldo_pendiente'] = max(factura.get('total_usd', 0) - total_abonado, 0)
         
         empresa = cargar_empresa()
+
+        # Agregar el ID de la factura para que el template pueda usarlo
+        factura['_id'] = id
+        
+        # Asegurar que cliente_id esté presente
+        if 'cliente_id' not in factura:
+            print(f"⚠️ ADVERTENCIA: factura {id} no tiene cliente_id")
+            print(f"⚠️ Campos disponibles en factura: {list(factura.keys())}")
+        else:
+            print(f"✅ factura {id} tiene cliente_id: {factura['cliente_id']}")
+
         print(f"DEBUG: Renderizando template factura_dashboard.html para factura {id}")
         print(f"DEBUG: Datos de factura: {factura}")
         print(f"DEBUG: Datos de clientes: {list(clientes.keys())[:5]}...")
@@ -1061,13 +1487,15 @@ def ver_factura(id):
         app.jinja_env.cache.clear()
         
         print("DEBUG: Llamando a render_template...")
-        resultado = render_template('factura_dashboard.html', 
-                                  factura=factura, 
-                                  clientes=clientes, 
-                                  inventario=inventario, 
-                                  empresa=empresa, 
-                                  zip=zip,
-                                  now=datetime.now)
+        resultado = render_template(
+            'factura_dashboard.html',
+            factura=factura, 
+            clientes=clientes, 
+            inventario=inventario, 
+            empresa=empresa, 
+            zip=zip,
+            now=datetime.now,
+        )
         print("DEBUG: render_template completado exitosamente")
         return resultado
         
@@ -1076,194 +1504,42 @@ def ver_factura(id):
         flash(f'Error al mostrar la factura: {str(e)}', 'danger')
         return redirect(url_for('mostrar_facturas'))
 
-@app.route('/facturas/<id>/pdf')
-def descargar_factura_pdf(id):
-    if pdfkit is None:
-        flash('PDFKit no está instalado. Instala con: pip install pdfkit', 'danger')
-        return redirect(url_for('ver_factura', id=id))
-    facturas = cargar_datos(ARCHIVO_FACTURAS)
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
-    factura = facturas.get(id)
-    if not factura:
-        flash('Factura no encontrada', 'danger')
-        return redirect(url_for('mostrar_facturas'))
-    empresa = cargar_empresa()
-    
-    # Resolver rutas de imágenes para wkhtmltopdf (usar file:/// cuando sea posible)
-    def _to_file_uri(static_relative_path: str) -> str:
-        try:
-            # Si ya es absoluta (http, https, file, o ruta absoluta), devolverla
-            if not static_relative_path:
-                return static_relative_path
-            lower_path = str(static_relative_path).lower()
-            if lower_path.startswith('http://') or lower_path.startswith('https://') or lower_path.startswith('file:'):
-                return static_relative_path
-            # Construir ruta absoluta dentro de la carpeta static
-            static_folder = os.path.join(app.root_path, 'static')
-            abs_path = os.path.abspath(
-                static_relative_path if os.path.isabs(static_relative_path) else os.path.join(static_folder, static_relative_path)
-            )
-            if os.path.exists(abs_path):
-                return 'file:///' + abs_path.replace('\\', '/')
-            # Fallback: servir por HTTP
-            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
-        except Exception:
-            # Fallback final
-            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
+# Ruta de prueba para verificar que funciona
+@app.route('/test-whatsapp')
+def test_whatsapp():
+    return jsonify({'message': 'Ruta de prueba funcionando'})
 
-    empresa_logo_src = None
-    empresa_logo_http = None
-    empresa_logo_file = None
-    if empresa.get('logo'):
-        # Intentar incrustar el logo como data URI para máxima compatibilidad
-        try:
-            import base64, mimetypes
-            static_folder = os.path.join(app.root_path, 'static')
-            candidate_path = empresa['logo']
-            abs_logo_path = os.path.abspath(
-                candidate_path if os.path.isabs(candidate_path) else os.path.join(static_folder, candidate_path)
-            )
-            if os.path.exists(abs_logo_path):
-                mime_type = mimetypes.guess_type(abs_logo_path)[0] or 'image/png'
-                with open(abs_logo_path, 'rb') as f:
-                    b64 = base64.b64encode(f.read()).decode('utf-8')
-                empresa_logo_src = f'data:{mime_type};base64,{b64}'
-        except Exception:
-            empresa_logo_src = None
-        # Rutas alternativas: http absoluta y file:///
-        try:
-            empresa_logo_http = request.url_root.rstrip('/') + url_for('static', filename=empresa['logo'])
-        except Exception:
-            empresa_logo_http = None
-        empresa_logo_file = _to_file_uri(empresa['logo'])
-    if empresa.get('membrete'):
-        empresa['membrete'] = _to_file_uri(empresa['membrete'])
-    
-    rendered = render_template('factura_imprimir.html', 
-                             factura=factura, 
-                             clientes=clientes, 
-                             inventario=inventario,
-                             now=datetime.now,
-                             empresa=empresa,
-                             zip=zip,
-                             empresa_logo_src=empresa_logo_src,
-                             empresa_logo_http=empresa_logo_http,
-                             empresa_logo_file=empresa_logo_file)
-    try:
-        # Intentar diferentes ubicaciones comunes de wkhtmltopdf
-        wkhtmltopdf_paths = [
-            'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
-            '/usr/bin/wkhtmltopdf',
-            '/usr/local/bin/wkhtmltopdf',
-            'wkhtmltopdf'  # Si está en el PATH
-        ]
-        
-        config = None
-        for path in wkhtmltopdf_paths:
-            if os.path.exists(path):
-                config = pdfkit.configuration(wkhtmltopdf=path)
-                break
-        
-        if config is None:
-            # Si no se encuentra wkhtmltopdf, intentar usar el comando directamente
-            config = pdfkit.configuration(wkhtmltopdf='wkhtmltopdf')
-            
-        # Alinear con el CSS del template (A4 y márgenes en mm)
-        options = {
-            'page-size': 'A4',
-            'margin-top': '8mm',
-            'margin-right': '6mm',
-            'margin-bottom': '8mm',
-            'margin-left': '6mm',
-            'encoding': 'UTF-8',
-            'no-outline': None,
-            'quiet': '',
-            'print-media-type': None,
-            'disable-smart-shrinking': '',
-            'dpi': 300,
-            'image-quality': 100,
-            'enable-local-file-access': None,
-            'footer-right': '[page] de [topage]',
-            'footer-font-size': '8',
-            'footer-spacing': '5',
-            'javascript-delay': '300',
-            'no-stop-slow-scripts': None
-        }
-        pdf = pdfkit.from_string(rendered, False, configuration=config, options=options)
-        response = make_response(pdf)
-        response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = f'attachment; filename=factura_{factura["numero"]}.pdf'
-        return response
-    except Exception as e:
-        print(f"Error al generar PDF: {str(e)}")  # Para debugging
-        flash(f'Error al generar PDF: {str(e)}', 'danger')
-        return redirect(url_for('ver_factura', id=id))
-
+# Ruta amigable para imprimir la factura (vista HTML lista para impresión/PDF)
 @app.route('/facturas/<id>/imprimir')
+@login_required
 def imprimir_factura(id):
-    """Vista amigable para imprimir la factura."""
+    """Renderiza una versión imprimible de la factura usando `factura_imprimir.html`."""
     facturas = cargar_datos(ARCHIVO_FACTURAS)
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
+
     factura = facturas.get(id)
     if not factura:
         flash('Factura no encontrada', 'danger')
         return redirect(url_for('mostrar_facturas'))
+
+    # Asegurar que el template tenga disponible el id de la factura
+    try:
+        factura['id'] = id
+    except Exception:
+        pass
+
     empresa = cargar_empresa()
 
-    # Alinear resolución de logo con la ruta de PDF
-    def _to_file_uri(static_relative_path: str) -> str:
-        try:
-            if not static_relative_path:
-                return static_relative_path
-            lower_path = str(static_relative_path).lower()
-            if lower_path.startswith('http://') or lower_path.startswith('https://') or lower_path.startswith('file:'):
-                return static_relative_path
-            static_folder = os.path.join(app.root_path, 'static')
-            abs_path = os.path.abspath(
-                static_relative_path if os.path.isabs(static_relative_path) else os.path.join(static_folder, static_relative_path)
-            )
-            if os.path.exists(abs_path):
-                return 'file:///' + abs_path.replace('\\', '/')
-            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
-        except Exception:
-            return request.url_root.rstrip('/') + url_for('static', filename=static_relative_path)
-
-    empresa_logo_src = None
-    empresa_logo_http = None
-    empresa_logo_file = None
-    if empresa.get('logo'):
-        try:
-            import base64, mimetypes
-            static_folder = os.path.join(app.root_path, 'static')
-            candidate_path = empresa['logo']
-            abs_logo_path = os.path.abspath(
-                candidate_path if os.path.isabs(candidate_path) else os.path.join(static_folder, candidate_path)
-            )
-            if os.path.exists(abs_logo_path):
-                mime_type = mimetypes.guess_type(abs_logo_path)[0] or 'image/png'
-                with open(abs_logo_path, 'rb') as f:
-                    b64 = base64.b64encode(f.read()).decode('utf-8')
-                empresa_logo_src = f'data:{mime_type};base64,{b64}'
-        except Exception:
-            empresa_logo_src = None
-        try:
-            empresa_logo_http = request.url_root.rstrip('/') + url_for('static', filename=empresa['logo'])
-        except Exception:
-            empresa_logo_http = None
-        empresa_logo_file = _to_file_uri(empresa['logo'])
-
-    return render_template('factura_imprimir.html',
+    return render_template(
+        'factura_imprimir.html',
                            factura=factura,
                            clientes=clientes,
                            inventario=inventario,
-                           now=datetime.now,
                            empresa=empresa,
+        now=datetime.now,
                            zip=zip,
-                           empresa_logo_src=empresa_logo_src,
-                           empresa_logo_http=empresa_logo_http,
-                           empresa_logo_file=empresa_logo_file)
+    )
 
 @app.route('/facturas/<id>/editar', methods=['GET', 'POST'])
 @login_required
@@ -2435,17 +2711,23 @@ def api_geocodificar():
 
 def obtener_tasa_bcv_dia():
     """Obtiene la tasa oficial USD/BS del BCV desde la web. Devuelve float o None si falla."""
-    url = 'https://www.bcv.org.ve/glosario/cambio-oficial'
     try:
+        # SIEMPRE intentar obtener desde la web primero (no usar tasa local)
+        url = 'https://www.bcv.org.ve/glosario/cambio-oficial'
+        print(f"🔍 Obteniendo tasa BCV ACTUAL desde: {url}")
+        
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        resp = requests.get(url, timeout=10, verify=False)
+        resp = requests.get(url, timeout=20, verify=False)
+        
         if resp.status_code != 200:
+            print(f"❌ Error HTTP al obtener tasa BCV: {resp.status_code}")
             return None
         
+        print(f"✅ Página BCV obtenida exitosamente, analizando contenido...")
         soup = BeautifulSoup(resp.text, 'html.parser')
         tasa = None
         
-        # Buscar por id='dolar'
+        # Método 1: Buscar por id='dolar' (método principal)
         dolar_div = soup.find('div', id='dolar')
         if dolar_div:
             strong = dolar_div.find('strong')
@@ -2455,43 +2737,128 @@ def obtener_tasa_bcv_dia():
                     posible = float(txt)
                     if posible > 10:
                         tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por ID 'dolar': {tasa}")
                 except:
                     pass
         
-        # Buscar por strong con texto que parezca una tasa
+        # Método 2: Buscar por id='usd' (alternativo)
+        if not tasa:
+            usd_div = soup.find('div', id='usd')
+            if usd_div:
+                strong = usd_div.find('strong')
+                if strong:
+                    txt = strong.text.strip().replace(".", "").replace(",", ".")
+                    try:
+                        posible = float(txt)
+                        if posible > 10:
+                            tasa = posible
+                            print(f"🎯 Tasa BCV encontrada por ID 'usd': {tasa}")
+                    except:
+                        pass
+        # Método 3: Buscar por strong con texto que parezca una tasa
         if not tasa:
             for strong in soup.find_all('strong'):
                 txt = strong.text.strip().replace('.', '').replace(',', '.')
                 try:
                     posible = float(txt)
-                    if posible > 10:
+                    if posible > 10 and posible < 1000:  # Rango razonable
                         tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por strong: {tasa}")
                         break
                 except:
                     continue
         
-        # Buscar cualquier número grande en el texto plano
+        # Método 4: Buscar por span con clase específica
         if not tasa:
-            import re
-            matches = re.findall(r'(\d{2,}[.,]\d{2})', resp.text)
-            for m in matches:
+            for span in soup.find_all('span', class_='centrado'):
+                txt = span.text.strip().replace('.', '').replace(',', '.')
                 try:
-                    posible = float(m.replace('.', '').replace(',', '.'))
-                    if posible > 10:
+                    posible = float(txt)
+                    if posible > 10 and posible < 1000:
                         tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por span: {tasa}")
                         break
                 except:
                     continue
+        
+        # Método 5: Buscar por regex más específico
+        if not tasa:
+            import re
+            # Buscar patrones como 36,50 o 36.50 (más específico)
+            matches = re.findall(r'(\d{2,}[.,]\d{2,})', resp.text)
+            for m in matches:
+                try:
+                    posible = float(m.replace('.', '').replace(',', '.'))
+                    if posible > 10 and posible < 1000:
+                        tasa = posible
+                        print(f"🎯 Tasa BCV encontrada por regex: {tasa}")
+                        break
+                except:
+                    continue
+        
+        # Método 6: Buscar en tablas específicas
+        if not tasa:
+            for table in soup.find_all('table'):
+                for row in table.find_all('tr'):
+                    for cell in row.find_all(['td', 'th']):
+                        txt = cell.text.strip().replace('.', '').replace(',', '.')
+                        try:
+                            posible = float(txt)
+                            if posible > 10 and posible < 1000:
+                                tasa = posible
+                                print(f"🎯 Tasa BCV encontrada en tabla: {tasa}")
+                                break
+                        except:
+                            continue
+                    if tasa:
+                        break
+                if tasa:
+                    break
+        
+        # Método 7: Buscar por texto que contenga "USD" o "Dólar"
+        if not tasa:
+            for element in soup.find_all(['div', 'span', 'p']):
+                if 'USD' in element.text or 'Dólar' in element.text or 'dólar' in element.text:
+                    txt = element.text.strip()
+                    # Extraer números del texto
+                    import re
+                    numbers = re.findall(r'(\d+[.,]\d+)', txt)
+                    for num in numbers:
+                        try:
+                            posible = float(num.replace('.', '').replace(',', '.'))
+                            if posible > 10 and posible < 1000:
+                                tasa = posible
+                                print(f"🎯 Tasa BCV encontrada por texto USD: {tasa}")
+                                break
+                        except:
+                            continue
+                    if tasa:
+                        break
         
         if tasa and tasa > 10:
             # Guardar la tasa en el archivo
             guardar_ultima_tasa_bcv(tasa)
+            print(f"💾 Tasa BCV ACTUAL guardada exitosamente: {tasa}")
             return tasa
         else:
+            print("❌ No se pudo encontrar una tasa BCV válida en la página")
+            # Solo como último recurso, usar tasa local
+            tasa_local = cargar_ultima_tasa_bcv()
+            if tasa_local and tasa_local > 10:
+                print(f"⚠️ Usando tasa BCV local como fallback: {tasa_local}")
+                return tasa_local
             return None
             
     except Exception as e:
-        print(f"Error obteniendo tasa BCV: {e}")
+        print(f"❌ Error obteniendo tasa BCV: {e}")
+        # Solo como último recurso, usar tasa local
+        try:
+            tasa_fallback = cargar_ultima_tasa_bcv()
+            if tasa_fallback and tasa_fallback > 10:
+                print(f"⚠️ Usando tasa BCV de fallback después de error: {tasa_fallback}")
+                return tasa_fallback
+        except:
+            pass
         return None
 
 # --- Manejo de Errores ---
@@ -3664,6 +4031,7 @@ def mostrar_cuentas_por_cobrar():
     return render_template('reporte_cuentas_por_cobrar.html',
         cuentas=cuentas_filtradas,
         clientes=clientes,
+        facturas=facturas,
         filtro=filtro,
         mes_seleccionado=mes_seleccionado,
         anio_seleccionado=anio_seleccionado,
@@ -4307,6 +4675,130 @@ def obtener_saldo_factura(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/facturas/<id>/enviar_recordatorio_whatsapp', methods=['POST'])
+@login_required
+@csrf.exempt
+def enviar_recordatorio_whatsapp(id):
+    try:
+        print(f"🔍 Iniciando envío de recordatorio WhatsApp para factura: {id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        print(f"📊 Facturas cargadas: {len(facturas)}")
+        print(f"👥 Clientes cargados: {len(clientes)}")
+        
+        if id not in facturas:
+            print(f"❌ Factura {id} no encontrada")
+            return jsonify({'error': 'Factura no encontrada'}), 404
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        
+        print(f"👤 Cliente ID: {cliente_id}")
+        print(f"📄 Factura: {factura.get('numero', 'N/A')}")
+        
+        if not cliente_id:
+            print(f"❌ Factura {id} no tiene cliente_id")
+            return jsonify({'error': 'La factura no tiene cliente asignado'}), 400
+        
+        # Verificar si el cliente_id está en la lista de clientes
+        print(f"🔍 Buscando cliente_id '{cliente_id}' en clientes...")
+        print(f"🔍 Clientes disponibles: {list(clientes.keys())}")
+        
+        if cliente_id not in clientes:
+            print(f"❌ Cliente {cliente_id} no encontrado en clientes")
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        print(f"📱 Teléfono del cliente: {telefono}")
+        print(f"👤 Nombre del cliente: {cliente.get('nombre', 'N/A')}")
+        
+        if not telefono:
+            print(f"❌ Cliente {cliente_id} no tiene teléfono")
+            return jsonify({'error': 'El cliente no tiene número de teléfono registrado'}), 400
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_original = telefono
+        try:
+            telefono = limpiar_numero_telefono(telefono)
+            print(f"📱 Teléfono formateado exitosamente: {telefono}")
+        except Exception as e:
+            print(f"❌ Error formateando teléfono: {e}")
+            return jsonify({'error': f'Error formateando teléfono: {str(e)}'}), 400
+        
+        print(f"📱 Teléfono original: {telefono_original}")
+        print(f"📱 Teléfono formateado: {telefono}")
+        
+        if not telefono or len(telefono) < 10:
+            print(f"❌ Teléfono formateado no válido: {telefono}")
+            return jsonify({'error': 'El número de teléfono no es válido'}), 400
+        
+        # Crear mensaje personalizado
+        try:
+            mensaje = crear_mensaje_recordatorio(factura, cliente)
+            print(f"💬 Mensaje creado exitosamente: {len(mensaje)} caracteres")
+        except Exception as e:
+            print(f"❌ Error creando mensaje: {e}")
+            return jsonify({'error': f'Error creando mensaje: {str(e)}'}), 400
+        
+        # Generar enlace de WhatsApp
+        try:
+            enlace_whatsapp = generar_enlace_whatsapp(telefono, mensaje)
+            print(f"🔗 Enlace WhatsApp generado exitosamente: {enlace_whatsapp}")
+        except Exception as e:
+            print(f"❌ Error generando enlace: {e}")
+            return jsonify({'error': f'Error generando enlace: {str(e)}'}), 400
+        
+        # Registrar en la bitácora
+        try:
+            registrar_bitacora(
+                session.get('usuario', 'Sistema'),
+                'Recordatorio WhatsApp Enviado',
+                f'Factura {factura.get("numero", "N/A")} - Cliente: {cliente.get("nombre", "N/A")}'
+            )
+            print("📝 Registrado en bitácora")
+        except Exception as e:
+            print(f"⚠️ Error registrando en bitácora: {e}")
+        
+        resultado = {
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'debug_info': {
+                'factura_id': id,
+                'cliente_id': cliente_id,
+                'telefono_original': telefono_original,
+                'telefono_formateado': telefono
+            }
+        }
+        
+        print(f"✅ Recordatorio preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        return jsonify(resultado)
+        
+    except Exception as e:
+        error_msg = f"Error al enviar recordatorio WhatsApp: {str(e)}"
+        print(f"❌ {error_msg}")
+        import traceback
+        print(f"🔍 Traceback completo:")
+        traceback.print_exc()
+        
+        return jsonify({
+            'success': False,
+            'error': f'Error al preparar el recordatorio: {str(e)}',
+            'debug_info': {
+                'factura_id': id,
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        })
+
 @app.route('/guardar_ubicacion_precisa', methods=['POST'])
 def guardar_ubicacion_precisa():
     data = request.get_json()
@@ -4331,6 +4823,216 @@ def guardar_ubicacion_precisa():
             session['ubicacion_precisa'] = {'lat': lat, 'lon': lon, 'texto': ''}
         return jsonify({'status': 'ok'})
     return jsonify({'status': 'error'}), 400
+
+@app.route('/probar-recordatorio-whatsapp/<id>')
+def probar_recordatorio_whatsapp(id):
+    """Ruta de prueba para verificar el funcionamiento del recordatorio WhatsApp."""
+    try:
+        print(f"🧪 PROBANDO recordatorio WhatsApp para factura: {id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        resultado = {
+            'factura_id': id,
+            'factura_encontrada': id in facturas,
+            'cliente_id': None,
+            'cliente_encontrado': False,
+            'telefono_disponible': False,
+            'telefono_original': None,
+            'telefono_formateado': None,
+            'mensaje_generado': False,
+            'enlace_generado': False,
+            'errores': []
+        }
+        
+        if id not in facturas:
+            resultado['errores'].append('Factura no encontrada')
+            return jsonify(resultado)
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        resultado['cliente_id'] = cliente_id
+        
+        if not cliente_id:
+            resultado['errores'].append('Factura no tiene cliente_id')
+            return jsonify(resultado)
+        
+        if cliente_id not in clientes:
+            resultado['errores'].append('Cliente no encontrado')
+            return jsonify(resultado)
+        
+        resultado['cliente_encontrado'] = True
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        resultado['telefono_original'] = telefono
+        
+        if not telefono:
+            resultado['errores'].append('Cliente no tiene teléfono')
+            return jsonify(resultado)
+        
+        resultado['telefono_disponible'] = True
+        
+        # Probar formateo de teléfono
+        try:
+            telefono_formateado = limpiar_numero_telefono(telefono)
+            resultado['telefono_formateado'] = telefono_formateado
+        except Exception as e:
+            resultado['errores'].append(f'Error formateando teléfono: {e}')
+            return jsonify(resultado)
+        
+        # Probar creación de mensaje
+        try:
+            mensaje = crear_mensaje_recordatorio(factura, cliente)
+            resultado['mensaje_generado'] = True
+            resultado['mensaje_preview'] = mensaje[:100] + '...' if len(mensaje) > 100 else mensaje
+        except Exception as e:
+            resultado['errores'].append(f'Error creando mensaje: {e}')
+            return jsonify(resultado)
+        
+        # Probar generación de enlace
+        try:
+            enlace = generar_enlace_whatsapp(telefono_formateado, mensaje)
+            resultado['enlace_generado'] = True
+            resultado['enlace_preview'] = enlace[:100] + '...' if len(enlace) > 100 else enlace
+        except Exception as e:
+            resultado['errores'].append(f'Error generando enlace: {e}')
+            return jsonify(resultado)
+        
+        resultado['success'] = True
+        resultado['message'] = 'Todas las funciones funcionan correctamente'
+        return jsonify(resultado)
+        
+    except Exception as e:
+        import traceback
+        error_info = {
+            'success': False,
+            'error': str(e),
+            'error_type': type(e).__name__,
+            'traceback': traceback.format_exc()
+        }
+        print(f"❌ Error en prueba: {error_info}")
+        return jsonify(error_info), 500
+        
+        # Probar generación de mensaje
+        try:
+            mensaje = crear_mensaje_recordatorio(factura, cliente)
+            resultado['mensaje_generado'] = True
+        except Exception as e:
+            resultado['errores'].append(f'Error generando mensaje: {e}')
+            return jsonify(resultado)
+        
+        # Probar generación de enlace
+        try:
+            enlace = generar_enlace_whatsapp(telefono_formateado, mensaje)
+            resultado['enlace_generado'] = True
+            resultado['enlace_ejemplo'] = enlace
+        except Exception as e:
+            resultado['errores'].append(f'Error generando enlace: {e}')
+            return jsonify(resultado)
+        
+        resultado['success'] = True
+        resultado['message'] = 'Sistema funcionando correctamente'
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'factura_id': id
+        }), 500
+
+@app.route('/forzar-actualizacion-tasa-bcv')
+def forzar_actualizacion_tasa_bcv():
+    """Fuerza la actualización de la tasa BCV desde la web del BCV."""
+    try:
+        print("🔄 FORZANDO actualización de tasa BCV desde web...")
+        
+        # Obtener tasa desde web (ignorar archivo local)
+        nueva_tasa = obtener_tasa_bcv_dia()
+        
+        if nueva_tasa and nueva_tasa > 10:
+            resultado = {
+                'success': True,
+                'message': f'Tasa BCV actualizada exitosamente: {nueva_tasa}',
+                'tasa_nueva': nueva_tasa,
+                'fecha_actualizacion': datetime.now().isoformat(),
+                'fuente': 'BCV Web Oficial'
+            }
+            print(f"✅ Tasa BCV actualizada: {nueva_tasa}")
+        else:
+            resultado = {
+                'success': False,
+                'message': 'No se pudo obtener la tasa BCV desde la web',
+                'error': 'Tasa no válida o no encontrada'
+            }
+            print("❌ No se pudo obtener tasa válida desde web")
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        error_msg = f"Error forzando actualización: {str(e)}"
+        print(f"❌ {error_msg}")
+        return jsonify({
+            'success': False,
+            'message': error_msg,
+            'error': str(e)
+        }), 500
+
+@app.route('/probar-tasa-bcv')
+def probar_tasa_bcv():
+    """Ruta de prueba para verificar el funcionamiento de la tasa BCV."""
+    try:
+        resultado = {
+            'archivo_existe': os.path.exists(ULTIMA_TASA_BCV_FILE),
+            'tasa_local': None,
+            'tasa_web': None,
+            'tasa_final': None,
+            'tasa_sistema': None,
+            'errores': []
+        }
+        
+        # Probar búsqueda en el sistema
+        try:
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            resultado['tasa_sistema'] = tasa_sistema
+        except Exception as e:
+            resultado['errores'].append(f"Error buscando tasa en sistema: {e}")
+        
+        # Probar carga de tasa local
+        try:
+            tasa_local = cargar_ultima_tasa_bcv()
+            resultado['tasa_local'] = tasa_local
+        except Exception as e:
+            resultado['errores'].append(f"Error cargando tasa local: {e}")
+        
+        # Probar obtención de tasa web
+        try:
+            tasa_web = obtener_tasa_bcv_dia()
+            resultado['tasa_web'] = tasa_web
+        except Exception as e:
+            resultado['errores'].append(f"Error obteniendo tasa web: {e}")
+        
+        # Probar función principal
+        try:
+            tasa_final = obtener_tasa_bcv()
+            resultado['tasa_final'] = tasa_final
+        except Exception as e:
+            resultado['errores'].append(f"Error en función principal: {e}")
+        
+        # Información adicional
+        resultado['info'] = {
+            'archivo_tasa': ULTIMA_TASA_BCV_FILE,
+            'fecha_prueba': datetime.now().isoformat(),
+            'sistema_inteligente': 'Sí - Busca en facturas, cotizaciones y cuentas'
+        }
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/actualizar-tasa-bcv', methods=['POST'])
 @login_required
@@ -4971,6 +5673,117 @@ def seniat_estado_sistema():
             'codigo': 'ESTADO_ERROR'
         }), 500
 
+# --- Funciones Auxiliares para WhatsApp ---
+def limpiar_numero_telefono(telefono):
+    """Limpia y formatea un número de teléfono para WhatsApp."""
+    try:
+        print(f"🔧 Formateando teléfono: {telefono}")
+        
+        # Verificar que el teléfono no esté vacío
+        if not telefono or str(telefono).strip() == '':
+            raise ValueError("El número de teléfono está vacío")
+        
+        # Remover todos los caracteres no numéricos
+        telefono_limpio = re.sub(r'[^\d]', '', str(telefono))
+        print(f"🔧 Solo números: {telefono_limpio}")
+        
+        # Verificar que haya números después de limpiar
+        if not telefono_limpio:
+            raise ValueError("No se encontraron números en el teléfono")
+        
+        # Si empieza con 0, removerlo
+        if telefono_limpio.startswith('0'):
+            telefono_limpio = telefono_limpio[1:]
+            print(f"🔧 Removido 0 inicial: {telefono_limpio}")
+        
+        # Si empieza con +58, removerlo
+        if telefono_limpio.startswith('58'):
+            telefono_limpio = telefono_limpio[2:]
+            print(f"🔧 Removido 58 inicial: {telefono_limpio}")
+        
+        # Verificar longitud y agregar 58 si es necesario
+        if len(telefono_limpio) == 10:
+            telefono_limpio = '58' + telefono_limpio
+            print(f"🔧 Agregado 58 para 10 dígitos: {telefono_limpio}")
+        elif len(telefono_limpio) == 9:
+            telefono_limpio = '58' + telefono_limpio
+            print(f"🔧 Agregado 58 para 9 dígitos: {telefono_limpio}")
+        
+        print(f"🔧 Teléfono final formateado: {telefono_limpio}")
+        
+        # Validar que el resultado sea válido
+        if len(telefono_limpio) < 11:
+            raise ValueError(f"Teléfono formateado muy corto: {telefono_limpio}")
+        
+        return telefono_limpio
+        
+    except Exception as e:
+        print(f"❌ Error en limpiar_numero_telefono: {e}")
+        raise
+
+def crear_mensaje_recordatorio(factura, cliente):
+    """Crea un mensaje personalizado de recordatorio de pago."""
+    try:
+        print(f"💬 Creando mensaje para factura: {factura.get('numero', 'N/A')}")
+        print(f"💬 Cliente: {cliente.get('nombre', 'N/A')}")
+        
+        numero_factura = factura.get('numero', 'N/A')
+        fecha_factura = factura.get('fecha', 'N/A')
+        total_usd = factura.get('total_usd', 0)
+        saldo_pendiente = factura.get('saldo_pendiente', 0)
+        vencimiento = factura.get('fecha_vencimiento', 'No especificado')
+        
+        print(f"💬 Datos extraídos: Factura={numero_factura}, Fecha={fecha_factura}, Total=${total_usd}, Saldo=${saldo_pendiente}")
+        
+        mensaje = f"""🏢 *RECORDATORIO DE PAGO*
+
+Hola {cliente.get('nombre', 'Cliente')}, 
+
+Te recordamos que tienes una factura pendiente de pago:
+
+📄 *Factura:* {numero_factura}
+📅 *Fecha:* {fecha_factura}
+💰 *Total:* ${total_usd:.2f}
+⏰ *Vencimiento:* {vencimiento}
+
+💳 *Saldo pendiente:* ${saldo_pendiente:.2f}
+
+Por favor, realiza el pago correspondiente para evitar cargos adicionales.
+
+Si ya realizaste el pago, ignora este mensaje.
+
+Para cualquier consulta, no dudes en contactarnos.
+
+¡Gracias por tu preferencia!
+
+---
+*Este es un mensaje automático del sistema de facturación*"""
+        
+        print(f"💬 Mensaje creado exitosamente: {len(mensaje)} caracteres")
+        return mensaje
+        
+    except Exception as e:
+        print(f"❌ Error creando mensaje: {e}")
+        raise
+
+def generar_enlace_whatsapp(telefono, mensaje):
+    """Genera un enlace de WhatsApp con el mensaje predefinido."""
+    try:
+        print(f"🔗 Generando enlace para teléfono: {telefono}")
+        print(f"🔗 Mensaje a codificar: {len(mensaje)} caracteres")
+        
+        # Codificar el mensaje para URL - preservar emojis
+        mensaje_codificado = urllib.parse.quote(mensaje, safe='')
+        print(f"🔗 Mensaje codificado: {len(mensaje_codificado)} caracteres")
+        
+        # Crear enlace de WhatsApp - usar api.whatsapp.com para mejor compatibilidad
+        enlace = f"https://api.whatsapp.com/send?phone={telefono}&text={mensaje_codificado}"
+        print(f"🔗 Enlace generado: {enlace[:100]}...")
+        return enlace
+    except Exception as e:
+        print(f"❌ Error generando enlace: {e}")
+        raise
+
 # --- Bloque para Ejecutar la Aplicación ---
 if __name__ == '__main__':
     import os
@@ -4983,6 +5796,89 @@ if __name__ == '__main__':
 def initdb():
     db.create_all()
     return 'Base de datos inicializada correctamente.'
+
+@app.route('/debug-recordatorio/<id>')
+@csrf.exempt
+def debug_recordatorio(id):
+    """Ruta de debug para diagnosticar problemas con recordatorios."""
+    try:
+        print(f"🔍 DEBUG recordatorio para factura: {id}")
+        
+        # Verificar que la factura existe
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        if id not in facturas:
+            return jsonify({'error': 'Factura no encontrada'}), 404
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        
+        # Verificar que el cliente existe
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        if not cliente_id or cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        # Información de debug
+        debug_info = {
+            'factura_id': id,
+            'factura_numero': factura.get('numero', 'N/A'),
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono_original': telefono,
+            'telefono_formateado': None,
+            'mensaje_generado': None,
+            'enlace_generado': None,
+            'errores': []
+        }
+        
+        # Probar cada función paso a paso
+        try:
+            telefono_formateado = limpiar_numero_telefono(telefono)
+            debug_info['telefono_formateado'] = telefono_formateado
+            print(f"✅ Teléfono formateado: {telefono_formateado}")
+        except Exception as e:
+            error_msg = f"Error formateando teléfono: {e}"
+            debug_info['errores'].append(error_msg)
+            print(f"❌ {error_msg}")
+            return jsonify(debug_info)
+        
+        try:
+            mensaje = crear_mensaje_recordatorio(factura, cliente)
+            debug_info['mensaje_generado'] = mensaje[:200] + '...' if len(mensaje) > 200 else mensaje
+            print(f"✅ Mensaje generado: {len(mensaje)} caracteres")
+        except Exception as e:
+            error_msg = f"Error creando mensaje: {e}"
+            debug_info['errores'].append(error_msg)
+            print(f"❌ {error_msg}")
+            return jsonify(debug_info)
+        
+        try:
+            enlace = generar_enlace_whatsapp(telefono_formateado, mensaje)
+            debug_info['enlace_generado'] = enlace[:200] + '...' if len(enlace) > 200 else enlace
+            print(f"✅ Enlace generado: {len(enlace)} caracteres")
+        except Exception as e:
+            error_msg = f"Error generando enlace: {e}"
+            debug_info['errores'].append(error_msg)
+            print(f"❌ {error_msg}")
+            return jsonify(debug_info)
+        
+        debug_info['success'] = True
+        debug_info['message'] = 'Todas las funciones funcionan correctamente'
+        print(f"✅ Debug completado exitosamente para factura {id}")
+        return jsonify(debug_info)
+        
+    except Exception as e:
+        import traceback
+        error_info = {
+            'success': False,
+            'error': str(e),
+            'error_type': type(e).__name__,
+            'traceback': traceback.format_exc()
+        }
+        print(f"❌ Error fatal en debug: {error_info}")
+        return jsonify(error_info), 500
 
 @app.route('/webauthn/register/options', methods=['POST'])
 def webauthn_register_options():
@@ -5067,6 +5963,842 @@ def webauthn_authenticate_verify():
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
+# --- Funcionalidad WhatsApp para Cuentas por Cobrar ---
+
+# Ruta de prueba para verificar que funciona
+@app.route('/test-whatsapp')
+def test_whatsapp():
+    return jsonify({'message': 'Ruta de prueba funcionando'})
+
+# Ruta de prueba para verificar que la ruta con path funciona
+@app.route('/test-path/<path:test_id>')
+def test_path(test_id):
+    return jsonify({'message': f'Ruta con path funcionando, ID recibido: {test_id}'})
+
+# Ruta de prueba específica para WhatsApp
+@app.route('/test-whatsapp-simple/<path:cliente_id>')
+def test_whatsapp_simple(cliente_id):
+    """Ruta de prueba simple para verificar que la ruta funciona"""
+    try:
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        if cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        return jsonify({
+            'success': True,
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono': cliente.get('telefono', 'N/A')
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Ruta de debug para ver qué está pasando (sin login para pruebas)
+@app.route('/debug-whatsapp/<path:cliente_id>')
+def debug_whatsapp(cliente_id):
+    """Ruta de debug para diagnosticar problemas con WhatsApp"""
+    try:
+        print(f"🔍 DEBUG WhatsApp para cliente: {cliente_id}")
+        
+        # Cargar datos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        print(f"📊 Clientes cargados: {len(clientes)}")
+        print(f"📊 Facturas cargadas: {len(facturas)}")
+        
+        if cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        # Buscar facturas del cliente
+        facturas_cliente = []
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                facturas_cliente.append({
+                    'id': factura_id,
+                    'numero': factura.get('numero', 'N/A'),
+                    'total_usd': factura.get('total_usd', 0),
+                    'total_abonado': factura.get('total_abonado', 0)
+                })
+        
+        debug_info = {
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono_original': telefono,
+            'telefono_tipo': str(type(telefono)),
+            'facturas_encontradas': len(facturas_cliente),
+            'facturas_detalle': facturas_cliente[:5],  # Solo las primeras 5
+            'tiene_telefono': bool(telefono and str(telefono).strip()),
+            'longitud_telefono': len(str(telefono)) if telefono else 0
+        }
+        
+        print(f"🔍 Debug info: {debug_info}")
+        return jsonify(debug_info)
+        
+    except Exception as e:
+        print(f"❌ Error en debug: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+# Ruta para servir la página de prueba
+@app.route('/test-whatsapp-routes')
+def test_whatsapp_routes():
+    """Página de prueba para verificar que las rutas de WhatsApp funcionan"""
+    return render_template('test_whatsapp.html')
+
+# Ruta de prueba simple para WhatsApp sin autenticación
+@app.route('/test-whatsapp-simple/<path:cliente_id>')
+def test_whatsapp_simple(cliente_id):
+    """Ruta de prueba simple para WhatsApp sin autenticación"""
+    try:
+        print(f"🧪 Test simple para cliente: {cliente_id}")
+        
+        # Cargar datos básicos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if cliente_id not in clientes:
+            return jsonify({
+                'error': 'Cliente no encontrado',
+                'cliente_id_buscado': cliente_id,
+                'clientes_disponibles': list(clientes.keys())[:5]
+            }), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        return jsonify({
+            'success': True,
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono': telefono,
+            'telefono_tipo': str(type(telefono)),
+            'mensaje': f'Cliente {cliente_id} encontrado correctamente'
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en test simple: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Ruta de prueba que funciona exactamente como la principal pero sin autenticación
+@app.route('/test-whatsapp-working/<path:cliente_id>', methods=['POST'])
+@csrf.exempt
+def test_whatsapp_working(cliente_id):
+    """Ruta de prueba que funciona exactamente como la principal pero sin autenticación"""
+    try:
+        print(f"🔍 TEST WhatsApp WORKING para cliente: {cliente_id}")
+        
+        # Cargar datos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        if cliente_id not in clientes:
+            return jsonify({
+                'error': 'Cliente no encontrado',
+                'cliente_id_buscado': cliente_id,
+                'clientes_disponibles': list(clientes.keys())[:10]
+            }), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono or str(telefono).strip() == '':
+            return jsonify({
+                'error': 'Cliente sin teléfono',
+                'cliente_id': cliente_id,
+                'cliente_nombre': cliente.get('nombre', 'N/A'),
+                'telefono': telefono
+            }), 400
+        
+        # Buscar facturas pendientes
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'saldo': saldo_pendiente
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        # Crear mensaje simple
+        mensaje = f"Hola {cliente.get('nombre', 'Cliente')}, tienes {len(facturas_pendientes)} facturas pendientes por un total de ${total_pendiente:.2f} USD. Por favor contacta para coordinar el pago."
+        
+        # Generar enlace simple
+        telefono_limpio = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+        if not telefono_limpio.startswith('58'):
+            telefono_limpio = '58' + telefono_limpio.lstrip('0')
+        enlace_whatsapp = f"https://wa.me/{telefono_limpio}?text={mensaje.replace(' ', '%20')}"
+        
+        return jsonify({
+            'success': True,
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono': telefono,
+            'telefono_formateado': telefono_limpio,
+            'facturas_pendientes': len(facturas_pendientes),
+            'total_pendiente': total_pendiente,
+            'mensaje': mensaje,
+            'enlace_whatsapp': enlace_whatsapp
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en test working: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+# Ruta de prueba que simula el botón de WhatsApp (sin login)
+@app.route('/test-whatsapp-button/<path:cliente_id>')
+def test_whatsapp_button(cliente_id):
+    """Ruta de prueba que simula exactamente lo que hace el botón de WhatsApp"""
+    try:
+        print(f"🔍 TEST WhatsApp Button para cliente: {cliente_id}")
+        
+        # Cargar datos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        if cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        # Simular el mismo flujo que la función principal
+        if not telefono or str(telefono).strip() == '':
+            return jsonify({
+                'error': 'Cliente sin teléfono',
+                'cliente_id': cliente_id,
+                'cliente_nombre': cliente.get('nombre', 'N/A'),
+                'telefono': telefono
+            }), 400
+        
+        # Buscar facturas pendientes
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'saldo': saldo_pendiente
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        return jsonify({
+            'success': True,
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono': telefono,
+            'facturas_pendientes': len(facturas_pendientes),
+            'total_pendiente': total_pendiente,
+            'facturas_detalle': facturas_pendientes[:3]  # Solo las primeras 3
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en test: {e}")
+        return jsonify({'error': str(e)}), 500
+
+# Ruta de prueba sin login para diagnosticar problemas
+@app.route('/test-whatsapp-no-login/<path:cliente_id>', methods=['POST'])
+@csrf.exempt
+def test_whatsapp_no_login(cliente_id):
+    """Ruta de prueba sin login para diagnosticar problemas de WhatsApp"""
+    try:
+        print(f"🔍 TEST WhatsApp NO LOGIN para cliente: {cliente_id}")
+        
+        # Cargar datos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        if cliente_id not in clientes:
+            return jsonify({
+                'error': 'Cliente no encontrado',
+                'cliente_id_buscado': cliente_id,
+                'clientes_disponibles': list(clientes.keys())[:10]
+            }), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        # Simular el mismo flujo que la función principal
+        if not telefono or str(telefono).strip() == '':
+            return jsonify({
+                'error': 'Cliente sin teléfono',
+                'cliente_id': cliente_id,
+                'cliente_nombre': cliente.get('nombre', 'N/A'),
+                'telefono': telefono
+            }), 400
+        
+        # Buscar facturas pendientes
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'saldo': saldo_pendiente
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        return jsonify({
+            'success': True,
+            'cliente_id': cliente_id,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'telefono': telefono,
+            'facturas_pendientes': len(facturas_pendientes),
+            'total_pendiente': total_pendiente,
+            'facturas_detalle': facturas_pendientes[:3]  # Solo las primeras 3
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en test no login: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/cuentas-por-cobrar/<path:cliente_id>/enviar_recordatorio_whatsapp', methods=['POST'])
+@csrf.exempt
+def enviar_recordatorio_cuentas_por_cobrar(cliente_id):
+    """Envía un recordatorio de WhatsApp con todas las facturas pendientes de un cliente."""
+    try:
+        # Verificar autenticación manualmente para mejor manejo de errores
+        if 'usuario' not in session:
+            print("❌ Usuario no autenticado")
+            return jsonify({
+                'error': 'Usuario no autenticado',
+                'redirect': url_for('login')
+            }), 401
+        
+        print(f"🔍 Iniciando envío de recordatorio WhatsApp para cliente: {cliente_id}")
+        print(f"🔍 Método HTTP: {request.method}")
+        print(f"🔍 Headers: {dict(request.headers)}")
+        print(f"🔍 Usuario autenticado: {session.get('usuario')}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        print(f"📊 Facturas cargadas: {len(facturas)}")
+        print(f"👥 Clientes cargados: {len(clientes)}")
+        
+        if cliente_id not in clientes:
+            print(f"❌ Cliente {cliente_id} no encontrado")
+            return jsonify({
+                'error': 'Cliente no encontrado',
+                'debug_info': {
+                    'cliente_id_buscado': cliente_id,
+                    'clientes_disponibles': list(clientes.keys())[:10]  # Solo los primeros 10
+                }
+            }), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        print(f"👤 Cliente: {cliente.get('nombre', 'N/A')}")
+        print(f"📱 Teléfono: '{telefono}' (tipo: {type(telefono)})")
+        
+        if not telefono or str(telefono).strip() == '':
+            print(f"❌ Cliente {cliente_id} no tiene teléfono o está vacío")
+            return jsonify({
+                'error': 'El cliente no tiene número de teléfono registrado o está vacío',
+                'debug_info': {
+                    'cliente_id': cliente_id,
+                    'cliente_nombre': cliente.get('nombre', 'N/A'),
+                    'telefono_valor': telefono,
+                    'telefono_tipo': str(type(telefono))
+                }
+            }), 400
+        
+        # Filtrar facturas pendientes del cliente
+        facturas_pendientes = []
+        total_pendiente = 0.0
+        
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                # Calcular saldo pendiente
+                total_factura = float(factura.get('total_usd', 0))
+                total_abonado = float(factura.get('total_abonado', 0))
+                saldo_pendiente = max(0, total_factura - total_abonado)
+                
+                if saldo_pendiente > 0:
+                    facturas_pendientes.append({
+                        'id': factura_id,
+                        'numero': factura.get('numero', 'N/A'),
+                        'fecha': factura.get('fecha', 'N/A'),
+                        'total': total_factura,
+                        'abonado': total_abonado,
+                        'saldo': saldo_pendiente,
+                        'vencimiento': factura.get('fecha_vencimiento', 'No especificado')
+                    })
+                    total_pendiente += saldo_pendiente
+        
+        if not facturas_pendientes:
+            print(f"✅ Cliente {cliente_id} no tiene facturas pendientes")
+            return jsonify({
+                'success': True,
+                'message': 'El cliente no tiene facturas pendientes de pago',
+                'facturas_pendientes': 0,
+                'total_pendiente': 0
+            })
+        
+        print(f"📋 Facturas pendientes encontradas: {len(facturas_pendientes)}")
+        print(f"💰 Total pendiente: ${total_pendiente:.2f}")
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_original = telefono
+        print(f"📱 Teléfono original recibido: '{telefono}' (tipo: {type(telefono)})")
+        
+        try:
+            # Formateo simple y directo
+            telefono = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            if not telefono.startswith('58'):
+                telefono = '58' + telefono.lstrip('0')
+            print(f"📱 Teléfono formateado exitosamente: {telefono}")
+        except Exception as e:
+            print(f"❌ Error formateando teléfono: {e}")
+            return jsonify({
+                'error': f'Error formateando teléfono: {str(e)}',
+                'debug_info': {
+                    'telefono_original': telefono_original,
+                    'tipo_telefono': str(type(telefono_original)),
+                    'cliente_id': cliente_id,
+                    'cliente_nombre': cliente.get('nombre', 'N/A')
+                }
+            }), 400
+        
+        if not telefono or len(str(telefono)) < 8:
+            print(f"❌ Teléfono formateado no válido: {telefono}")
+            return jsonify({
+                'error': 'El número de teléfono no es válido después del formateo',
+                'debug_info': {
+                    'telefono_formateado': telefono,
+                    'longitud': len(str(telefono)) if telefono else 0,
+                    'cliente_id': cliente_id
+                }
+            }), 400
+        
+        # Crear mensaje personalizado para cuentas por cobrar
+        try:
+            # Mensaje simple y directo
+            mensaje = f"Hola {cliente.get('nombre', 'Cliente')}, tienes {len(facturas_pendientes)} facturas pendientes por un total de ${total_pendiente:.2f} USD. Por favor contacta para coordinar el pago."
+            print(f"💬 Mensaje creado exitosamente: {len(mensaje)} caracteres")
+            print(f"💬 Mensaje completo: {mensaje}")
+        except Exception as e:
+            print(f"❌ Error creando mensaje: {e}")
+            return jsonify({'error': f'Error creando mensaje: {str(e)}'}), 400
+        
+        # Generar enlace de WhatsApp
+        try:
+            # Enlace simple y directo
+            telefono_limpio = str(telefono).replace(' ', '').replace('-', '').replace('(', '').replace(')', '')
+            print(f"🔗 Teléfono limpio: {telefono_limpio}")
+            if not telefono_limpio.startswith('58'):
+                telefono_limpio = '58' + telefono_limpio.lstrip('0')
+                print(f"🔗 Teléfono con prefijo 58: {telefono_limpio}")
+            enlace_whatsapp = f"https://wa.me/{telefono_limpio}?text={mensaje.replace(' ', '%20')}"
+            print(f"🔗 Enlace WhatsApp generado exitosamente: {enlace_whatsapp}")
+        except Exception as e:
+            print(f"❌ Error generando enlace: {e}")
+            return jsonify({'error': f'Error generando enlace: {str(e)}'}), 400
+        
+        # Registrar en la bitácora (opcional, no fallar si hay error)
+        try:
+            # Registro simple en consola
+            print(f"📝 REGISTRO: Usuario {session.get('usuario', 'Sistema')} envió recordatorio WhatsApp a {cliente.get('nombre', 'N/A')} - {len(facturas_pendientes)} facturas pendientes - Total: ${total_pendiente:.2f}")
+        except Exception as e:
+            print(f"⚠️ Error registrando en bitácora (no crítico): {e}")
+        
+        resultado = {
+            'success': True,
+            'message': 'Recordatorio de cuentas por cobrar preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'facturas_pendientes': len(facturas_pendientes),
+            'total_pendiente': total_pendiente,
+        }
+        
+        print(f"✅ Recordatorio preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        print(f"📱 Teléfono: {telefono}")
+        print(f"🔗 Enlace: {enlace_whatsapp}")
+        
+        return jsonify(resultado)
+        
+    except Exception as e:
+        error_msg = f"Error al enviar recordatorio de cuentas por cobrar: {str(e)}"
+        print(f"❌ {error_msg}")
+        import traceback
+        print(f"🔍 Traceback completo:")
+        traceback.print_exc()
+        
+        return jsonify({
+            'success': False,
+            'error': f'Error al preparar el recordatorio: {str(e)}',
+            'debug_info': {
+                'cliente_id': cliente_id,
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        }), 500
+
+@app.route('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', methods=['POST'])
+@csrf.exempt
+def enviar_recordatorio_cuentas_por_cobrar_body():
+    """Endpoint alternativo que recibe cliente_id por body JSON y delega al principal."""
+    try:
+        print(f"🔍 Endpoint alternativo llamado - Método: {request.method}")
+        print(f"🔍 Headers: {dict(request.headers)}")
+        print(f"🔍 Content-Type: {request.content_type}")
+        
+        # Intentar obtener datos del body
+        data = request.get_json(silent=True)
+        print(f"🔍 JSON recibido: {data}")
+        
+        if not data:
+            # Intentar form data
+            data = request.form.to_dict()
+            print(f"🔍 Form data recibido: {data}")
+        
+        cliente_id = str(data.get('cliente_id') or '').strip()
+        print(f"🔍 Cliente ID extraído: '{cliente_id}'")
+        
+        if not cliente_id:
+            print("❌ Cliente ID vacío o faltante")
+            return jsonify({
+                'error': 'Falta cliente_id en la solicitud',
+                'debug_info': {
+                    'json_data': request.get_json(silent=True),
+                    'form_data': request.form.to_dict(),
+                    'headers': dict(request.headers)
+                }
+            }), 400
+        
+        print(f"📩 Cliente ID válido recibido: {cliente_id}")
+        print(f"📩 Llamando a función principal...")
+        
+        # Llamar a la función principal
+        resultado = enviar_recordatorio_cuentas_por_cobrar(cliente_id)
+        print(f"📩 Resultado de función principal: {resultado}")
+        return resultado
+        
+    except Exception as e:
+        print(f"❌ Error en endpoint alternativo (body): {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'error': f'Error en endpoint alternativo: {str(e)}',
+            'debug_info': {
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        }), 500
+
+@app.route('/facturas/<path:cliente_id>/enviar_informe_facturas_pagadas', methods=['POST'])
+@csrf.exempt
+def enviar_informe_facturas_pagadas(cliente_id):
+    """Envía un informe de facturas pagadas, abonadas y cobradas por WhatsApp al cliente."""
+    try:
+        print(f"📊 Iniciando envío de informe de facturas pagadas para cliente: {cliente_id}")
+        
+        # Cargar datos
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        if not clientes or not facturas:
+            return jsonify({'error': 'No se pudieron cargar los datos del sistema'}), 400
+        
+        # Obtener cliente
+        cliente = clientes.get(cliente_id)
+        if not cliente:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        print(f"👤 Cliente encontrado: {cliente.get('nombre', 'N/A')}")
+        
+        # Obtener teléfono del cliente
+        telefono = cliente.get('telefono', '')
+        if not telefono:
+            return jsonify({'error': 'El cliente no tiene número de teléfono registrado'}), 400
+        
+        print(f"📱 Teléfono del cliente: {telefono}")
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_original = telefono
+        try:
+            telefono = limpiar_numero_telefono(telefono)
+            print(f"📱 Teléfono formateado exitosamente: {telefono}")
+        except Exception as e:
+            print(f"❌ Error formateando teléfono: {e}")
+            return jsonify({'error': f'Error formateando teléfono: {str(e)}'}), 400
+        
+        print(f"📱 Teléfono original: {telefono_original}")
+        print(f"📱 Teléfono formateado: {telefono}")
+        
+        if not telefono or len(telefono) < 10:
+            print(f"❌ Teléfono formateado no válido: {telefono}")
+            return jsonify({'error': 'El número de teléfono no es válido'}), 400
+        
+        # Filtrar facturas del cliente
+        facturas_cliente = []
+        for factura_id, factura in facturas.items():
+            if factura.get('cliente_id') == cliente_id:
+                factura_copia = factura.copy()
+                factura_copia['_id'] = factura_id
+                facturas_cliente.append(factura_copia)
+        
+        if not facturas_cliente:
+            return jsonify({'error': 'El cliente no tiene facturas registradas'}), 400
+        
+        print(f"📄 Facturas encontradas para el cliente: {len(facturas_cliente)}")
+        
+        # Crear mensaje del informe
+        try:
+            mensaje = crear_mensaje_informe_facturas_pagadas(cliente, facturas_cliente)
+            print(f"💬 Mensaje del informe creado exitosamente: {len(mensaje)} caracteres")
+        except Exception as e:
+            print(f"❌ Error creando mensaje del informe: {e}")
+            return jsonify({'error': f'Error creando mensaje del informe: {str(e)}'}), 400
+        
+        # Generar enlace de WhatsApp
+        try:
+            enlace_whatsapp = generar_enlace_whatsapp(telefono, mensaje)
+            print(f"🔗 Enlace WhatsApp generado exitosamente: {enlace_whatsapp}")
+        except Exception as e:
+            print(f"❌ Error generando enlace: {e}")
+            return jsonify({'error': f'Error generando enlace: {str(e)}'}), 400
+        
+        # Registrar en la bitácora
+        try:
+            registrar_bitacora(
+                session.get('usuario', 'Sistema'),
+                'Informe Facturas Pagadas WhatsApp Enviado',
+                f'Cliente: {cliente.get("nombre", "N/A")} - {len(facturas_cliente)} facturas en el informe'
+            )
+            print("📝 Registrado en bitácora")
+        except Exception as e:
+            print(f"⚠️ Error registrando en bitácora: {e}")
+        
+        resultado = {
+            'success': True,
+            'message': 'Informe de facturas pagadas preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A'),
+            'total_facturas': len(facturas_cliente),
+            'debug_info': {
+                'cliente_id': cliente_id,
+                'telefono_original': telefono_original,
+                'telefono_formateado': telefono
+            }
+        }
+        
+        print(f"✅ Informe de facturas pagadas preparado exitosamente para {cliente.get('nombre', 'N/A')}")
+        return jsonify(resultado)
+        
+    except Exception as e:
+        error_msg = f"Error al enviar informe de facturas pagadas: {str(e)}"
+        print(f"❌ {error_msg}")
+        import traceback
+        print(f"🔍 Traceback completo:")
+        traceback.print_exc()
+        
+        return jsonify({
+            'success': False,
+            'error': f'Error al preparar el informe: {str(e)}',
+            'debug_info': {
+                'cliente_id': cliente_id,
+                'error_type': type(e).__name__,
+                'error_details': str(e)
+            }
+        })
+
+@app.route('/enviar-informe-facturas-pagadas', methods=['POST'])
+@csrf.exempt
+def enviar_informe_facturas_pagadas_post():
+    """Variante JSON: recibe cliente_id en el cuerpo y delega al handler principal."""
+    try:
+        payload = request.get_json(silent=True) or {}
+        cliente_id = payload.get('cliente_id') or request.form.get('cliente_id')
+        if not cliente_id:
+            return jsonify({'success': False, 'error': 'cliente_id requerido'}), 400
+        return enviar_informe_facturas_pagadas(cliente_id)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+def crear_mensaje_informe_facturas_pagadas(cliente, facturas_cliente):
+    """Crea un mensaje personalizado del informe de facturas pagadas, abonadas y cobradas."""
+    try:
+        print(f"💬 Creando informe de facturas para cliente: {cliente.get('nombre', 'N/A')}")
+        print(f"💬 Total de facturas: {len(facturas_cliente)}")
+        
+        nombre_cliente = cliente.get('nombre', 'Cliente')
+        
+        # Categorizar facturas
+        facturas_cobradas = []
+        facturas_abonadas = []
+        facturas_pagadas = []
+        
+        for factura in facturas_cliente:
+            total_facturado = float(factura.get('total_usd', 0))
+            total_abonado = float(factura.get('total_abonado', 0))
+            saldo = max(0, total_facturado - total_abonado)
+            
+            if saldo == 0 and total_abonado > 0:
+                facturas_cobradas.append(factura)
+            elif total_abonado > 0 and saldo > 0:
+                facturas_abonadas.append(factura)
+            else:
+                facturas_pagadas.append(factura)
+        
+        # Calcular totales
+        total_cobrado = sum(float(f.get('total_usd', 0)) for f in facturas_cobradas)
+        total_abonado = sum(float(f.get('total_abonado', 0)) for f in facturas_abonadas)
+        total_pagado = sum(float(f.get('total_usd', 0)) for f in facturas_pagadas)
+        
+        print(f"💬 Facturas cobradas: {len(facturas_cobradas)} - Total: ${total_cobrado:.2f}")
+        print(f"💬 Facturas abonadas: {len(facturas_abonadas)} - Total: ${total_abonado:.2f}")
+        print(f"💬 Facturas pagadas: {len(facturas_pagadas)} - Total: ${total_pagado:.2f}")
+        
+        # Crear mensaje
+        mensaje = f"""🏢 *INFORME DE FACTURAS - {nombre_cliente.upper()}*
+
+Hola {nombre_cliente}, 
+
+Te enviamos un resumen de tu historial de facturas:
+
+📊 *RESUMEN GENERAL:*
+• Total de facturas: {len(facturas_cliente)}
+• Monto total facturado: ${sum(float(f.get('total_usd', 0)) for f in facturas_cliente):.2f}
+
+✅ *FACTURAS COMPLETAMENTE COBRADAS:*
+• Cantidad: {len(facturas_cobradas)}
+• Total: ${total_cobrado:.2f}
+
+💰 *FACTURAS CON ABONOS:*
+• Cantidad: {len(facturas_abonadas)}
+• Total abonado: ${total_abonado:.2f}
+
+📄 *FACTURAS PENDIENTES:*
+• Cantidad: {len(facturas_pagadas)}
+• Total pendiente: ${total_pagado:.2f}
+
+📋 *DETALLE DE FACTURAS COBRADAS:*
+"""
+        
+        # Agregar lista de facturas cobradas
+        for i, factura in enumerate(facturas_cobradas[:5], 1):  # Máximo 5 para no hacer el mensaje muy largo
+            mensaje += f"{i}. {factura.get('numero', 'N/A')} - {factura.get('fecha', 'N/A')} - ${factura.get('total_usd', 0):.2f}\n"
+        
+        if len(facturas_cobradas) > 5:
+            mensaje += f"... y {len(facturas_cobradas) - 5} facturas más\n"
+        
+        mensaje += f"""
+
+📋 *DETALLE DE FACTURAS CON ABONOS:*
+"""
+        
+        # Agregar lista de facturas abonadas
+        for i, factura in enumerate(facturas_abonadas[:5], 1):
+            abonado = float(factura.get('total_abonado', 0))
+            pendiente = float(factura.get('total_usd', 0)) - abonado
+            mensaje += f"{i}. {factura.get('numero', 'N/A')} - Abonado: ${abonado:.2f} - Pendiente: ${pendiente:.2f}\n"
+        
+        if len(facturas_abonadas) > 5:
+            mensaje += f"... y {len(facturas_abonadas) - 5} facturas más\n"
+        
+        mensaje += f"""
+
+¡Gracias por tu confianza y por mantener al día tus pagos!
+
+Para cualquier consulta sobre tus facturas, no dudes en contactarnos.
+
+---
+*Este es un informe automático del sistema de facturación*"""
+        
+        print(f"💬 Informe de facturas creado exitosamente: {len(mensaje)} caracteres")
+        return mensaje
+        
+    except Exception as e:
+        print(f"❌ Error creando informe de facturas: {e}")
+        raise
+
+def crear_mensaje_cuentas_por_cobrar(cliente, facturas_pendientes, total_pendiente):
+    """Crea un mensaje personalizado de recordatorio de cuentas por cobrar."""
+    try:
+        print(f"💬 Creando mensaje de cuentas por cobrar para cliente: {cliente.get('nombre', 'N/A')}")
+        print(f"💬 Facturas pendientes: {len(facturas_pendientes)}")
+        print(f"💬 Total pendiente: ${total_pendiente:.2f}")
+        
+        nombre_cliente = cliente.get('nombre', 'Cliente')
+        
+        # Crear lista de facturas pendientes
+        lista_facturas = ""
+        for i, factura in enumerate(facturas_pendientes, 1):
+            lista_facturas += f"{i}. {factura['numero']} - {factura['fecha']} - Saldo: ${factura['saldo']:.2f}\n"
+        
+        mensaje = f"""🏢 *RECORDATORIO DE CUENTAS POR COBRAR*
+
+Hola {nombre_cliente}, 
+
+Te recordamos que tienes facturas pendientes de pago:
+
+📋 *Resumen:*
+• Total de facturas pendientes: {len(facturas_pendientes)}
+• Monto total pendiente: ${total_pendiente:.2f}
+
+📄 *Facturas pendientes:*
+{lista_facturas.strip()}
+
+Por favor, realiza el pago correspondiente para regularizar tu situación.
+
+Si ya realizaste algún pago, ignora este mensaje.
+
+Para cualquier consulta o para coordinar pagos, no dudes en contactarnos.
+
+¡Gracias por tu preferencia!
+
+---
+*Este es un mensaje automático del sistema de facturación*"""
+        
+        print(f"💬 Mensaje de cuentas por cobrar creado exitosamente: {len(mensaje)} caracteres")
+        return mensaje
+        
+    except Exception as e:
+        print(f"❌ Error creando mensaje de cuentas por cobrar: {e}")
+        raise
+
 # NOTA: Esta sección se consolidó al inicio del archivo para evitar usar rutas del sistema como /data en Render.
 # Mantener una única definición de CAPTURAS_FOLDER basada en BASE_PATH y enlazada en tiempo de inicio por render.yaml.
+
+# Debug: Imprimir rutas disponibles
+if __name__ == '__main__':
+    print("🔍 Rutas disponibles en la aplicación:")
+    for rule in app.url_map.iter_rules():
+        print(f"  {rule.rule} -> {rule.endpoint}")
+    print("🚀 Aplicación iniciada correctamente")
 

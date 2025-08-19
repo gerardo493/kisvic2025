@@ -493,6 +493,8 @@
   </div>
 </div>
 
+
+
 <!-- Modal de confirmación para eliminar pago -->
 <div class="modal fade" id="modalEliminarPago" tabindex="-1">
     <div class="modal-dialog">
@@ -697,5 +699,7 @@ function confirmarEliminar(id, numero) {
     document.getElementById('formEliminar').action = "{{ url_for('eliminar_factura', id='__ID__') }}".replace('__ID__', id);
     new bootstrap.Modal(document.getElementById('modalEliminar')).show();
 }
+
+
 </script>
 {% endblock %} 

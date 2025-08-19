@@ -818,9 +818,11 @@
         "nombre": "JOSE GREGORIO RUIZ",
         "email": "josegregorioruiz@gmail.com",
         "telefono": "+5804121447869",
-        "direccion": "Cajua Aragua",
+        "direccion": "Cagua Aragua",
         "fecha_creacion": "2025-08-10T22:40:50.854939",
         "usuario_creacion": "admin",
+        "fecha_ultima_actualizacion": "2025-08-18T13:09:44.754006",
+        "usuario_ultima_actualizacion": "admin",
         "activo": true,
         "validado_seniat": true
     }

@@ -16240,5 +16240,195 @@
         "total_abonado": 0,
         "estado": "pendiente",
         "saldo_pendiente": 130.8
+    },
+    "74bf71e3-7d2b-4f5c-8d47-4a4ececdcc77": {
+        "numero": "FAC-00000725",
+        "numero_secuencial": 725,
+        "fecha": "2025-08-16",
+        "hora": "22:56:58",
+        "timestamp_creacion": "2025-08-16T22:56:58.338460",
+        "cliente_id": "26369968",
+        "cliente_datos": {
+            "rif": "26369968",
+            "nombre": "gerardo",
+            "direccion": "marcay",
+            "telefono": "04121447869",
+            "email": ""
+        },
+        "condicion_pago": "contado",
+        "dias_credito": "30",
+        "fecha_vencimiento": "",
+        "tasa_bcv": 135.64,
+        "items": [
+            {
+                "id": "13",
+                "nombre": "CHANCA PIEDRA X 60 CAP",
+                "cantidad": 50,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 406.91999999999996,
+                "categoria": "Calculo Renal",
+                "codigo_barras": "",
+                "subtotal_usd": 150.0,
+                "subtotal_bs": 20345.999999999996
+            }
+        ],
+        "productos": [
+            "13"
+        ],
+        "cantidades": [
+            "50"
+        ],
+        "precios": [
+            3.0
+        ],
+        "descuento": 0.0,
+        "tipo_descuento": "bs",
+        "iva": 0.0,
+        "subtotal_usd": 150.0,
+        "subtotal_bs": 20345.999999999996,
+        "descuento_total": 0.0,
+        "iva_total": 0.0,
+        "total_usd": 150.0,
+        "total_bs": 20345.999999999996,
+        "pagos": [],
+        "moneda_principal": "USD",
+        "moneda_secundaria": "VES",
+        "_metadatos_seguridad": {
+            "tipo_documento": "FACTURA",
+            "fecha_creacion": "2025-08-16 22:56:58.353",
+            "mac_address": "d8:9e:f3:41:8b:22",
+            "hostname": "DESKTOP-S2434A2",
+            "version_sistema": "1.0.0",
+            "inmutable": true,
+            "id_documento": "74bf71e3-7d2b-4f5c-8d47-4a4ececdcc77",
+            "hash_inmutable": "dae83279c375911e3cbf3f96c8d49d41e2929676c374ecf212a6c8927c298a00",
+            "firma_digital": "ab3ceafadf829ba61a9837848c5a0e5cd6770537adc27af31d410c4e460240c8"
+        },
+        "total_abonado": 0,
+        "estado": "pendiente",
+        "saldo_pendiente": 150.0
+    },
+    "e132cd06-496d-44db-ba3d-9843455e1ad4": {
+        "numero": "FAC-00000726",
+        "numero_secuencial": 726,
+        "fecha": "2025-08-18",
+        "hora": "13:03:30",
+        "timestamp_creacion": "2025-08-18T13:03:30.504701",
+        "cliente_id": "V-8576138",
+        "cliente_datos": {
+            "rif": "V-8576138",
+            "nombre": "JOSE GREGORIO RUIZ",
+            "direccion": "Cajua Aragua",
+            "telefono": "+5804121447869",
+            "email": "josegregorioruiz@gmail.com"
+        },
+        "condicion_pago": "credito",
+        "dias_credito": "21",
+        "fecha_vencimiento": "2025-09-07",
+        "tasa_bcv": 136.89,
+        "items": [
+            {
+                "id": "16",
+                "nombre": "COLON CLEANSER X 60 CAP",
+                "cantidad": 3,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 410.66999999999996,
+                "categoria": "Limpieza De colon",
+                "codigo_barras": "",
+                "subtotal_usd": 9.0,
+                "subtotal_bs": 1232.0099999999998
+            },
+            {
+                "id": "36",
+                "nombre": "VENA CLEASNER X 60 CAP",
+                "cantidad": 2,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 410.66999999999996,
+                "categoria": "Circulación Insuficiencia Venosa",
+                "codigo_barras": "",
+                "subtotal_usd": 6.0,
+                "subtotal_bs": 821.3399999999999
+            },
+            {
+                "id": "19",
+                "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+                "cantidad": 2,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 410.66999999999996,
+                "categoria": "Circulación Insuficiencia Venosa",
+                "codigo_barras": "",
+                "subtotal_usd": 6.0,
+                "subtotal_bs": 821.3399999999999
+            },
+            {
+                "id": "18",
+                "nombre": "DIENTE DE LEON X 60 CAP",
+                "cantidad": 2,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 410.66999999999996,
+                "categoria": "Protector Hepatico",
+                "codigo_barras": "",
+                "subtotal_usd": 6.0,
+                "subtotal_bs": 821.3399999999999
+            },
+            {
+                "id": "20",
+                "nombre": "GINKGO C/ GINSENG X 60 CAP",
+                "cantidad": 3,
+                "precio_unitario_usd": 3.0,
+                "precio_unitario_bs": 410.66999999999996,
+                "categoria": "Oxigenante/ Energizante",
+                "codigo_barras": "",
+                "subtotal_usd": 9.0,
+                "subtotal_bs": 1232.0099999999998
+            }
+        ],
+        "productos": [
+            "16",
+            "36",
+            "19",
+            "18",
+            "20"
+        ],
+        "cantidades": [
+            "3",
+            "2",
+            "2",
+            "2",
+            "3"
+        ],
+        "precios": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0
+        ],
+        "descuento": 0.0,
+        "tipo_descuento": "bs",
+        "iva": 0.0,
+        "subtotal_usd": 36.0,
+        "subtotal_bs": 4928.039999999999,
+        "descuento_total": 0.0,
+        "iva_total": 0.0,
+        "total_usd": 36.0,
+        "total_bs": 4928.039999999999,
+        "pagos": [],
+        "moneda_principal": "USD",
+        "moneda_secundaria": "VES",
+        "_metadatos_seguridad": {
+            "tipo_documento": "FACTURA",
+            "fecha_creacion": "2025-08-18 13:03:30.504",
+            "mac_address": "d8:9e:f3:41:8b:22",
+            "hostname": "DESKTOP-S2434A2",
+            "version_sistema": "1.0.0",
+            "inmutable": true,
+            "id_documento": "e132cd06-496d-44db-ba3d-9843455e1ad4",
+            "hash_inmutable": "e010ef4fc4b5f6805a4d249a714e46e302d812d81903e90ff5663a4f2bc6b4b0",
+            "firma_digital": "bbabc78da478184365e3e956c98a58478d81cd95edbf7f16ef6add2374826a6a"
+        },
+        "total_abonado": 0,
+        "estado": "pendiente",
+        "saldo_pendiente": 36.0
     }
 }

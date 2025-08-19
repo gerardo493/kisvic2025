@@ -483,6 +483,20 @@
                         <button onclick="window.print()" class="btn btn-dark ms-2">
                             <i class="fas fa-print me-2"></i>Imprimir
                         </button>
+                        <!-- Botón para enviar informe de facturas pagadas -->
+                        {% if cliente_seleccionado %}
+                        <button onclick="enviarInformeFacturasPagadas('{{ cliente_seleccionado }}', '{{ cliente_nombre_seleccionado }}')" 
+                                class="btn btn-primary ms-2" 
+                                title="Enviar informe de facturas pagadas a {{ cliente_nombre_seleccionado }}">
+                            <i class="fas fa-chart-line me-2"></i>Informe Facturas
+                        </button>
+                        {% endif %}
+                        <!-- Botón de prueba de emojis -->
+                        <button onclick="probarEmojis('Hola, este es un mensaje de prueba con emojis: 📊 📋 📅 🔴 🟡 🟢 ⚠️ 💡')" 
+                                class="btn btn-warning ms-2" 
+                                title="Probar funciones de emojis">
+                            <i class="fas fa-bug me-2"></i>Probar Emojis
+                        </button>
                     </div>
                     <div class="mb-4" style="font-size:1rem;color:#e3eafc;">
                         <span>Los totales globales siempre reflejan todas las facturas. La tabla y el conteo de facturas respetan el filtro seleccionado.</span>
@@ -994,4 +1008,741 @@ document.addEventListener('DOMContentLoaded', updateCarrusel);
 </script>
 
 <!-- Script de antigüedad duplicado eliminado -->
+
+<script>
+// Funcionalidad para enviar recordatorios de cuentas por cobrar por WhatsApp
+function enviarRecordatorioCuentasPorCobrar(clienteId, clienteNombre) {
+    console.log('🔍 Función llamada con:', { clienteId, clienteNombre });
+    
+    if (!clienteId) {
+        alert('Error: No se pudo identificar al cliente');
+        return;
+    }
+    
+    // Confirmar envío
+    if (!confirm(`¿Deseas enviar un recordatorio de cuentas por cobrar por WhatsApp a ${clienteNombre}?`)) {
+        return;
+    }
+    
+    // Mostrar indicador de carga
+    const btn = event.target.closest('button');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    btn.disabled = true;
+    
+    const url = `/cuentas-por-cobrar/enviar_recordatorio_whatsapp`;
+    console.log('📡 Enviando solicitud a:', url);
+    
+    // Enviar solicitud al servidor
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ cliente_id: clienteId })
+    })
+            .then(response => {
+            console.log('📡 Respuesta del servidor:', response.status, response.statusText);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('📊 Datos recibidos:', data);
+            if (data.success) {
+                // Mostrar modal de WhatsApp en lugar de confirm
+                mostrarModalWhatsAppCuentasPorCobrar(data);
+            } else {
+                alert(`❌ Error: ${data.error || 'No se pudo preparar el recordatorio'}`);
+            }
+        })
+    .catch(error => {
+        console.error('❌ Error completo:', error);
+        console.error('❌ Stack trace:', error.stack);
+        
+        let errorMessage = '❌ Error de conexión. ';
+        if (error.message.includes('HTTP')) {
+            errorMessage += `Error del servidor: ${error.message}`;
+        } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            errorMessage += 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+        } else {
+            errorMessage += `Error: ${error.message}`;
+        }
+        
+        alert(errorMessage);
+    })
+    .finally(() => {
+        // Restaurar botón
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+    });
+}
+
+// Función para mostrar información detallada del recordatorio
+function mostrarDetallesRecordatorio(data) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📱 Recordatorio WhatsApp Preparado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success">
+                        <h6><i class="fas fa-check-circle"></i> Recordatorio preparado exitosamente</h6>
+                        <p class="mb-0">Cliente: <strong>${data.cliente_nombre}</strong></p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle"></i> Información del Cliente</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Nombre:</strong> ${data.cliente_nombre}</li>
+                                <li><strong>Teléfono:</strong> ${data.telefono}</li>
+                                <li><strong>Facturas pendientes:</strong> ${data.facturas_pendientes}</li>
+                                <li><strong>Total pendiente:</strong> $${data.total_pendiente.toFixed(2)}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-whatsapp"></i> Acción</h6>
+                            <p>Se ha generado un enlace de WhatsApp con el mensaje personalizado.</p>
+                            <button class="btn btn-success btn-lg w-100" onclick="window.open('${data.enlace_whatsapp}', '_blank')">
+                                <i class="fas fa-whatsapp me-2"></i>Abrir WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h6><i class="fas fa-envelope"></i> Vista Previa del Mensaje</h6>
+                        <div class="border rounded p-3 bg-light">
+                            <pre style="white-space: pre-wrap; font-family: inherit;">${data.mensaje}</pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="window.open('${data.enlace_whatsapp}', '_blank')">
+                        <i class="fas fa-whatsapp me-2"></i>Abrir WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const modalInstance = new bootstrap.Modal(modal);
+    modalInstance.show();
+    
+    // Limpiar modal cuando se cierre
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+}
+
+function mostrarModalWhatsAppCuentasPorCobrar(data) {
+    console.log('🎯 Mostrando modal de cuentas por cobrar con datos:', data);
+    
+    // Validar datos requeridos
+    if (!data.enlace_whatsapp) {
+        console.error('❌ Falta enlace_whatsapp en los datos:', data);
+        alert('Error: No se pudo generar el enlace de WhatsApp');
+        return;
+    }
+    
+    // Crear modal dinámicamente
+    const modalHTML = `
+        <div class="modal fade" id="whatsappModalCuentas" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="fab fa-whatsapp me-2"></i>Recordatorio de Cuentas por Cobrar
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-success mb-3">
+                                    <i class="fas fa-check-circle me-2"></i>Recordatorio preparado exitosamente
+                                </h6>
+                                <p><strong>Cliente:</strong> ${data.cliente_nombre || 'N/A'}</p>
+                                <p><strong>Teléfono:</strong> ${data.telefono || 'N/A'}</p>
+                                <p><strong>Facturas pendientes:</strong> ${data.facturas_pendientes || 0}</p>
+                                <p><strong>Total pendiente:</strong> $${data.total_pendiente || 0}</p>
+                                <p><strong>Mensaje:</strong></p>
+                                <div class="border rounded p-3 bg-light">
+                                    <pre style="white-space: pre-wrap; font-size: 0.9em;">${data.mensaje || 'Mensaje no disponible'}</pre>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fab fa-whatsapp text-success" style="font-size: 4rem;"></i>
+                                </div>
+                                <p class="text-muted">Haz clic en el botón para abrir WhatsApp</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <a href="${data.enlace_whatsapp}" 
+                           target="_blank" 
+                           class="btn btn-success btn-lg">
+                            <i class="fab fa-whatsapp me-2"></i>Abrir WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(document.getElementById('whatsappModalCuentas'));
+    modal.show();
+    
+    // Limpiar modal cuando se cierre
+    document.getElementById('whatsappModalCuentas').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Funcionalidad para enviar informes de facturas pagadas por WhatsApp
+function enviarInformeFacturasPagadas(clienteId, clienteNombre) {
+    console.log('🔍 Función de informe llamada con:', { clienteId, clienteNombre });
+    
+    if (!clienteId) {
+        alert('Error: No se pudo identificar al cliente');
+        return;
+    }
+    
+    // Obtener el filtro actual de la página
+    const filtroActual = '{{ filtro }}';
+    console.log('🎯 Filtro actual detectado:', filtroActual);
+    
+    // Adaptar el mensaje de confirmación según el filtro
+    let mensajeConfirmacion = `¿Deseas enviar un informe de facturas por WhatsApp a ${clienteNombre}?\n\n`;
+    
+    switch(filtroActual) {
+        case 'por_cobrar':
+            mensajeConfirmacion += `Este informe incluirá:\n• Facturas pendientes por cobrar\n• Saldos pendientes\n• Fechas de vencimiento`;
+            break;
+        case 'abonada':
+            mensajeConfirmacion += `Este informe incluirá:\n• Facturas con abonos parciales\n• Saldos pendientes\n• Progreso de pagos`;
+            break;
+        case 'cobrada':
+            mensajeConfirmacion += `Este informe incluirá:\n• Facturas completamente pagadas\n• Total de pagos realizados\n• Historial de cobranzas`;
+            break;
+        default: // 'todas'
+            mensajeConfirmacion += `Este informe incluirá:\n• Todas las facturas del cliente\n• Resumen completo de estados\n• Balance general`;
+    }
+    
+    // Confirmar envío
+    if (!confirm(mensajeConfirmacion)) {
+        return;
+    }
+    
+    // Mostrar indicador de carga
+    const btn = event.target.closest('button');
+    const originalContent = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando...';
+    btn.disabled = true;
+    
+    try {
+        console.log('🔍 Iniciando generación de informe para cliente:', clienteId);
+        
+        // Obtener datos del cliente desde el contexto de la página con validación
+        const clientes = {{ clientes|default({})|tojson }};
+        console.log('📊 Datos de clientes cargados:', clientes);
+        const cliente = clientes[clienteId] || {};
+        console.log('👤 Cliente encontrado:', cliente);
+        
+        // Generar informe en el frontend
+        const telefonoRaw = String(cliente.telefono || '').trim();
+        
+        // Formatear teléfono simple
+        let telefono = telefonoRaw.replace(/\D/g, '');
+        if (telefono.startsWith('00')) telefono = telefono.slice(2);
+        if (telefono.startsWith('0')) telefono = telefono.slice(1);
+        if (!telefono.startsWith('58')) telefono = '58' + telefono;
+        
+        if (!telefono) {
+            alert('El cliente no tiene teléfono registrado.');
+            return;
+        }
+        
+        // Obtener información de facturas del cliente desde el contexto con validación
+        const cuentasObj = {{ cuentas|default({})|tojson }};
+        console.log('📋 Datos de cuentas cargados:', cuentasObj);
+        const cuentasArr = Array.isArray(cuentasObj) ? cuentasObj : Object.values(cuentasObj || {});
+        console.log('📋 Cuentas convertidas a array:', cuentasArr);
+        const cuentasCliente = cuentasArr.filter(c => c && String(c.cliente_id) === String(clienteId));
+        console.log('🎯 Cuentas filtradas para el cliente:', cuentasCliente);
+        
+        // Clasificar facturas por estado
+        const facturasPorCobrar = cuentasCliente.filter(c => c.estado === 'por_cobrar');
+        const facturasAbonadas = cuentasCliente.filter(c => c.estado === 'abonada');
+        const facturasCobradas = cuentasCliente.filter(c => c.estado === 'cobrada');
+        
+        // Calcular totales por estado
+        const totalPorCobrar = facturasPorCobrar.reduce((sum, c) => sum + (parseFloat(c.saldo_pendiente) || 0), 0);
+        const totalAbonadas = facturasAbonadas.reduce((sum, c) => sum + (parseFloat(c.saldo_pendiente) || 0), 0);
+        const totalCobradas = facturasCobradas.reduce((sum, c) => sum + (parseFloat(c.total_usd) || 0), 0);
+        
+        const totalFacturas = cuentasCliente.length;
+        const totalFacturado = cuentasCliente.reduce((sum, c) => sum + (parseFloat(c.total_usd) || 0), 0);
+        const totalAbonado = cuentasCliente.reduce((sum, c) => {
+            const abonado = c.abonado_usd != null ? parseFloat(c.abonado_usd) : (parseFloat(c.total_usd) || 0) - (parseFloat(c.saldo_pendiente) || 0);
+            return sum + (isNaN(abonado) ? 0 : abonado);
+        }, 0);
+        const totalPendiente = Math.max(totalFacturado - totalAbonado, 0);
+        
+        // Generar mensaje del informe inteligente adaptado al filtro
+        let mensaje = `Hola ${clienteNombre}, aquí tienes tu informe de facturas (${filtroActual.toUpperCase()}):\n\n`;
+        console.log('📝 Iniciando construcción del mensaje con filtro:', filtroActual);
+        
+        // Adaptar el resumen según el filtro
+        switch(filtroActual) {
+            case 'por_cobrar':
+                mensaje += `📊 RESUMEN DE FACTURAS PENDIENTES:\n`;
+                mensaje += `• Total de facturas pendientes: ${totalFacturas}\n`;
+                mensaje += `• Total pendiente por cobrar: $${totalPendiente.toFixed(2)} USD\n`;
+                mensaje += `• Promedio por factura: $${(totalPendiente / totalFacturas).toFixed(2)} USD\n\n`;
+                break;
+                
+            case 'abonada':
+                mensaje += `📊 RESUMEN DE FACTURAS CON ABONOS:\n`;
+                mensaje += `• Total de facturas abonadas: ${totalFacturas}\n`;
+                mensaje += `• Total abonado: $${totalAbonado.toFixed(2)} USD\n`;
+                mensaje += `• Saldo pendiente: $${totalPendiente.toFixed(2)} USD\n`;
+                mensaje += `• Progreso de recuperación: ${((totalAbonado / totalFacturado) * 100).toFixed(1)}%\n\n`;
+                break;
+                
+            case 'cobrada':
+                mensaje += `📊 RESUMEN DE FACTURAS COBRADAS:\n`;
+                mensaje += `• Total de facturas cobradas: ${totalFacturas}\n`;
+                mensaje += `• Total cobrado: $${totalFacturado.toFixed(2)} USD\n`;
+                mensaje += `• Promedio por factura: $${(totalFacturado / totalFacturas).toFixed(2)} USD\n\n`;
+                break;
+                
+            default: // 'todas'
+                mensaje += `📊 RESUMEN GENERAL:\n`;
+                mensaje += `• Total de facturas: ${totalFacturas}\n`;
+                mensaje += `• Total facturado: $${totalFacturado.toFixed(2)} USD\n`;
+                mensaje += `• Total abonado: $${totalAbonado.toFixed(2)} USD\n`;
+                mensaje += `• Saldo pendiente: $${totalPendiente.toFixed(2)} USD\n\n`;
+                mensaje += `📋 CLASIFICACIÓN POR ESTADO:\n`;
+                mensaje += `• Facturas por cobrar: ${facturasPorCobrar.length} ($${totalPorCobrar.toFixed(2)} USD)\n`;
+                mensaje += `• Facturas abonadas: ${facturasAbonadas.length} ($${totalAbonadas.toFixed(2)} USD)\n`;
+                mensaje += `• Facturas cobradas: ${facturasCobradas.length} ($${totalCobradas.toFixed(2)} USD)\n\n`;
+        }
+        
+        mensaje += `📅 DETALLE DE FACTURAS:\n`;
+        
+        // Agregar detalles según el filtro seleccionado
+        switch(filtroActual) {
+            case 'por_cobrar':
+                if (facturasPorCobrar.length > 0) {
+                    mensaje += `\n🔴 FACTURAS PENDIENTES POR COBRAR:\n`;
+                    facturasPorCobrar.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const vence = f.fecha_vencimiento ? ` (Vence: ${f.fecha_vencimiento})` : '';
+                            const diasVencidos = f.dias_vencidos > 0 ? ` ⚠️ Vencida ${f.dias_vencidos} días` : '';
+                            const saldo = parseFloat(f.saldo_pendiente) || 0;
+                            mensaje += `• ${f.numero || 'N/A'}: $${saldo.toFixed(2)} USD - ${fecha}${vence}${diasVencidos}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura por cobrar:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                break;
+                
+            case 'abonada':
+                if (facturasAbonadas.length > 0) {
+                    mensaje += `\n🟡 FACTURAS CON ABONOS PARCIALES:\n`;
+                    facturasAbonadas.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const abonado = parseFloat(f.abonado_usd) || 0;
+                            const pendiente = parseFloat(f.saldo_pendiente) || 0;
+                            const progreso = ((abonado / (abonado + pendiente)) * 100).toFixed(1);
+                            mensaje += `• ${f.numero || 'N/A'}: Abonado $${abonado.toFixed(2)} USD, Pendiente $${pendiente.toFixed(2)} USD (${progreso}% pagado) - ${fecha}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura abonada:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                break;
+                
+            case 'cobrada':
+                if (facturasCobradas.length > 0) {
+                    mensaje += `\n🟢 FACTURAS COMPLETAMENTE COBRADAS:\n`;
+                    facturasCobradas.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const total = parseFloat(f.total_usd) || 0;
+                            mensaje += `• ${f.numero || 'N/A'}: $${total.toFixed(2)} USD - ${fecha}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura cobrada:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                break;
+                
+            default: // 'todas'
+                // Agregar facturas por cobrar con fechas
+                if (facturasPorCobrar.length > 0) {
+                    mensaje += `\n🔴 PENDIENTES POR COBRAR:\n`;
+                    facturasPorCobrar.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const vence = f.fecha_vencimiento ? ` (Vence: ${f.fecha_vencimiento})` : '';
+                            const diasVencidos = f.dias_vencidos > 0 ? ` ⚠️ Vencida ${f.dias_vencidos} días` : '';
+                            const saldo = parseFloat(f.saldo_pendiente) || 0;
+                            mensaje += `• ${f.numero || 'N/A'}: $${saldo.toFixed(2)} USD - ${fecha}${vence}${diasVencidos}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura por cobrar:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                
+                // Agregar facturas abonadas con fechas
+                if (facturasAbonadas.length > 0) {
+                    mensaje += `\n🟡 CON ABONOS:\n`;
+                    facturasAbonadas.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const abonado = parseFloat(f.abonado_usd) || 0;
+                            const pendiente = parseFloat(f.saldo_pendiente) || 0;
+                            mensaje += `• ${f.numero || 'N/A'}: Abonado $${abonado.toFixed(2)} USD, Pendiente $${pendiente.toFixed(2)} USD - ${fecha}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura abonada:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                
+                // Agregar facturas cobradas con fechas
+                if (facturasCobradas.length > 0) {
+                    mensaje += `\n🟢 COMPLETAMENTE COBRADAS:\n`;
+                    facturasCobradas.forEach(f => {
+                        try {
+                            const fecha = f.fecha || 'Sin fecha';
+                            const total = parseFloat(f.total_usd) || 0;
+                            mensaje += `• ${f.numero || 'N/A'}: $${total.toFixed(2)} USD - ${fecha}\n`;
+                        } catch (e) {
+                            console.error('Error procesando factura cobrada:', e, f);
+                            mensaje += `• Factura con error de datos\n`;
+                        }
+                    });
+                }
+                break;
+        }
+        
+        mensaje += `💡 Para coordinar pagos o resolver dudas, contáctanos. Gracias.`;
+        
+        // Verificar que el mensaje se construyó correctamente
+        console.log('📱 Mensaje completo construido:', mensaje);
+        console.log('📏 Longitud del mensaje:', mensaje.length);
+        console.log('🔍 Emojis detectados en el mensaje:', mensaje.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu));
+        
+        // Probar emojis específicos
+        console.log('🧪 Prueba de emojis específicos:');
+        console.log('📊 Bar Chart:', '📊');
+        console.log('📋 Clipboard:', '📋');
+        console.log('📅 Calendar:', '📅');
+        console.log('🔴 Red Circle:', '🔴');
+        console.log('🟡 Yellow Square:', '🟡');
+        console.log('🟢 Green Square:', '🟢');
+        console.log('⚠️ Warning:', '⚠️');
+        console.log('💡 Light Bulb:', '💡');
+        
+        // Verificar emojis en el mensaje generado
+        console.log('🔍 Verificando emojis en mensaje generado:');
+        const emojisEnMensaje = mensaje.match(/[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu) || [];
+        console.log('📊 Emojis encontrados en mensaje:', emojisEnMensaje);
+        console.log('📏 Cantidad de emojis:', emojisEnMensaje.length);
+        
+        // Crear enlaces de WhatsApp con codificación correcta
+        const mensajeCodificado = encodeURIComponent(mensaje);
+        console.log('🔗 Mensaje codificado:', mensajeCodificado);
+        
+        // Verificar que la codificación preservó los emojis
+        const mensajeDecodificado = decodeURIComponent(mensajeCodificado);
+        console.log('🔍 Mensaje decodificado para verificación:', mensajeDecodificado);
+        console.log('✅ Emojis preservados:', mensajeDecodificado.includes('📊') && mensajeDecodificado.includes('📅') && mensajeDecodificado.includes('🔴'));
+        
+        // Crear enlaces con verificación adicional
+        const enlaceApp = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
+        const enlaceWeb = `https://web.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`;
+        
+        // Verificar enlaces generados
+        console.log('📱 Enlace App:', enlaceApp);
+        console.log('💻 Enlace Web:', enlaceWeb);
+        console.log('📞 Teléfono formateado:', telefono);
+        
+        // Verificar que los enlaces contengan el mensaje codificado
+        console.log('🔍 Verificación de enlaces:');
+        console.log('📱 App contiene mensaje:', enlaceApp.includes(mensajeCodificado));
+        console.log('💻 Web contiene mensaje:', enlaceWeb.includes(mensajeCodificado));
+        
+        // Mostrar modal con el informe
+        mostrarModalInformeWhatsAppCuentasPorCobrar({
+            success: true,
+            cliente_nombre: clienteNombre,
+            telefono: telefonoRaw || telefono,
+            mensaje,
+            enlace_whatsapp: enlaceApp,
+            enlace_web: enlaceWeb,
+            total_facturas: totalFacturas,
+            total_facturado: totalFacturado,
+            total_abonado: totalAbonado,
+            total_pendiente: totalPendiente,
+            facturas_por_cobrar: facturasPorCobrar.length,
+            facturas_abonadas: facturasAbonadas.length,
+            facturas_cobradas: facturasCobradas.length
+        });
+        
+    } catch (e) {
+        console.error('Error preparando informe en cliente:', e);
+        alert('Error inesperado al preparar el informe en el navegador.');
+    } finally {
+        // Restaurar botón
+        btn.innerHTML = originalContent;
+        btn.disabled = false;
+    }
+}
+
+function mostrarModalInformeWhatsAppCuentasPorCobrar(data) {
+    console.log('🎯 Mostrando modal de informe con datos:', data);
+    
+    // Validar datos requeridos
+    if (!data.enlace_whatsapp) {
+        console.error('❌ Falta enlace_whatsapp en los datos:', data);
+        alert('Error: No se pudo generar el enlace de WhatsApp');
+        return;
+    }
+    
+    // Crear modal dinámicamente
+    const phoneDigits = String(data.telefono || '').replace(/\D/g, '');
+    const enlaceApp = data.enlace_whatsapp;
+    const enlaceWeb = data.enlace_web;
+    
+    console.log('🎯 Modal - Enlace App:', enlaceApp);
+    console.log('🎯 Modal - Enlace Web:', enlaceWeb);
+    console.log('🎯 Modal - Teléfono:', phoneDigits);
+    
+    const modalHTML = `
+        <div class="modal fade" id="informeWhatsappModalCuentas" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-chart-line me-2"></i>Informe de Facturas Preparado para WhatsApp
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="text-primary mb-3">
+                                    <i class="fas fa-check-circle me-2"></i>Informe preparado exitosamente
+                                </h6>
+                                <p><strong>Cliente:</strong> ${data.cliente_nombre || 'N/A'}</p>
+                                <p><strong>Teléfono:</strong> ${data.telefono || 'N/A'}</p>
+                                <p><strong>Total de facturas:</strong> ${data.total_facturas || 0}</p>
+                                <p><strong>Total facturado:</strong> $${data.total_facturado || 0}</p>
+                                <p><strong>Total abonado:</strong> $${data.total_abonado || 0}</p>
+                                <p><strong>Saldo pendiente:</strong> $${data.total_pendiente || 0}</p>
+                                <p><strong>Mensaje del informe:</strong></p>
+                                <div class="border rounded p-3 bg-light">
+                                    <pre style="white-space: pre-wrap; font-size: 0.9em;">${data.mensaje || 'Mensaje no disponible'}</pre>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-chart-line text-primary" style="font-size: 4rem;"></i>
+                                </div>
+                                <p class="text-muted">Haz clic en un botón para abrir WhatsApp</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-warning me-2" id="btnProbarEmojis">
+                            <i class="fas fa-bug me-2"></i>Probar Emojis
+                        </button>
+                        <button type="button" class="btn btn-info me-2" id="btnCopiarMensaje">
+                            <i class="fas fa-copy me-2"></i>Copiar Mensaje
+                        </button>
+                        <button type="button" class="btn btn-dark me-2" id="btnProbarEnlaces">
+                            <i class="fas fa-link me-2"></i>Probar Enlaces
+                        </button>
+                        <a href="${enlaceWeb}" target="_blank" class="btn btn-success" onclick="console.log('🌐 Abriendo WhatsApp Web:', '${enlaceWeb}')">
+                            <i class="fab fa-whatsapp me-2"></i>Abrir WhatsApp Web
+                        </a>
+                        <a href="${enlaceApp}" target="_blank" class="btn btn-primary btn-lg" onclick="console.log('📱 Abriendo WhatsApp App:', '${enlaceApp}')">
+                            <i class="fab fa-whatsapp me-2"></i>Abrir App
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Configurar event listeners para los botones
+    const modalElement = document.getElementById('informeWhatsappModalCuentas');
+    const btnProbarEmojis = modalElement.querySelector('#btnProbarEmojis');
+    const btnCopiarMensaje = modalElement.querySelector('#btnCopiarMensaje');
+    const btnProbarEnlaces = modalElement.querySelector('#btnProbarEnlaces');
+    
+    btnProbarEmojis.addEventListener('click', function() {
+        probarEmojis(data.mensaje);
+    });
+    
+    btnCopiarMensaje.addEventListener('click', function() {
+        copiarMensajeAlPortapapeles(data.mensaje);
+    });
+    
+    btnProbarEnlaces.addEventListener('click', function() {
+        probarEnlaces(data.enlace_whatsapp, data.enlace_web, data.mensaje);
+    });
+    
+    // Mostrar modal
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+    
+    // Limpiar modal cuando se cierre
+    modalElement.addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+// Función para copiar el mensaje al portapapeles
+function copiarMensajeAlPortapapeles(mensaje) {
+    try {
+        // El mensaje ya viene decodificado, solo copiarlo
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(mensaje).then(() => {
+                alert('✅ Mensaje copiado al portapapeles con emojis');
+                console.log('📋 Mensaje copiado:', mensaje);
+            }).catch(err => {
+                console.error('Error copiando al portapapeles:', err);
+                fallbackCopyTextToClipboard(mensaje);
+            });
+        } else {
+            fallbackCopyTextToClipboard(mensaje);
+        }
+    } catch (e) {
+        console.error('Error procesando mensaje para copiar:', e);
+        alert('❌ Error al copiar el mensaje');
+    }
+}
+
+// Fallback para navegadores que no soportan clipboard API
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        alert('✅ Mensaje copiado al portapapeles');
+        console.log('📋 Mensaje copiado (fallback):', text);
+    } catch (err) {
+        console.error('Error en fallback copy:', err);
+        alert('❌ Error al copiar el mensaje');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+// Función para probar emojis
+function probarEmojis(mensaje) {
+    console.log('🧪 PROBANDO EMOJIS:');
+    console.log('📝 Mensaje completo:', mensaje);
+    console.log('📏 Longitud:', mensaje.length);
+    
+    // Verificar emojis específicos
+    const emojis = {
+        '📊': '📊',
+        '📋': '📋',
+        '📅': '📅',
+        '🔴': '🔴',
+        '🟡': '🟡',
+        '🟢': '🟢',
+        '⚠️': '⚠️',
+        '💡': '💡'
+    };
+    
+    console.log('🔍 Emojis encontrados:');
+    let emojisEncontrados = 0;
+    Object.entries(emojis).forEach(([nombre, codigo]) => {
+        const encontrado = mensaje.includes(codigo);
+        console.log(`${nombre} (${codigo}): ${encontrado ? '✅' : '❌'}`);
+        if (encontrado) emojisEncontrados++;
+    });
+    
+    console.log(`📊 Total emojis encontrados: ${emojisEncontrados}/${Object.keys(emojis).length}`);
+    
+    // Mostrar mensaje en alert para verificación visual
+    const mensajeFormateado = mensaje.replace(/\n/g, '\n');
+    alert(`🧪 PRUEBA DE EMOJIS:\n\nMensaje generado:\n${mensajeFormateado}\n\nEmojis encontrados: ${emojisEncontrados}/${Object.keys(emojis).length}\n\nVerifica en la consola del navegador los detalles.`);
+    
+    // También mostrar en consola el mensaje formateado
+    console.log('📋 Mensaje formateado para copiar:');
+    console.log(mensaje);
+}
+
+// Función para probar enlaces
+function probarEnlaces(enlaceApp, enlaceWeb, mensaje) {
+    console.log('🔗 PROBANDO ENLACES:');
+    console.log('📱 Enlace App:', enlaceApp);
+    console.log('💻 Enlace Web:', enlaceWeb);
+    console.log('📝 Mensaje original:', mensaje);
+    
+    // Verificar codificación
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    const mensajeDecodificado = decodeURIComponent(mensajeCodificado);
+    
+    console.log('🔍 Codificación:');
+    console.log('📤 Mensaje codificado:', mensajeCodificado);
+    console.log('📥 Mensaje decodificado:', mensajeDecodificado);
+    console.log('✅ Emojis preservados:', mensajeDecodificado.includes('📊') && mensajeDecodificado.includes('📅') && mensajeDecodificado.includes('🔴'));
+    
+    // Verificar enlaces
+    console.log('🔍 Verificación de enlaces:');
+    console.log('📱 App contiene mensaje codificado:', enlaceApp.includes(mensajeCodificado));
+    console.log('💻 Web contiene mensaje codificado:', enlaceWeb.includes(mensajeCodificado));
+    
+    // Mostrar alert con información
+    alert(`🔗 PRUEBA DE ENLACES:\n\n` +
+          `📱 Enlace App: ${enlaceApp.substring(0, 100)}...\n\n` +
+          `💻 Enlace Web: ${enlaceWeb.substring(0, 100)}...\n\n` +
+          `📝 Mensaje original: ${mensaje.substring(0, 200)}...\n\n` +
+          `✅ Emojis preservados: ${mensajeDecodificado.includes('📊') && mensajeDecodificado.includes('📅') && mensajeDecodificado.includes('🔴') ? 'SÍ' : 'NO'}\n\n` +
+          `Verifica en la consola del navegador los detalles completos.`);
+}
+</script>
+
 {% endblock %} 

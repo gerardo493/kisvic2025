@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test WhatsApp Routes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 3px; }
+        .error { background: #f8d7da; color: #721c24; }
+        .success { background: #d4edda; color: #155724; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Rutas WhatsApp</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Ruta Simple (sin login)</h3>
+        <button class="btn" onclick="testSimpleRoute()">Probar /test-whatsapp-simple/V-13.058.545</button>
+        <div id="result1" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Test Debug (sin login)</h3>
+        <button class="btn" onclick="testDebugRoute()">Probar /debug-whatsapp/V-13.058.545</button>
+        <div id="result2" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Test WhatsApp Button (sin login)</h3>
+        <button class="btn" onclick="testWhatsAppButton()">Probar /test-whatsapp-button/V-13.058.545</button>
+        <div id="result3" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Test WhatsApp Sin Login (POST)</h3>
+        <button class="btn" onclick="testWhatsAppNoLogin()">Probar /test-whatsapp-no-login/V-13.058.545</button>
+        <div id="result4" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>5. Test Ruta Principal (requiere login)</h3>
+        <button class="btn" onclick="testMainRoute()">Probar /cuentas-por-cobrar/V-13.058.545/enviar_recordatorio_whatsapp</button>
+        <div id="result5" class="result"></div>
+    </div>
+
+    <script>
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${isError ? 'error' : 'success'}`;
+            element.innerHTML = `<strong>${isError ? '❌ Error:' : '✅ Resultado:'}</strong><br><pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+
+        async function testSimpleRoute() {
+            try {
+                const response = await fetch('/test-whatsapp-simple/V-13.058.545');
+                const data = await response.json();
+                showResult('result1', data, !response.ok);
+            } catch (error) {
+                showResult('result1', { error: error.message }, true);
+            }
+        }
+
+        async function testDebugRoute() {
+            try {
+                const response = await fetch('/debug-whatsapp/V-13.058.545');
+                const data = await response.json();
+                showResult('result2', data, !response.ok);
+            } catch (error) {
+                showResult('result2', { error: error.message }, true);
+            }
+        }
+
+        async function testWhatsAppButton() {
+            try {
+                const response = await fetch('/test-whatsapp-button/V-13.058.545');
+                const data = await response.json();
+                showResult('result3', data, !response.ok);
+            } catch (error) {
+                showResult('result3', { error: error.message }, true);
+            }
+        }
+
+        async function testWhatsAppNoLogin() {
+            try {
+                const response = await fetch('/test-whatsapp-no-login/V-13.058.545', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await response.json();
+                showResult('result4', data, !response.ok);
+            } catch (error) {
+                showResult('result4', { error: error.message }, true);
+            }
+        }
+
+        async function testMainRoute() {
+            try {
+                const response = await fetch('/cuentas-por-cobrar/V-13.058.545/enviar_recordatorio_whatsapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+                showResult('result5', data, !response.ok);
+            } catch (error) {
+                showResult('result5', { error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>
