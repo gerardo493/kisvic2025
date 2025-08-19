@@ -5965,11 +5965,6 @@ def webauthn_authenticate_verify():
 
 # --- Funcionalidad WhatsApp para Cuentas por Cobrar ---
 
-# Ruta de prueba para verificar que funciona
-@app.route('/test-whatsapp')
-def test_whatsapp():
-    return jsonify({'message': 'Ruta de prueba funcionando'})
-
 # Ruta de prueba para verificar que la ruta con path funciona
 @app.route('/test-path/<path:test_id>')
 def test_path(test_id):
@@ -6051,38 +6046,7 @@ def test_whatsapp_routes():
     """Página de prueba para verificar que las rutas de WhatsApp funcionan"""
     return render_template('test_whatsapp.html')
 
-# Ruta de prueba simple para WhatsApp sin autenticación
-@app.route('/test-whatsapp-simple/<path:cliente_id>')
-def test_whatsapp_simple(cliente_id):
-    """Ruta de prueba simple para WhatsApp sin autenticación"""
-    try:
-        print(f"🧪 Test simple para cliente: {cliente_id}")
-        
-        # Cargar datos básicos
-        clientes = cargar_datos(ARCHIVO_CLIENTES)
-        
-        if cliente_id not in clientes:
-            return jsonify({
-                'error': 'Cliente no encontrado',
-                'cliente_id_buscado': cliente_id,
-                'clientes_disponibles': list(clientes.keys())[:5]
-            }), 404
-        
-        cliente = clientes[cliente_id]
-        telefono = cliente.get('telefono', '')
-        
-        return jsonify({
-            'success': True,
-            'cliente_id': cliente_id,
-            'cliente_nombre': cliente.get('nombre', 'N/A'),
-            'telefono': telefono,
-            'telefono_tipo': str(type(telefono)),
-            'mensaje': f'Cliente {cliente_id} encontrado correctamente'
-        })
-        
-    except Exception as e:
-        print(f"❌ Error en test simple: {e}")
-        return jsonify({'error': str(e)}), 500
+
 
 # Ruta de prueba que funciona exactamente como la principal pero sin autenticación
 @app.route('/test-whatsapp-working/<path:cliente_id>', methods=['POST'])
