@@ -1,133 +1,209 @@
-# 🚀 Sistema de Despliegue Automático KISVIC 2025
+# 🚀 Script de Deploy Automático para Render
 
-## 📋 Descripción
+Este script automatiza completamente el proceso de deploy de tu aplicación web a Render, incluyendo commit automático, push a Git y despliegue en Render.
 
-Este sistema automatiza completamente el proceso de despliegue de tu aplicación web a Render. Cada vez que hagas cambios en tu código, puedes desplegarlos con un solo comando.
+## ✨ Características
 
-## 🎯 Características
+- 🔄 **Commit automático** de cambios pendientes
+- 📤 **Push automático** al repositorio remoto
+- 🚀 **Deploy automático** en Render
+- 👀 **Monitoreo en tiempo real** del progreso del deploy
+- 📝 **Logs detallados** de todo el proceso
+- ⚙️ **Configuración flexible** mediante archivo JSON
+- 🛡️ **Manejo robusto de errores**
 
-- ✅ **Despliegue automático** con un comando
-- ✅ **Mensajes de commit personalizados** o automáticos
-- ✅ **Verificación automática** del estado de Git
-- ✅ **Integración completa** con GitHub y Render
-- ✅ **Interfaz amigable** con opciones interactivas
-- ✅ **Scripts para Windows** (archivos .bat)
+## 📋 Requisitos Previos
 
-## 📁 Archivos del Sistema
+1. **Python 3.7+** instalado
+2. **Git** configurado con acceso al repositorio
+3. **Token de Render** configurado como variable de entorno
+4. **Service ID** de Render configurado
 
-### **Scripts Python:**
-- `deploy_auto.py` - Script principal de despliegue automático
+## 🛠️ Instalación
 
-### **Scripts Windows (.bat):**
-- `deploy_rapido.bat` - Despliegue rápido con doble clic
-- `deploy_personalizado.bat` - Despliegue con mensaje personalizado
-- `deploy_cmd.bat` - Despliegue desde línea de comandos
-
-## 🚀 Cómo Usar
-
-### **Opción 1: Despliegue Rápido (Recomendado)**
-1. **Doble clic** en `deploy_rapido.bat`
-2. **Espera** a que termine el proceso
-3. **¡Listo!** Tu aplicación se desplegará automáticamente
-
-### **Opción 2: Despliegue Personalizado**
-1. **Doble clic** en `deploy_personalizado.bat`
-2. **Ingresa** tu mensaje personalizado
-3. **Espera** a que termine el proceso
-
-### **Opción 3: Desde Línea de Comandos**
+### 1. Instalar dependencias
 ```bash
-# Despliegue rápido
-deploy_cmd.bat
-
-# Despliegue con mensaje personalizado
-deploy_cmd.bat "Mejoré la interfaz de facturas"
-
-# Despliegue con mensaje largo
-deploy_cmd.bat "Agregué nueva funcionalidad de reportes y mejoré el rendimiento"
+pip install -r requirements_deploy.txt
 ```
 
-### **Opción 4: Directamente con Python**
+### 2. Configurar variables de entorno
 ```bash
-# Activar entorno virtual
-venv\Scripts\activate.bat
+# Windows (PowerShell)
+$env:RENDER_TOKEN="tu_token_aqui"
 
-# Despliegue rápido
-python deploy_auto.py
+# Windows (CMD)
+set RENDER_TOKEN=tu_token_aqui
 
-# Despliegue con mensaje personalizado
-python deploy_auto.py "Descripción del cambio"
+# Linux/Mac
+export RENDER_TOKEN="tu_token_aqui"
 ```
 
-## 🔄 Flujo de Trabajo
+### 3. Configurar render_config.json
+Edita el archivo `render_config.json` y coloca tu Service ID:
+```json
+{
+    "service_id": "srv-d2ckh46r433s73appvug",
+    "service_name": "mi_app_web",
+    "environment": "production"
+}
+```
 
-1. **Haces cambios** en tu código
-2. **Ejecutas** el script de despliegue
-3. **El sistema automáticamente:**
-   - Verifica cambios en Git
-   - Agrega todos los archivos
-   - Hace commit con tu mensaje
-   - Sube a GitHub
-   - Render detecta cambios y se despliega
+## 🚀 Uso
 
-## 📊 Estado del Despliegue
+### Opción 1: Script Python directo
+```bash
+# Deploy automático completo
+python deploy_render_automatico.py
 
-### **Para verificar el progreso:**
-1. Ve a: [Dashboard de Render](https://dashboard.render.com/web/srv-d2ckh46r433s73appvug)
-2. Revisa la sección **"Events"**
-3. El despliegue comenzará automáticamente
+# Deploy con mensaje personalizado
+python deploy_render_automatico.py "Mejoras en el sistema de recordatorios"
 
-### **URLs importantes:**
-- 🌐 **Tu aplicación**: https://kisvic2025.onrender.com
-- 📊 **Dashboard Render**: https://dashboard.render.com/web/srv-d2ckh46r433s73appvug
-- 📚 **Repositorio GitHub**: https://github.com/gerardo493/kisvic2025
+# Deploy sin commit automático
+python deploy_render_automatico.py --no-commit
 
-## ⏱️ Tiempos Estimados
+# Mostrar ayuda
+python deploy_render_automatico.py --help
+```
 
-- **Despliegue local**: 30 segundos - 2 minutos
-- **Despliegue en Render**: 2-5 minutos
-- **Total**: 3-7 minutos
+### Opción 2: Script Batch (Windows)
+```bash
+# Deploy automático
+deploy_render.bat
+
+# Deploy con argumentos
+deploy_render.bat "Mejoras en recordatorios"
+deploy_render.bat --no-commit
+```
+
+## 📊 Flujo del Deploy
+
+1. **🔍 Verificación de Git**
+   - Revisa si hay cambios pendientes
+   - Muestra estado del repositorio
+
+2. **📝 Commit Automático**
+   - Agrega todos los cambios al staging
+   - Realiza commit con timestamp automático
+   - Permite mensaje personalizado
+
+3. **📤 Push al Repositorio**
+   - Envía cambios al repositorio remoto
+   - Verifica que el push sea exitoso
+
+4. **🚀 Deploy en Render**
+   - Dispara deploy manual en Render
+   - Obtiene ID del deploy para monitoreo
+
+5. **👀 Monitoreo del Deploy**
+   - Verifica estado cada 10 segundos
+   - Muestra progreso en tiempo real
+   - Espera máximo 5 minutos
+
+## ⚙️ Configuración
+
+### render_config.json
+```json
+{
+    "service_id": "srv-xxxxxxxxxxxxxxxxx",
+    "service_name": "nombre_del_servicio",
+    "environment": "production",
+    "auto_deploy": true,
+    "clear_cache": false,
+    "timeout_minutes": 10,
+    "retry_attempts": 3
+}
+```
+
+### Variables de Entorno
+- `RENDER_TOKEN`: Token de API de Render (requerido)
+
+## 📝 Logs
+
+El script genera logs detallados en:
+- **Consola**: Output en tiempo real
+- **Archivo**: `deploy_render.log`
+
+### Niveles de Log
+- `INFO`: Información general del proceso
+- `WARNING`: Advertencias no críticas
+- `ERROR`: Errores que impiden el deploy
 
 ## 🚨 Solución de Problemas
 
-### **Error: "No hay cambios para desplegar"**
-- ✅ **Normal**: Significa que no has hecho cambios desde el último commit
-- 🔧 **Solución**: Haz cambios en tu código y vuelve a ejecutar
+### Error: RENDER_TOKEN no encontrado
+```bash
+# Verificar que la variable esté configurada
+echo $env:RENDER_TOKEN  # PowerShell
+echo %RENDER_TOKEN%     # CMD
+```
 
-### **Error: "Error al subir a GitHub"**
-- 🔧 **Verifica**: Tu conexión a internet
-- 🔧 **Verifica**: Que tengas acceso al repositorio
+### Error: Service ID no configurado
+- Verifica que `render_config.json` exista
+- Asegúrate de que `service_id` tenga un valor válido
 
-### **Error: "No se puede activar el entorno virtual"**
-- 🔧 **Solución**: Ejecuta desde el directorio correcto del proyecto
-- 🔧 **Verifica**: Que el entorno virtual esté en `venv/`
+### Error: Git no configurado
+```bash
+# Verificar configuración de Git
+git config --list
+git remote -v
+```
 
-## 💡 Consejos de Uso
-
-1. **Usa mensajes descriptivos** para tus commits
-2. **Ejecuta el script** desde el directorio raíz del proyecto
-3. **Verifica el estado** en Render después del despliegue
-4. **Mantén tu código sincronizado** con GitHub
+### Error: Deploy falló
+- Revisa los logs en `deploy_render.log`
+- Verifica el estado en el dashboard de Render
+- Revisa que el código compile correctamente
 
 ## 🔧 Personalización
 
-### **Cambiar el mensaje por defecto:**
-Edita `deploy_auto.py` línea 89:
+### Modificar timeout del deploy
 ```python
-message = f"Tu mensaje personalizado - {timestamp}"
+# En deploy_render_automatico.py, línea ~200
+max_attempts = 60  # 10 minutos en lugar de 5
 ```
 
-### **Agregar más comandos:**
-Edita `deploy_auto.py` en la función `deploy()` para agregar más pasos.
+### Agregar más validaciones
+```python
+# En la función check_git_status()
+# Agregar validaciones personalizadas antes del deploy
+```
 
-## 📞 Soporte
+### Modificar mensajes de commit
+```python
+# En la función commit_changes()
+commit_message = f"Deploy automático - {timestamp} - {os.environ.get('USER', 'Sistema')}"
+```
 
-Si tienes problemas:
-1. **Verifica** que estés en el directorio correcto
-2. **Verifica** que el entorno virtual esté activado
-3. **Revisa** los mensajes de error del script
-4. **Verifica** tu conexión a internet
+## 📚 Comandos Útiles
+
+### Ver estado del repositorio
+```bash
+git status
+git log --oneline -5
+```
+
+### Ver logs del deploy
+```bash
+# Ver logs en tiempo real
+Get-Content deploy_render.log -Wait  # PowerShell
+tail -f deploy_render.log            # Linux/Mac
+```
+
+### Verificar configuración
+```bash
+python -c "import json; print(json.load(open('render_config.json')))"
+```
+
+## 🤝 Contribución
+
+Para reportar problemas o sugerir mejoras:
+1. Revisa los logs del script
+2. Verifica la configuración
+3. Prueba con un deploy manual primero
+
+## 📄 Licencia
+
+Este script es parte del sistema de deploy automático de mi_app_web.
 
 ---
 
-**¡Con este sistema, desplegar tu aplicación es tan fácil como hacer doble clic! 🚀**
+**¡Deploy feliz! 🚀✨**

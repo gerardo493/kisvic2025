@@ -714,22 +714,6 @@
         "activo": true,
         "validado_seniat": true
     },
-    "V-26369968": {
-        "id": "V-26369968",
-        "rif": "V-26369968",
-        "tipo_identificacion": "V",
-        "numero_identificacion": "26369968",
-        "digito_verificador": "",
-        "nombre": "GERARDO",
-        "email": "gerardojaime72@gmail.com",
-        "telefono": "04121447869",
-        "direccion": "Caña De Azucar Sector 2 Vereda 64 Casa 1-A",
-        "fecha_creacion": "2025-07-29T23:34:40.489612",
-        "usuario_creacion": "MIGRACION_SENIAT",
-        "fecha_migracion": "2025-07-29T23:34:40.489612",
-        "activo": true,
-        "validado_seniat": true
-    },
     "J-500845600": {
         "id": "J-500845600",
         "rif": "J-500845600",
