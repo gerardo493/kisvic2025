@@ -213,13 +213,14 @@
         "tipo_identificacion": "J",
         "numero_identificacion": "502357718",
         "digito_verificador": "",
-        "nombre": "VARIEDADES VIVE VERDE",
+        "nombre": "T/N VIVE VERDE",
         "email": "variedades.vive.verde@dominioinventado.com",
         "telefono": "+5804144512744",
         "direccion": "Calle Miranda, Con Dr Manzo Frente Al Edif Kilzi Center, Villa De Cura.",
         "fecha_creacion": "2025-07-29T23:34:40.348986",
         "usuario_creacion": "MIGRACION_SENIAT",
-        "fecha_migracion": "2025-07-29T23:34:40.348986",
+        "fecha_ultima_actualizacion": "2025-08-19T21:28:23.441949",
+        "usuario_ultima_actualizacion": "admin",
         "activo": true,
         "validado_seniat": true
     },
@@ -680,15 +681,6 @@
         "activo": true,
         "validado_seniat": false
     },
-    "26369968": {
-        "id": "26369968",
-        "nombre": "gerardo",
-        "email": "",
-        "telefono": "04121447869",
-        "direccion": "marcay",
-        "validado_seniat": false,
-        "rif": "26369968"
-    },
     "N/A": {
         "id": "N/A",
         "nombre": "T/N CASA VERDE",
@@ -775,21 +767,6 @@
         "fecha_creacion": "2025-07-29T23:34:40.505238",
         "usuario_creacion": "MIGRACION_SENIAT",
         "fecha_migracion": "2025-07-29T23:34:40.505238",
-        "activo": true,
-        "validado_seniat": true
-    },
-    "V-9339073": {
-        "id": "V-9339073",
-        "rif": "V-9339073",
-        "tipo_identificacion": "V",
-        "numero_identificacion": "9339073",
-        "digito_verificador": "",
-        "nombre": "ANGEL ROBERTO JAIMES DUQUE",
-        "email": "angelrobertojaimes50@gmail.com",
-        "telefono": "+5804247286225",
-        "direccion": "Caña De Azucar Sector 2 Vereda 64 Casa 1-A",
-        "fecha_creacion": "2025-07-29T23:18:00.567228",
-        "usuario_creacion": "admin",
         "activo": true,
         "validado_seniat": true
     },

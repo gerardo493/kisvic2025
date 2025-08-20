@@ -49,6 +49,23 @@ ALLOWED_EXTENSIONS = {'csv', 'jpg', 'jpeg', 'png', 'gif'}
 BITACORA_FILE = 'bitacora.log'
 
 # --- Funciones de Utilidad ---
+def validar_url_factura(f):
+    """Decorador para validar URLs de facturas y redirigir si están malformadas"""
+    @wraps(f)
+    def decorated_function(id, *args, **kwargs):
+        # Verificar que la URL no tenga doble barra consecutiva (como /facturas//editar)
+        if '//' in request.path:
+            flash('URL de factura inválida', 'danger')
+            return redirect(url_for('mostrar_facturas'))
+        
+        # Verificar que el ID sea válido
+        if not id or str(id).strip() == '':
+            flash('ID de factura inválido', 'danger')
+            return redirect(url_for('mostrar_facturas'))
+        
+        return f(id, *args, **kwargs)
+    return decorated_function
+
 def cargar_datos(nombre_archivo):
     """Carga datos desde un archivo JSON."""
     try:
@@ -1339,6 +1356,11 @@ def mostrar_facturas():
 
     rows = []  # (id, factura)
     for id, f in facturas.items():
+        # Validar que el ID sea válido
+        if not id or str(id).strip() == '':
+            print(f"ADVERTENCIA: Factura con ID inválido encontrada: {id}")
+            continue
+            
         numero = str(f.get('numero', id)).lower()
         fecha = fecha_ok(str(f.get('fecha', '')))
         cliente_id = str(f.get('cliente_id', ''))
@@ -1426,9 +1448,49 @@ def mostrar_facturas():
         query_args=request.args
     )
 
+# Ruta amigable para imprimir la factura (vista HTML lista para impresión/PDF)
+@app.route('/facturas/<id>/imprimir')
+@login_required
+def imprimir_factura(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
+    """Renderiza una versión imprimible de la factura usando `factura_imprimir.html`."""
+    facturas = cargar_datos(ARCHIVO_FACTURAS)
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+
+    factura = facturas.get(id)
+    if not factura:
+        flash('Factura no encontrada', 'danger')
+        return redirect(url_for('mostrar_facturas'))
+
+    # Asegurar que el template tenga disponible el id de la factura
+    try:
+        factura['id'] = id
+    except Exception:
+        pass
+
+    empresa = cargar_empresa()
+
+    return render_template(
+        'factura_imprimir.html',
+                           factura=factura,
+                           clientes=clientes,
+                           inventario=inventario,
+                           empresa=empresa,
+        now=datetime.now,
+                           zip=zip,
+    )
+
 @app.route('/facturas/<id>')
 @login_required
 def ver_factura(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     """Muestra los detalles de una factura."""
     print(f"=== DEBUG: Función ver_factura llamada con ID: {id} ===")
     print(f"=== DEBUG: URL actual: {request.url} ===")
@@ -1507,41 +1569,35 @@ def ver_factura(id):
 def test_whatsapp():
     return jsonify({'message': 'Ruta de prueba funcionando'})
 
-# Ruta amigable para imprimir la factura (vista HTML lista para impresión/PDF)
-@app.route('/facturas/<id>/imprimir')
+# Rutas para capturar URLs malformadas específicas
+@app.route('/facturas//editar', methods=['GET', 'POST'])
 @login_required
-def imprimir_factura(id):
-    """Renderiza una versión imprimible de la factura usando `factura_imprimir.html`."""
-    facturas = cargar_datos(ARCHIVO_FACTURAS)
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+def editar_factura_url_malformada():
+    """Captura URLs malformadas como /facturas//editar y redirige"""
+    flash('URL de factura inválida detectada', 'danger')
+    return redirect(url_for('mostrar_facturas'))
 
-    factura = facturas.get(id)
-    if not factura:
-        flash('Factura no encontrada', 'danger')
-        return redirect(url_for('mostrar_facturas'))
+@app.route('/facturas//', methods=['GET', 'POST'])
+@login_required
+def factura_url_malformada_general():
+    """Captura URLs malformadas como /facturas// y redirige"""
+    flash('URL de factura inválida detectada', 'danger')
+    return redirect(url_for('mostrar_facturas'))
 
-    # Asegurar que el template tenga disponible el id de la factura
-    try:
-        factura['id'] = id
-    except Exception:
-        pass
-
-    empresa = cargar_empresa()
-
-    return render_template(
-        'factura_imprimir.html',
-                           factura=factura,
-                           clientes=clientes,
-                           inventario=inventario,
-                           empresa=empresa,
-        now=datetime.now,
-                           zip=zip,
-    )
+@app.route('/facturas///editar', methods=['GET', 'POST'])
+@login_required
+def editar_factura_url_triple_malformada():
+    """Captura URLs malformadas como /facturas///editar y redirige"""
+    flash('URL de factura inválida detectada', 'danger')
+    return redirect(url_for('mostrar_facturas'))
 
 @app.route('/facturas/<id>/editar', methods=['GET', 'POST'])
 @login_required
 def editar_factura(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     facturas = cargar_datos(ARCHIVO_FACTURAS)
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
@@ -1675,7 +1731,7 @@ def editar_factura(id):
     
     inventario_disponible = {k: v for k, v in inventario.items() if int(v.get('cantidad', 0)) > 0 or k in facturas[id].get('productos', [])}
     empresa = cargar_empresa()
-    return render_template('factura_form.html', factura=facturas[id], clientes=clientes, inventario=inventario_disponible, editar=True, zip=zip, empresa=empresa)
+    return render_template('factura_form.html', id=id, factura=facturas[id], clientes=clientes, inventario=inventario_disponible, editar=True, zip=zip, empresa=empresa)
 
 @app.route('/facturas/duplicar', methods=['POST'])
 @login_required
@@ -1965,6 +2021,12 @@ def nueva_factura():
             # === FASE 12: GUARDAR FACTURA FISCAL ===
             facturas = cargar_datos(ARCHIVO_FACTURAS)
             id_factura = factura_inmutable['_metadatos_seguridad']['id_documento']
+            
+            # Validar que el ID se haya generado correctamente
+            if not id_factura or str(id_factura).strip() == '':
+                flash('Error: No se pudo generar el ID de la factura', 'danger')
+                return redirect(url_for('nueva_factura'))
+                
             facturas[id_factura] = factura_inmutable
             
             if guardar_datos(ARCHIVO_FACTURAS, facturas):
@@ -1992,6 +2054,35 @@ def nueva_factura():
     inventario_disponible = {k: v for k, v in inventario.items() if int(v.get('cantidad', 0)) > 0}
     empresa = cargar_empresa()
     return render_template('factura_form.html', clientes=clientes, inventario=inventario_disponible, editar=False, empresa=empresa, factura=None)
+
+@app.route('/facturas/limpiar_ids_invalidos', methods=['POST'])
+@login_required
+def limpiar_ids_invalidos_facturas():
+    """Elimina facturas con IDs inválidos del archivo JSON."""
+    try:
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        facturas_originales = len(facturas)
+        
+        # Encontrar y eliminar facturas con IDs inválidos
+        ids_invalidos = []
+        for id_factura in list(facturas.keys()):
+            if not id_factura or str(id_factura).strip() == '':
+                ids_invalidos.append(id_factura)
+                del facturas[id_factura]
+        
+        if ids_invalidos:
+            if guardar_datos(ARCHIVO_FACTURAS, facturas):
+                flash(f'Se eliminaron {len(ids_invalidos)} facturas con IDs inválidos. Total restante: {len(facturas)}', 'success')
+                registrar_bitacora(session['usuario'], 'Limpiar IDs inválidos', f"Eliminadas: {ids_invalidos}")
+            else:
+                flash('Error al guardar los cambios', 'danger')
+        else:
+            flash('No se encontraron facturas con IDs inválidos', 'info')
+            
+    except Exception as e:
+        flash(f'Error al limpiar IDs inválidos: {str(e)}', 'danger')
+    
+    return redirect(url_for('mostrar_facturas'))
 
 @app.route('/facturas/migrar_formato', methods=['POST'])
 @login_required
@@ -2128,6 +2219,10 @@ def configurar_secuencia():
 @app.route('/facturas/<id>/eliminar', methods=['POST'])
 @login_required
 def eliminar_factura(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     """Elimina una factura."""
     facturas = cargar_datos(ARCHIVO_FACTURAS)
     if id in facturas:
@@ -4895,6 +4990,10 @@ def limpiar_bitacora():
 @app.route('/facturas/<id>/registrar_pago', methods=['POST'])
 @login_required
 def registrar_pago(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     facturas = cargar_datos(ARCHIVO_FACTURAS)
     if id not in facturas:
         flash('Factura no encontrada', 'error')
@@ -4947,6 +5046,10 @@ def registrar_pago(id):
 @app.route('/facturas/<id>/eliminar_pago/<pago_id>', methods=['POST'])
 @login_required
 def eliminar_pago(id, pago_id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     try:
         facturas = cargar_datos(ARCHIVO_FACTURAS)
         if id not in facturas:
@@ -4996,6 +5099,10 @@ def eliminar_pago(id, pago_id):
 @app.route('/facturas/<id>/saldo')
 @login_required
 def obtener_saldo_factura(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     try:
         facturas = cargar_datos(ARCHIVO_FACTURAS)
         if id not in facturas:
@@ -5016,6 +5123,10 @@ def obtener_saldo_factura(id):
 @login_required
 @csrf.exempt
 def enviar_recordatorio_whatsapp(id):
+    # Validación simple del ID
+    if not id or str(id).strip() == '':
+        flash('ID de factura inválido', 'danger')
+        return redirect(url_for('mostrar_facturas'))
     try:
         print(f"🔍 Iniciando envío de recordatorio WhatsApp para factura: {id}")
         

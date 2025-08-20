@@ -210,6 +210,12 @@
                 <a href="{{ url_for('nueva_factura') }}" class="btn btn-primary">
                     <i class="fas fa-file-invoice me-2"></i>Nueva Factura
                 </a>
+                <form method="POST" action="{{ url_for('limpiar_ids_invalidos_facturas') }}" style="display: inline;" onsubmit="return confirm('¿Está seguro que desea limpiar las facturas con IDs inválidos? Esta acción no se puede deshacer.')">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-warning" title="Limpiar IDs inválidos">
+                        <i class="fas fa-broom me-2"></i>Limpiar IDs
+                    </button>
+                </form>
             </div>
         </div>
 

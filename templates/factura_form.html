@@ -253,7 +253,7 @@
             </h2>
             </div>
 
-                <form method="POST" action="{% if editar %}{{ url_for('editar_factura', id=factura.id) }}{% else %}{{ url_for('nueva_factura') }}{% endif %}" id="facturaForm" enctype="multipart/form-data">
+                <form method="POST" action="{% if editar %}{{ url_for('editar_factura', id=id) }}{% else %}{{ url_for('nueva_factura') }}{% endif %}" id="facturaForm" enctype="multipart/form-data">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <!-- Información Básica -->
