@@ -1,0 +1,9 @@
+{
+    "service_id": "YOUR_RENDER_SERVICE_ID_HERE",
+    "service_name": "mi_app_web",
+    "environment": "production",
+    "auto_deploy": true,
+    "clear_cache": false,
+    "timeout_minutes": 10,
+    "retry_attempts": 3
+}

@@ -1069,7 +1069,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
             }
-        ]
+        ],
+        "stock": 0
     },
     "8": {
         "nombre": "CARDO LECHOZO X 60 CAP",
@@ -1573,7 +1574,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000724"
             }
-        ]
+        ],
+        "stock": 0
     },
     "10": {
         "nombre": "CASTAÑA DE INDIA X 60  CAP",
@@ -2026,7 +2028,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
             }
-        ]
+        ],
+        "stock": 0
     },
     "11": {
         "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP",
@@ -3884,7 +3887,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
             }
-        ]
+        ],
+        "stock": 0
     },
     "19": {
         "nombre": "ESCOBA DE CARNICERO X 60 CAP",
@@ -5085,7 +5089,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000712"
             }
-        ]
+        ],
+        "stock": 0
     },
     "28": {
         "nombre": "MAPURITE X 60 CAP",
@@ -5192,7 +5197,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000688"
             }
-        ]
+        ],
+        "stock": 0
     },
     "29": {
         "nombre": "ÑAME SALVAJE X 60 CAP",
@@ -6606,7 +6612,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
             }
-        ]
+        ],
+        "stock": 0
     },
     "35": {
         "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP",
@@ -7089,7 +7096,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
             }
-        ]
+        ],
+        "stock": 0
     },
     "38": {
         "nombre": "ZARZAPARRILLA X 60CAP",
@@ -7964,7 +7972,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000721"
             }
-        ]
+        ],
+        "stock": 0
     },
     "47": {
         "nombre": "CUBEA AYOA X 240 ML",
@@ -8262,7 +8271,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000725"
             }
-        ]
+        ],
+        "stock": 0
     },
     "49": {
         "nombre": "FIVERPLANT",
@@ -8755,7 +8765,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000714"
             }
-        ]
+        ],
+        "stock": 0
     },
     "54": {
         "nombre": "CHAMPU DE CAYENA",

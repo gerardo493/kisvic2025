@@ -19,6 +19,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
 # Virtual Environment
 venv/
@@ -37,28 +38,24 @@ Thumbs.db
 
 # Logs
 *.log
-*.tmp
 
-# Backup files
-backups/
-*.bak
-*.zip
+# Database
+*.db
+*.sqlite3
 
 # Environment variables
 .env
 .env.local
 
-# Render specific
-render_config.json
-deploy_render.py
-deploy_render_simple.py
-test_render_api.py
-test_render_detailed.py
-setup_deploy.py
-requirements_deploy.txt
-README_DEPLOY.md
-ejemplo_uso.py
+# Uploads and static files
+uploads/
+static/uploads/
+static/imagenes_productos/
 
-# Temporary files
-temp/
-*.tmp
+# JSON data files (if you want to exclude them)
+# clientes.json
+# inventario.json
+# cuentas_por_cobrar.json
+# ultima_tasa_bcv.json
+# usuarios.json
+# empresa.json

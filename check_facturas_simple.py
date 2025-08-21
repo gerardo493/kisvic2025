@@ -21,3 +21,4 @@ else:
 print("\nPrimeras 5 claves:")
 for i, k in enumerate(list(facturas.keys())[:5]):
     print(f"  {i+1}. {repr(k)}")
+

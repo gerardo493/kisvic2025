@@ -43,6 +43,7 @@ ARCHIVO_CLIENTES = 'clientes.json'
 ARCHIVO_INVENTARIO = 'inventario.json'
 ARCHIVO_FACTURAS = 'facturas_json/facturas.json'
 ARCHIVO_COTIZACIONES = 'cotizaciones_json/cotizaciones.json'
+ARCHIVO_NOTAS_ENTREGA = 'notas_entrega_json/notas_entrega.json'
 ARCHIVO_CUENTAS = 'cuentas_por_cobrar.json'
 ULTIMA_TASA_BCV_FILE = 'ultima_tasa_bcv.json'
 ALLOWED_EXTENSIONS = {'csv', 'jpg', 'jpeg', 'png', 'gif'}
@@ -6233,11 +6234,7 @@ def generar_enlace_whatsapp(telefono, mensaje):
         raise
 
 # --- Bloque para Ejecutar la Aplicación ---
-if __name__ == '__main__':
-    import os
-    port = int(os.environ.get('PORT', '5000'))
-    debug = os.environ.get('FLASK_ENV') != 'production'
-    app.run(debug=debug, host='0.0.0.0', port=port)
+# MOVIDO AL FINAL DEL ARCHIVO PARA QUE SE REGISTREN TODAS LAS RUTAS
 
 @app.route('/initdb')
 @admin_required
@@ -7361,10 +7358,567 @@ Para cualquier consulta o para coordinar pagos, no dudes en contactarnos.
 # NOTA: Esta sección se consolidó al inicio del archivo para evitar usar rutas del sistema como /data en Render.
 # Mantener una única definición de CAPTURAS_FOLDER basada en BASE_PATH y enlazada en tiempo de inicio por render.yaml.
 
+# ========================================
+# RUTAS PARA NOTAS DE ENTREGA
+# ========================================
+
+@app.route('/notas-entrega')
+@login_required
+def mostrar_notas_entrega():
+    """Muestra la lista de notas de entrega."""
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        # Agregar información del cliente a cada nota
+        for nota in notas.values():
+            cliente_id = nota.get('cliente_id')
+            if cliente_id in clientes:
+                nota['cliente_nombre'] = clientes[cliente_id].get('nombre', 'N/A')
+                nota['cliente_identificacion'] = clientes[cliente_id].get('identificacion', 'N/A')
+            else:
+                nota['cliente_nombre'] = 'Cliente no encontrado'
+                nota['cliente_identificacion'] = 'N/A'
+            
+            # Agregar códigos y nombres de productos
+            inventario = cargar_datos(ARCHIVO_INVENTARIO)
+            productos_codigos = []
+            productos_nombres = []
+            for producto_id in nota.get('productos', []):
+                if producto_id in inventario:
+                    productos_codigos.append(inventario[producto_id].get('codigo_barras', 'N/A'))
+                    productos_nombres.append(inventario[producto_id].get('nombre', f'Producto {producto_id}'))
+                else:
+                    productos_codigos.append('N/A')
+                    productos_nombres.append(f'Producto {producto_id}')
+            nota['productos_codigos'] = productos_codigos
+            nota['productos_nombres'] = productos_nombres
+            
+            # Agregar campos por defecto para notas antiguas
+            nota['porcentaje_descuento'] = nota.get('porcentaje_descuento', 0)
+            nota['descuento'] = nota.get('descuento', 0)
+            nota['total_usd'] = nota.get('total_usd', nota.get('subtotal_usd', 0))
+            nota['tasa_bcv'] = nota.get('tasa_bcv', 0)
+            nota['fecha_tasa_bcv'] = nota.get('fecha_tasa_bcv', 'N/A')
+        
+        return render_template('notas_entrega.html', notas=notas, clientes=clientes)
+    except Exception as e:
+        flash(f'Error cargando notas de entrega: {e}', 'danger')
+        return redirect(url_for('index'))
+
+@app.route('/notas-entrega/nueva', methods=['GET', 'POST'])
+@login_required
+def nueva_nota_entrega():
+    """Crea una nueva nota de entrega."""
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            cliente_id = request.form['cliente_id']
+            fecha = request.form['fecha']
+            hora = request.form.get('hora', datetime.now().strftime('%H:%M:%S'))
+            modalidad_pago = request.form['modalidad_pago']
+            dias_credito = request.form.get('dias_credito', '30')
+            observaciones = request.form.get('observaciones', '')
+            porcentaje_descuento = float(request.form.get('porcentaje_descuento', 0))
+            
+            # Obtener productos, cantidades y precios
+            productos = request.form.getlist('productos[]')
+            cantidades = request.form.getlist('cantidades[]')
+            precios = request.form.getlist('precios[]')
+            
+            # Validar que hay productos
+            if not productos or not cantidades or not precios:
+                flash('La nota de entrega debe tener al menos un producto', 'error')
+                return redirect(url_for('nueva_nota_entrega'))
+            
+            # Calcular totales
+            subtotal_usd = sum(float(precios[i]) * int(cantidades[i]) for i in range(len(precios)))
+            descuento = subtotal_usd * (porcentaje_descuento / 100)
+            total_usd = subtotal_usd - descuento
+            
+            # Obtener tasa BCV actual
+            try:
+                from tasas_bcv import obtener_tasa_bcv_actual
+                tasa_bcv = obtener_tasa_bcv_actual()
+                fecha_tasa_bcv = datetime.now().strftime('%Y-%m-%d')
+            except:
+                tasa_bcv = None
+                fecha_tasa_bcv = None
+            
+            # Obtener tasa BCV actual
+            try:
+                from tasas_bcv import obtener_tasa_bcv_actual
+                tasa_bcv = obtener_tasa_bcv_actual()
+                fecha_tasa_bcv = datetime.now().strftime('%Y-%m-%d')
+            except:
+                tasa_bcv = None
+                fecha_tasa_bcv = None
+            
+            # Obtener numeración secuencial
+            notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+            numero_secuencial = len(notas) + 1
+            numero_nota = f"NE-{numero_secuencial:04d}"
+            
+            # Determinar estado según modalidad de pago
+            if modalidad_pago == 'contado':
+                estado = 'PENDIENTE_ENTREGA'
+                fecha_vencimiento_factura = None
+            elif modalidad_pago == 'credito':
+                estado = 'PENDIENTE_FACTURACION'
+                fecha_vencimiento_factura = (datetime.now() + timedelta(days=int(dias_credito))).strftime('%Y-%m-%d')
+            else:  # nota_credito
+                estado = 'PENDIENTE_ENTREGA'
+                fecha_vencimiento_factura = None
+            
+            # Crear nota de entrega
+            nota = {
+                'numero': numero_nota,
+                'numero_secuencial': numero_secuencial,
+                'fecha': fecha,
+                'hora': hora,
+                'timestamp_creacion': datetime.now().isoformat(),
+                'cliente_id': cliente_id,
+                'modalidad_pago': modalidad_pago,
+                'dias_credito': int(dias_credito) if modalidad_pago == 'credito' else None,
+                'fecha_vencimiento_factura': fecha_vencimiento_factura,
+                'productos': productos,
+                'cantidades': cantidades,
+                'precios': precios,
+                'subtotal_usd': subtotal_usd,
+                'porcentaje_descuento': porcentaje_descuento,
+                'descuento': descuento,
+                'total_usd': total_usd,
+                'tasa_bcv': tasa_bcv,
+                'fecha_tasa_bcv': fecha_tasa_bcv,
+                'observaciones': observaciones,
+                'estado': estado,
+                'usuario_creacion': session['usuario'],
+                'firma_recibido': False,
+                'fecha_entrega': None,
+                'hora_entrega': None,
+                'entregado_por': None,
+                'recibido_por': None,
+                'documento_identidad': None
+            }
+            
+            # Guardar nota
+            notas[numero_nota] = nota
+            guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
+            
+            # Descontar stock del inventario
+            try:
+                inventario = cargar_datos(ARCHIVO_INVENTARIO)
+                for i, producto_id in enumerate(productos):
+                    if producto_id in inventario:
+                        cantidad_actual = int(inventario[producto_id].get('stock', 0))
+                        cantidad_vendida = int(cantidades[i])
+                        nuevo_stock = max(0, cantidad_actual - cantidad_vendida)
+                        inventario[producto_id]['stock'] = nuevo_stock
+                        
+                        # Registrar en bitácora
+                        registrar_bitacora(session['usuario'], 'Descontar stock por nota de entrega', 
+                                         f"Producto: {producto_id}, Cantidad: {cantidad_vendida}, Stock anterior: {cantidad_actual}, Stock nuevo: {nuevo_stock}")
+                
+                guardar_datos(ARCHIVO_INVENTARIO, inventario)
+                print(f"✅ Stock descontado exitosamente para nota {numero_nota}")
+                
+            except Exception as e:
+                print(f"❌ Error descontando stock: {e}")
+                # No fallar la creación de la nota si hay error en stock
+                flash(f'Nota creada pero hubo un error actualizando el inventario: {e}', 'warning')
+            
+            # Mensaje según modalidad
+            if modalidad_pago == 'contado':
+                flash(f'Nota de entrega #{numero_nota} creada (Contado)', 'success')
+            elif modalidad_pago == 'credito':
+                flash(f'Nota de entrega #{numero_nota} creada (A Crédito - Facturar antes del {fecha_vencimiento_factura})', 'warning')
+            else:
+                flash(f'Nota de entrega #{numero_nota} creada (Nota de Crédito)', 'info')
+            
+            registrar_bitacora(session['usuario'], 'Nueva nota de entrega', f"Cliente: {cliente_id}, Modalidad: {modalidad_pago}")
+            return redirect(url_for('mostrar_notas_entrega'))
+            
+        except Exception as e:
+            flash(f'Error creando nota de entrega: {e}', 'danger')
+            return redirect(url_for('nueva_nota_entrega'))
+    
+    # GET: Mostrar formulario
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    return render_template('nota_entrega_form.html', clientes=clientes, inventario=inventario)
+
+@app.route('/notas-entrega/<id>/editar', methods=['GET', 'POST'])
+@login_required
+def editar_nota_entrega(id):
+    """Edita una nota de entrega existente."""
+    notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+    
+    if id not in notas:
+        flash('Nota de entrega no encontrada', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+    
+    nota = notas[id]
+    
+    if request.method == 'POST':
+        try:
+            # Actualizar datos
+            nota['fecha'] = request.form['fecha']
+            nota['hora'] = request.form.get('hora', datetime.now().strftime('%H:%M:%S'))
+            nota['observaciones'] = request.form.get('observaciones', '')
+            
+            # Actualizar productos
+            productos = request.form.getlist('productos[]')
+            cantidades = request.form.getlist('cantidades[]')
+            precios = request.form.getlist('precios[]')
+            
+            if productos and cantidades and precios:
+                nota['productos'] = productos
+                nota['cantidades'] = cantidades
+                nota['precios'] = precios
+                nota['subtotal_usd'] = sum(float(precios[i]) * int(cantidades[i]) for i in range(len(precios)))
+            
+            # Guardar cambios
+            guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
+            flash('Nota de entrega actualizada exitosamente', 'success')
+            registrar_bitacora(session['usuario'], 'Editar nota de entrega', f"Nota: {id}")
+            return redirect(url_for('mostrar_notas_entrega'))
+            
+        except Exception as e:
+            flash(f'Error actualizando nota de entrega: {e}', 'danger')
+    
+    # GET: Mostrar formulario de edición
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    return render_template('nota_entrega_form.html', nota=nota, clientes=clientes, inventario=inventario, editar=True)
+
+@app.route('/notas-entrega/<id>/marcar-entregado', methods=['POST'])
+@login_required
+def marcar_nota_entregada(id):
+    """Marca una nota de entrega como entregada."""
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        
+        if id not in notas:
+            flash('Nota de entrega no encontrada', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        nota = notas[id]
+        
+        # Obtener datos de entrega
+        recibido_por = request.form.get('recibido_por', '').strip()
+        documento_identidad = request.form.get('documento_identidad', '').strip()
+        
+        if not recibido_por:
+            flash('Debe especificar quién recibe la mercancía', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        # Actualizar estado
+        nota['estado'] = 'ENTREGADO'
+        nota['fecha_entrega'] = datetime.now().strftime('%Y-%m-%d')
+        nota['hora_entrega'] = datetime.now().strftime('%H:%M:%S')
+        nota['entregado_por'] = session['usuario']
+        nota['recibido_por'] = recibido_por
+        nota['documento_identidad'] = documento_identidad
+        nota['firma_recibido'] = True
+        
+        # Guardar cambios
+        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
+        
+        # Mensaje según modalidad
+        if nota['modalidad_pago'] == 'contado':
+            flash(f'Nota de entrega #{id} marcada como entregada (Contado)', 'success')
+        elif nota['modalidad_pago'] == 'credito':
+            flash(f'Nota de entrega #{id} entregada. RECORDATORIO: Debe generar factura antes del {nota["fecha_vencimiento_factura"]}', 'warning')
+        else:
+            flash(f'Nota de entrega #{id} marcada como entregada (Nota de Crédito)', 'success')
+        
+        registrar_bitacora(session['usuario'], 'Marcar nota entregada', f"Nota: {id}, Recibido por: {recibido_por}")
+        return redirect(url_for('mostrar_notas_entrega'))
+        
+    except Exception as e:
+        flash(f'Error marcando nota como entregada: {e}', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+
+@app.route('/notas-entrega/<id>/convertir-a-factura', methods=['POST'])
+@login_required
+def convertir_nota_a_factura(id):
+    """Convierte nota de entrega a crédito en factura."""
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        
+        if id not in notas:
+            flash('Nota de entrega no encontrada', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        nota = notas[id]
+        
+        if nota.get('modalidad_pago') != 'credito':
+            flash('Solo se pueden convertir notas a crédito', 'warning')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        if nota.get('estado') != 'ENTREGADO':
+            flash('La nota debe estar entregada para convertirla a factura', 'warning')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        # Obtener numeración fiscal
+        usuario_actual = session.get('usuario', 'SISTEMA')
+        numero_fiscal, numero_secuencial = control_numeracion.obtener_siguiente_numero('FACTURA', usuario_actual)
+        
+        # Crear factura basada en la nota
+        factura = {
+            'numero': numero_fiscal,
+            'numero_secuencial': numero_secuencial,
+            'fecha': datetime.now().strftime('%Y-%m-%d'),
+            'hora': datetime.now().strftime('%H:%M:%S'),
+            'timestamp_creacion': datetime.now().isoformat(),
+            'cliente_id': nota['cliente_id'],
+            'productos': nota['productos'],
+            'cantidades': nota['cantidades'],
+            'precios': nota['precios'],
+            'subtotal_usd': nota['subtotal_usd'],
+            'descuento': 0,
+            'tipo_descuento': 'bs',
+            'descuento_total': 0,
+            'iva': 16,  # IVA estándar
+            'iva_total': nota['subtotal_usd'] * 0.16,
+            'total_usd': nota['subtotal_usd'] * 1.16,
+            'condicion_pago': 'credito',
+            'dias_credito': nota.get('dias_credito', 30),
+            'fecha_vencimiento': (datetime.now() + timedelta(days=nota.get('dias_credito', 30))).strftime('%Y-%m-%d'),
+            'nota_entrega_origen': id,
+            'estado': 'PENDIENTE',
+            'pagos': [],
+            'tasa_bcv': 36.00  # Tasa por defecto
+        }
+        
+        # Guardar factura
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        facturas[factura['numero']] = factura
+        guardar_datos(ARCHIVO_FACTURAS, facturas)
+        
+        # Marcar nota como facturada
+        nota['estado'] = 'FACTURADO'
+        nota['factura_generada'] = factura['numero']
+        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
+        
+        flash(f'Nota de entrega #{id} convertida a factura #{factura["numero"]}', 'success')
+        registrar_bitacora(session['usuario'], 'Convertir nota a factura', f"Nota: {id} -> Factura: {factura['numero']}")
+        return redirect(url_for('editar_factura', id=factura['numero']))
+        
+    except Exception as e:
+        flash(f'Error convirtiendo nota a factura: {e}', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+
+@app.route('/test-eliminar-nota/<id>')
+def test_eliminar_nota(id):
+    """Ruta de prueba para verificar eliminación de notas."""
+    return f"Ruta de prueba funcionando para nota {id}"
+
+@app.route('/notas-entrega/<id>/eliminar', methods=['GET'])
+# @login_required
+def eliminar_nota_entrega(id):
+    """Elimina una nota de entrega."""
+    print(f"🔍 Función eliminar_nota_entrega llamada con ID: {id}")
+    print(f"🔍 Método HTTP: {request.method}")
+    print(f"🔍 URL: {request.url}")
+    
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        print(f"🔍 Notas cargadas: {len(notas)} notas encontradas")
+        
+        if id not in notas:
+            print(f"❌ Nota {id} no encontrada")
+            flash('Nota de entrega no encontrada', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        nota = notas[id]
+        print(f"✅ Nota {id} encontrada: {nota.get('numero', 'N/A')}")
+        
+        # Solo permitir eliminar si no está entregada
+        if nota.get('estado') == 'ENTREGADO':
+            print(f"❌ Nota {id} ya entregada, no se puede eliminar")
+            flash('No se puede eliminar una nota de entrega ya entregada', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        # Restaurar stock del inventario antes de eliminar
+        try:
+            inventario = cargar_datos(ARCHIVO_INVENTARIO)
+            productos = nota.get('productos', [])
+            cantidades = nota.get('cantidades', [])
+            
+            for i, producto_id in enumerate(productos):
+                if producto_id in inventario and i < len(cantidades):
+                    cantidad_actual = int(inventario[producto_id].get('stock', 0))
+                    cantidad_restaurada = int(cantidades[i])
+                    nuevo_stock = cantidad_actual + cantidad_restaurada
+                    inventario[producto_id]['stock'] = nuevo_stock
+                    
+                    # Registrar en bitácora
+                    registrar_bitacora(session['usuario'], 'Restaurar stock por eliminación de nota', 
+                                     f"Producto: {producto_id}, Cantidad: {cantidad_restaurada}, Stock anterior: {cantidad_actual}, Stock nuevo: {nuevo_stock}")
+            
+            guardar_datos(ARCHIVO_INVENTARIO, inventario)
+            print(f"✅ Stock restaurado exitosamente para nota {id}")
+            
+        except Exception as e:
+            print(f"❌ Error restaurando stock: {e}")
+            # Continuar con la eliminación aunque falle la restauración de stock
+        
+        # Eliminar nota directamente
+        del notas[id]
+        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
+        print(f"✅ Nota {id} eliminada exitosamente")
+        
+        flash(f'Nota de entrega #{id} eliminada exitosamente', 'success')
+        # registrar_bitacora(session['usuario'], 'Eliminar nota de entrega', f"Nota: {id}")
+        return redirect(url_for('mostrar_notas_entrega'))
+        
+    except Exception as e:
+        print(f"❌ Error eliminando nota {id}: {e}")
+        flash(f'Error eliminando nota de entrega: {e}', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+
+@app.route('/notas-entrega/<id>/imprimir')
+@login_required
+def imprimir_nota_entrega(id):
+    """Muestra la nota de entrega para imprimir."""
+    notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+    
+    if id not in notas:
+        flash('Nota de entrega no encontrada', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+    
+    nota = notas[id]
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    
+    # Obtener información completa del cliente
+    cliente = clientes.get(nota['cliente_id'], {})
+    nota['cliente_nombre'] = cliente.get('nombre', 'Cliente no encontrado')
+    nota['cliente_identificacion'] = cliente.get('identificacion', '')
+    nota['cliente_direccion'] = cliente.get('direccion', '')
+    nota['cliente_telefono'] = cliente.get('telefono', '')
+    nota['cliente_email'] = cliente.get('email', '')
+    
+    # Obtener nombres y códigos de productos
+    productos_nombres = []
+    productos_codigos = []
+    
+    for producto_id in nota.get('productos', []):
+        producto = inventario.get(str(producto_id), {})
+        productos_nombres.append(producto.get('nombre', f'Producto ID: {producto_id}'))
+        productos_codigos.append(producto.get('codigo', ''))
+    
+    nota['productos_nombres'] = productos_nombres
+    nota['productos_codigos'] = productos_codigos
+    
+    # Cargar tasa BCV si no está disponible
+    if not nota.get('tasa_bcv') or nota.get('tasa_bcv') == 0:
+        try:
+            with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
+                tasa_data = json.load(f)
+                nota['tasa_bcv'] = tasa_data.get('tasa', 0)
+                nota['fecha_tasa_bcv'] = tasa_data.get('fecha', 'N/A')
+        except:
+            nota['tasa_bcv'] = 0
+            nota['fecha_tasa_bcv'] = 'N/A'
+    
+    return render_template('nota_entrega_imprimir.html', nota=nota, cliente=cliente)
+
+@app.route('/reporte/notas-entrega')
+@login_required
+def reporte_notas_entrega():
+    """Genera reporte de notas de entrega."""
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        # Filtrar por parámetros
+        fecha_inicio = request.args.get('fecha_inicio')
+        fecha_fin = request.args.get('fecha_fin')
+        estado = request.args.get('estado', '')
+        modalidad = request.args.get('modalidad', '')
+        
+        notas_filtradas = {}
+        
+        for id_nota, nota in notas.items():
+            # Filtro por fecha
+            if fecha_inicio and nota['fecha'] < fecha_inicio:
+                continue
+            if fecha_fin and nota['fecha'] > fecha_fin:
+                continue
+            
+            # Filtro por estado
+            if estado and nota['estado'] != estado:
+                continue
+            
+            # Filtro por modalidad
+            if modalidad and nota['modalidad_pago'] != modalidad:
+                continue
+            
+            notas_filtradas[id_nota] = nota
+        
+        # Agregar información del cliente
+        for nota in notas_filtradas.values():
+            cliente_id = nota.get('cliente_id')
+            if cliente_id in clientes:
+                nota['cliente_nombre'] = clientes[cliente_id].get('nombre', 'N/A')
+            else:
+                nota['cliente_nombre'] = 'Cliente no encontrado'
+        
+        return render_template('reporte_notas_entrega.html', 
+                             notas=notas_filtradas, 
+                             clientes=clientes,
+                             fecha_inicio=fecha_inicio,
+                             fecha_fin=fecha_fin,
+                             estado=estado,
+                             modalidad=modalidad)
+        
+    except Exception as e:
+        flash(f'Error generando reporte: {e}', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+
+@app.route('/notas-entrega/recordatorios-facturacion')
+@login_required
+def recordatorios_facturacion():
+    """Muestra notas pendientes de facturación."""
+    try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        
+        # Filtrar notas a crédito pendientes de facturación
+        notas_pendientes = []
+        for nota in notas.values():
+            if (nota.get('modalidad_pago') == 'credito' and 
+                nota.get('estado') == 'ENTREGADO'):
+                
+                # Verificar si está vencida
+                if nota.get('fecha_vencimiento_factura'):
+                    fecha_vencimiento = datetime.strptime(nota['fecha_vencimiento_factura'], '%Y-%m-%d')
+                    dias_restantes = (fecha_vencimiento - datetime.now()).days
+                    nota['dias_restantes'] = dias_restantes
+                    nota['vencida'] = dias_restantes < 0
+                
+                notas_pendientes.append(nota)
+        
+        # Ordenar por fecha de vencimiento (más urgentes primero)
+        notas_pendientes.sort(key=lambda x: x.get('fecha_vencimiento_factura', ''))
+        
+        return render_template('recordatorios_facturacion.html', notas=notas_pendientes)
+        
+    except Exception as e:
+        flash(f'Error cargando recordatorios: {e}', 'danger')
+        return redirect(url_for('mostrar_notas_entrega'))
+
 # Debug: Imprimir rutas disponibles
 if __name__ == '__main__':
     print("🔍 Rutas disponibles en la aplicación:")
     for rule in app.url_map.iter_rules():
         print(f"  {rule.rule} -> {rule.endpoint}")
     print("🚀 Aplicación iniciada correctamente")
+    print("🌐 Iniciando servidor web en http://127.0.0.1:5000")
+    print("📱 Para acceder a las notas de entrega: http://127.0.0.1:5000/notas-entrega")
+    print("⏹️  Presiona CTRL+C para detener el servidor")
+    
+    # Iniciar el servidor Flask
+    app.run(debug=True, host='127.0.0.1', port=5000)
 

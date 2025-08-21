@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}Notas de Entrega{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header con estadísticas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="mb-2"><i class="fas fa-truck me-3"></i>Sistema de Notas de Entrega</h1>
+                            <p class="mb-0 opacity-75">Gestión completa de entregas con tres modalidades de pago</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ notas|length }}</h3>
+                                    <small>Total</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ notas|selectattr('estado', 'equalto', 'ENTREGADO')|list|length }}</h3>
+                                    <small>Entregadas</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ notas|selectattr('estado', 'equalto', 'PENDIENTE_ENTREGA')|list|length }}</h3>
+                                    <small>Pendientes</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('nueva_nota_entrega') }}" class="btn btn-success btn-lg">
+                    <i class="fas fa-plus me-2"></i>Nueva Nota de Entrega
+                </a>
+                <a href="{{ url_for('recordatorios_facturacion') }}" class="btn btn-warning btn-lg">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Recordatorios de Facturación
+                </a>
+                <a href="{{ url_for('reporte_notas_entrega') }}" class="btn btn-info btn-lg">
+                    <i class="fas fa-chart-bar me-2"></i>Reportes
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select id="filtroModalidad" class="form-select">
+                                <option value="">Todas las modalidades</option>
+                                <option value="contado">Contado</option>
+                                <option value="credito">A Crédito</option>
+                                <option value="nota_credito">Nota de Crédito</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="filtroEstado" class="form-select">
+                                <option value="">Todos los estados</option>
+                                <option value="PENDIENTE_ENTREGA">Pendiente de Entrega</option>
+                                <option value="ENTREGADO">Entregado</option>
+                                <option value="PENDIENTE_FACTURACION">Pendiente de Facturación</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" id="busqueda" class="form-control" placeholder="Buscar por cliente, número o productos...">
+                        </div>
+                        <div class="col-md-2">
+                            <button id="limpiarFiltros" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-times me-1"></i>Limpiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de notas -->
+    <div class="row" id="notasContainer">
+        {% if notas %}
+            {% for id_nota, nota in notas.items() %}
+            <div class="col-12 col-lg-6 col-xl-4 mb-4 nota-item" 
+                 data-modalidad="{{ nota.modalidad_pago }}" 
+                 data-estado="{{ nota.estado }}"
+                 data-cliente="{{ nota.cliente_nombre|lower }}"
+                 data-numero="{{ nota.numero|lower }}"
+                 data-productos="{{ nota.productos|join(' ')|lower }}">
+                <div class="card h-100 shadow-sm border-0">
+                    <!-- Header de la tarjeta -->
+                    <div class="card-header bg-transparent border-0 pb-0">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h5 class="card-title mb-1 text-primary fw-bold">{{ nota.numero }}</h5>
+                                <p class="text-muted mb-0 small">{{ nota.cliente_nombre }}</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge fs-6 px-3 py-2 
+                                    {% if nota.modalidad_pago == 'contado' %}bg-success
+                                    {% elif nota.modalidad_pago == 'credito' %}bg-warning text-dark
+                                    {% else %}bg-info{% endif %}">
+                                    {% if nota.modalidad_pago == 'contado' %}
+                                        <i class="fas fa-money-bill-wave me-1"></i>Contado
+                                    {% elif nota.modalidad_pago == 'credito' %}
+                                        <i class="fas fa-clock me-1"></i>A Crédito
+                                    {% else %}
+                                        <i class="fas fa-sticky-note me-1"></i>Nota de Crédito
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cuerpo de la tarjeta -->
+                    <div class="card-body pt-2">
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar text-muted me-2"></i>
+                                    <span class="small">{{ nota.fecha }}</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <span class="small">{{ nota.hora|default('N/A') }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Estado -->
+                        <div class="mb-3">
+                            <span class="badge 
+                                {% if nota.estado == 'ENTREGADO' %}bg-success
+                                {% elif nota.estado == 'PENDIENTE_ENTREGA' %}bg-secondary
+                                {% else %}bg-warning text-dark{% endif %}">
+                                <i class="fas fa-circle me-1"></i>
+                                {{ nota.estado|replace('_', ' ')|title }}
+                            </span>
+                        </div>
+
+                        <!-- Productos -->
+                        <div class="mb-3">
+                            <h6 class="text-muted small mb-2">Productos:</h6>
+                            <div class="productos-lista">
+                                {% for i in range(nota.productos|length) %}
+                                <div class="d-flex justify-content-between align-items-center py-1">
+                                    <span class="small">
+                                        {% if nota.productos_nombres and nota.productos_nombres[i] %}
+                                            {{ nota.productos_nombres[i] }}
+                                        {% else %}
+                                            {{ nota.productos[i] }}
+                                        {% endif %}
+                                    </span>
+                                    <span class="badge bg-light text-dark">
+                                        {{ nota.cantidades[i] }} x ${{ "%.2f"|format(nota.precios[i]|float) }}
+                                    </span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 text-success fw-bold">
+                                    ${{ "%.2f"|format(nota.subtotal_usd) }}
+                                </h5>
+                                <small class="text-muted">Total USD</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer con acciones -->
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ url_for('imprimir_nota_entrega', id=id_nota) }}" 
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                <i class="fas fa-print me-1"></i>Imprimir
+                            </a>
+                            
+                            {% if nota.estado == 'PENDIENTE_ENTREGA' %}
+                            <button class="btn btn-success btn-sm flex-fill" 
+                                    onclick="showEntregaModal('{{ id_nota }}')">
+                                <i class="fas fa-check me-1"></i>Entregar
+                            </button>
+                            {% endif %}
+                            
+                            {% if nota.modalidad_pago == 'credito' and nota.estado == 'ENTREGADO' %}
+                            <form method="POST" action="{{ url_for('convertir_nota_a_factura', id=id_nota) }}" 
+                                  class="flex-fill">
+                                <button type="submit" class="btn btn-warning btn-sm w-100">
+                                    <i class="fas fa-file-invoice me-1"></i>Convertir a Factura
+                                </button>
+                            </form>
+                            {% endif %}
+                            
+                            {% if nota.estado != 'ENTREGADO' %}
+                            <a href="{{ url_for('editar_nota_entrega', id=id_nota) }}" 
+                               class="btn btn-outline-secondary btn-sm flex-fill">
+                                <i class="fas fa-edit me-1"></i>Editar
+                            </a>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('eliminar_nota_entrega', id=id_nota) }}" 
+                               class="btn btn-outline-danger btn-sm flex-fill"
+                               onclick="return confirm('¿Estás seguro de que quieres eliminar esta nota de entrega? Esta acción no se puede deshacer.')">
+                                <i class="fas fa-trash me-1"></i>Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-truck fa-4x text-muted"></i>
+                    </div>
+                    <h3 class="text-muted mb-3">No hay notas de entrega</h3>
+                    <p class="text-muted mb-4">Crea tu primera nota de entrega para comenzar a gestionar las entregas</p>
+                    <a href="{{ url_for('nueva_nota_entrega') }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus me-2"></i>Crear Primera Nota
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal para entrega -->
+<div class="modal fade" id="entregaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle me-2"></i>Marcar como Entregado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="entregaForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-user me-1"></i>Recibido por *
+                        </label>
+                        <input type="text" name="recibido_por" class="form-control" required 
+                               placeholder="Nombre completo de quien recibe">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="fas fa-id-card me-1"></i>Documento de Identidad
+                        </label>
+                        <input type="text" name="documento_identidad" class="form-control" 
+                               placeholder="Cédula, pasaporte, etc. (opcional)">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>Confirmar Entrega
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos adicionales -->
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.productos-lista {
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.nota-item {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.nota-item.filtrado {
+    display: none;
+    opacity: 0;
+}
+</style>
+
+<!-- JavaScript para filtros -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filtroModalidad = document.getElementById('filtroModalidad');
+    const filtroEstado = document.getElementById('filtroEstado');
+    const busqueda = document.getElementById('busqueda');
+    const limpiarFiltros = document.getElementById('limpiarFiltros');
+    const notasContainer = document.getElementById('notasContainer');
+
+    function aplicarFiltros() {
+        const modalidad = filtroModalidad.value;
+        const estado = filtroEstado.value;
+        const texto = busqueda.value.toLowerCase();
+
+        document.querySelectorAll('.nota-item').forEach(item => {
+            let mostrar = true;
+
+            // Filtro por modalidad
+            if (modalidad && item.dataset.modalidad !== modalidad) {
+                mostrar = false;
+            }
+
+            // Filtro por estado
+            if (estado && item.dataset.estado !== estado) {
+                mostrar = false;
+            }
+
+            // Filtro por texto
+            if (texto) {
+                const cliente = item.dataset.cliente;
+                const numero = item.dataset.numero;
+                const productos = item.dataset.productos;
+                
+                if (!cliente.includes(texto) && !numero.includes(texto) && !productos.includes(texto)) {
+                    mostrar = false;
+                }
+            }
+
+            if (mostrar) {
+                item.classList.remove('filtrado');
+            } else {
+                item.classList.add('filtrado');
+            }
+        });
+    }
+
+    // Event listeners
+    filtroModalidad.addEventListener('change', aplicarFiltros);
+    filtroEstado.addEventListener('change', aplicarFiltros);
+    busqueda.addEventListener('input', aplicarFiltros);
+    
+    limpiarFiltros.addEventListener('click', function() {
+        filtroModalidad.value = '';
+        filtroEstado.value = '';
+        busqueda.value = '';
+        aplicarFiltros();
+    });
+});
+
+function showEntregaModal(notaId) {
+    const modal = new bootstrap.Modal(document.getElementById('entregaModal'));
+    const form = document.getElementById('entregaForm');
+    form.action = `/notas-entrega/${notaId}/marcar-entregado`;
+    modal.show();
+}
+</script>
+{% endblock %}
