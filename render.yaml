@@ -7,6 +7,7 @@ services:
     buildCommand: |
       # Forzar Python 3.10 (más estable)
       python3.10 --version
+      
       # Instalar dependencias del sistema
       apt-get update && apt-get install -y \
         libxml2-dev \
@@ -16,17 +17,26 @@ services:
         python3.10-dev \
         pkg-config \
         libffi-dev
+      
       # Actualizar pip
       python3.10 -m pip install --upgrade pip
+      
       # Configurar variables de entorno para lxml
       export LXML_USE_SYSTEM_LIBRARIES=1
       export STATIC_DEPS=true
       export PYTHONPATH=/usr/local/lib/python3.10/site-packages
-      # LIMPIAR COMPLETAMENTE EL ENTORNO VIRTUAL
-      python3.10 -m pip uninstall -y Flask Flask-WTF WTForms lxml beautifulsoup4
+      
+      # LIMPIAR COMPLETAMENTE TODO
+      python3.10 -m pip uninstall -y Flask Flask-WTF WTForms lxml beautifulsoup4 gunicorn requests
       python3.10 -m pip cache purge
-      # Instalar dependencias usando Python 3.10 específicamente
-      python3.10 -m pip install --no-cache-dir --force-reinstall --no-deps -r requirements_ultra_estable.txt
+      python3.10 -m pip freeze | xargs python3.10 -m pip uninstall -y
+      
+      # Instalar SOLO las versiones bloqueadas
+      python3.10 -m pip install --no-cache-dir --force-reinstall --no-deps --ignore-installed -r requirements_bloqueado.txt
+      
+      # Verificar que se instalaron las versiones correctas
+      python3.10 -c "import flask; print(f'Flask instalado: {flask.__version__}')"
+      python3.10 -c "import flask_wtf; print(f'Flask-WTF instalado: {flask_wtf.__version__}')"
     startCommand: python3.10 -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
     envVars:
       - key: PYTHON_VERSION
@@ -37,3 +47,5 @@ services:
         value: "true"
       - key: PYTHONPATH
         value: "/usr/local/lib/python3.10/site-packages"
+      - key: PIP_NO_DEPENDENCIES
+        value: "1"
