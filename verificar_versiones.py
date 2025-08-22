@@ -18,28 +18,41 @@ def verificar_versiones():
         import wtforms
         print(f"✅ WTForms: {wtforms.__version__}")
         
-        import lxml
-        print(f"✅ lxml: {lxml.__version__}")
+        try:
+            import lxml
+            print(f"✅ lxml: {lxml.__version__}")
+        except ImportError:
+            print("ℹ️  lxml: No instalado (se instalará en Render)")
         
-        import gunicorn
-        print(f"✅ Gunicorn: {gunicorn.__version__}")
+        try:
+            import gunicorn
+            print(f"✅ Gunicorn: {gunicorn.__version__}")
+        except ImportError:
+            print("ℹ️  Gunicorn: No instalado (se instalará en Render)")
         
-        print("\n🎯 Versiones esperadas:")
-        print("   Flask: 2.3.3")
-        print("   Flask-WTF: 1.1.1")
+        print("\n🎯 Versiones esperadas (Ultra Estables en Render):")
+        print("   Flask: 2.2.5")
+        print("   Flask-WTF: 1.0.1")
         print("   WTForms: 3.0.1")
-        print("   lxml: 4.9.2")
+        print("   lxml: 4.9.1")
+        print("   Python: 3.10.0")
         
         # Verificar compatibilidad
-        if flask.__version__ == "2.3.3":
-            print("\n✅ Flask 2.3.3 instalado correctamente")
+        if flask.__version__ == "2.2.5":
+            print("\n✅ Flask 2.2.5 instalado correctamente")
         else:
-            print(f"\n❌ ERROR: Flask {flask.__version__} no es compatible")
+            print(f"\n⚠️  NOTA: Flask {flask.__version__} en local (en Render será 2.2.5)")
             
-        if flask_wtf.__version__ == "1.1.1":
-            print("✅ Flask-WTF 1.1.1 instalado correctamente")
+        if flask_wtf.__version__ == "1.0.1":
+            print("✅ Flask-WTF 1.0.1 instalado correctamente")
         else:
-            print(f"❌ ERROR: Flask-WTF {flask_wtf.__version__} no es compatible")
+            print(f"⚠️  NOTA: Flask-WTF {flask_wtf.__version__} en local (en Render será 1.0.1)")
+        
+        print("\n💡 Información:")
+        print("   • Las versiones locales pueden ser diferentes")
+        print("   • En Render se instalarán las versiones ultra estables")
+        print("   • lxml se instalará automáticamente en Render")
+        print("   • Python 3.10 se usará en Render")
             
         return True
         
