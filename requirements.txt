@@ -7,7 +7,10 @@ click==8.1.7
 blinker==1.6.3
 gunicorn==21.2.0
 requests==2.31.0
-beautifulsoup4>=4.9.3
-urllib3>=1.26.0
-Flask-WTF>=1.1.1
-Flask-SQLAlchemy>=3.0.0 
+beautifulsoup4==4.12.2
+urllib3==1.26.18
+Flask-WTF==1.1.1
+Flask-SQLAlchemy==3.0.5
+WTForms==3.0.1
+lxml==4.9.3
+html5lib==1.1 

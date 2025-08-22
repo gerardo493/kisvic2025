@@ -1,10 +1,13 @@
 services:
   - type: web
-    name: kisvic-sistema
+    name: mi-app-web
     env: python
-    plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.16
+        value: 3.9.18
+      - key: PYTHONPATH
+        value: /opt/render/project/src
