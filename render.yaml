@@ -3,13 +3,22 @@ services:
     name: mi-app-web
     env: python
     buildCommand: |
+      apt-get update && apt-get install -y \
+        libxml2-dev \
+        libxslt1-dev \
+        gcc \
+        g++ \
+        python3-dev \
+        pkg-config
       python -m pip install --upgrade pip
+      export LXML_USE_SYSTEM_LIBRARIES=1
+      export STATIC_DEPS=true
       python -m pip install --no-cache-dir -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
     envVars:
       - key: PYTHON_VERSION
-        value: 3.13.0
-      - key: PYTHONPATH
-        value: /opt/render/project/src
-      - key: PIP_NO_CACHE_DIR
+        value: 3.11.0
+      - key: LXML_USE_SYSTEM_LIBRARIES
         value: "1"
+      - key: STATIC_DEPS
+        value: "true"

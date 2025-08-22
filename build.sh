@@ -1,28 +1,23 @@
 #!/bin/bash
-set -e
+# Script de construcción personalizado para Render
 
-echo "🚀 Iniciando build de la aplicación..."
-
-# Actualizar pip
-echo "📦 Actualizando pip..."
-python -m pip install --upgrade pip
-
-# Instalar dependencias del sistema si es necesario
 echo "🔧 Instalando dependencias del sistema..."
-apt-get update -qq && apt-get install -y -qq \
-    python3-dev \
-    build-essential \
+apt-get update
+apt-get install -y \
     libxml2-dev \
     libxslt1-dev \
-    libffi-dev \
-    libssl-dev
+    gcc \
+    g++ \
+    python3-dev \
+    pkg-config \
+    libffi-dev
 
-# Instalar dependencias de Python
-echo "🐍 Instalando dependencias de Python..."
-python -m pip install --no-cache-dir -r requirements.txt
+echo "🐍 Configurando Python..."
+python -m pip install --upgrade pip
 
-# Verificar instalación
-echo "✅ Verificando instalación..."
-python -c "import psutil, cryptography, beautifulsoup4, flask; print('Todas las dependencias instaladas correctamente')"
+echo "📦 Instalando dependencias de Python..."
+export LXML_USE_SYSTEM_LIBRARIES=1
+export STATIC_DEPS=true
+pip install --no-cache-dir -r requirements.txt
 
-echo "🎉 Build completado exitosamente!"
+echo "✅ Construcción completada"
