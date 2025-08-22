@@ -23,10 +23,11 @@ export LXML_USE_SYSTEM_LIBRARIES=1
 export STATIC_DEPS=true
 export PYTHONPATH=/usr/local/lib/python3.11/site-packages
 
-echo "🧹 Limpiando instalaciones previas..."
-python3.11 -m pip uninstall -y Flask Flask-WTF WTForms
+echo "🧹 Limpiando completamente el entorno virtual..."
+python3.11 -m pip uninstall -y Flask Flask-WTF WTForms lxml beautifulsoup4
+python3.11 -m pip cache purge
 
 echo "📦 Instalando dependencias de Python..."
-python3.11 -m pip install --no-cache-dir --force-reinstall -r requirements_forzado.txt
+python3.11 -m pip install --no-cache-dir --force-reinstall --no-deps -r requirements_forzado.txt
 
 echo "✅ Construcción completada con Python 3.11"

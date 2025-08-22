@@ -26,8 +26,8 @@ def verificar_versiones():
         
         print("\n🎯 Versiones esperadas:")
         print("   Flask: 2.3.3")
-        print("   Flask-WTF: 1.2.2")
-        print("   WTForms: 3.2.1")
+        print("   Flask-WTF: 1.1.1")
+        print("   WTForms: 3.0.1")
         print("   lxml: 4.9.2")
         
         # Verificar compatibilidad
@@ -36,8 +36,8 @@ def verificar_versiones():
         else:
             print(f"\n❌ ERROR: Flask {flask.__version__} no es compatible")
             
-        if flask_wtf.__version__ == "1.2.2":
-            print("✅ Flask-WTF 1.2.2 instalado correctamente")
+        if flask_wtf.__version__ == "1.1.1":
+            print("✅ Flask-WTF 1.1.1 instalado correctamente")
         else:
             print(f"❌ ERROR: Flask-WTF {flask_wtf.__version__} no es compatible")
             

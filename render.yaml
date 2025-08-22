@@ -22,10 +22,11 @@ services:
       export LXML_USE_SYSTEM_LIBRARIES=1
       export STATIC_DEPS=true
       export PYTHONPATH=/usr/local/lib/python3.11/site-packages
-      # LIMPIAR CUALQUIER INSTALACIÓN PREVIA
-      python3.11 -m pip uninstall -y Flask Flask-WTF WTForms
+      # LIMPIAR COMPLETAMENTE EL ENTORNO VIRTUAL
+      python3.11 -m pip uninstall -y Flask Flask-WTF WTForms lxml beautifulsoup4
+      python3.11 -m pip cache purge
       # Instalar dependencias usando Python 3.11 específicamente
-      python3.11 -m pip install --no-cache-dir --force-reinstall -r requirements_forzado.txt
+      python3.11 -m pip install --no-cache-dir --force-reinstall --no-deps -r requirements_forzado.txt
     startCommand: python3.11 -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
     envVars:
       - key: PYTHON_VERSION
