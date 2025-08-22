@@ -2,19 +2,29 @@ services:
   - type: web
     name: mi-app-web
     env: python
+    plan: free
+    region: oregon
     buildCommand: |
+      # Forzar Python 3.11
+      python3.11 --version
+      # Instalar dependencias del sistema
       apt-get update && apt-get install -y \
         libxml2-dev \
         libxslt1-dev \
         gcc \
         g++ \
-        python3-dev \
-        pkg-config
-      python -m pip install --upgrade pip
+        python3.11-dev \
+        pkg-config \
+        libffi-dev
+      # Actualizar pip
+      python3.11 -m pip install --upgrade pip
+      # Configurar variables de entorno para lxml
       export LXML_USE_SYSTEM_LIBRARIES=1
       export STATIC_DEPS=true
-      python -m pip install --no-cache-dir -r requirements.txt
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
+      export PYTHONPATH=/usr/local/lib/python3.11/site-packages
+      # Instalar dependencias usando Python 3.11 específicamente
+      python3.11 -m pip install --no-cache-dir -r requirements_render.txt
+    startCommand: python3.11 -m gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -22,3 +32,5 @@ services:
         value: "1"
       - key: STATIC_DEPS
         value: "true"
+      - key: PYTHONPATH
+        value: "/usr/local/lib/python3.11/site-packages"
