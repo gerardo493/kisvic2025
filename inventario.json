@@ -2,11 +2,11 @@
     "1": {
         "nombre": "ADELGALAX  X 60 CAP",
         "precio": 3.0,
-        "cantidad": 791,
+        "cantidad": 781,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "imagenes_productos/producto_1.jpg",
         "ultima_entrada": "2025-05-24 22:06:30",
-        "ultima_salida": "2025-05-24 17:00:44",
+        "ultima_salida": "2025-08-25 23:09:56",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:23:28",
@@ -294,16 +294,17 @@
             }
         ],
         "precio_detal": 3.0,
-        "precio_distribuidor": 2.6
+        "precio_distribuidor": 2.6,
+        "stock": 13
     },
     "2": {
         "nombre": "ANTITUMORAL X 60 CAP",
         "precio": 3.0,
-        "cantidad": 275,
+        "cantidad": 265,
         "categoria": "Antitumorales - anticancerigeno",
         "ruta_imagen": "imagenes_productos/producto_2.png",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 23:09:56",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -441,16 +442,17 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000014"
             }
-        ]
+        ],
+        "stock": 66
     },
     "3": {
         "nombre": "ARANDANO NEGRO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 437,
+        "cantidad": 427,
         "categoria": "Protector Ocular",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 23:09:56",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:23:28",
@@ -586,7 +588,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
             }
-        ]
+        ],
+        "stock": 10
     },
     "4": {
         "nombre": "ARANDANO ROJO X 60 CAP",
@@ -935,11 +938,11 @@
     "7": {
         "nombre": "CALCIO MAG-ZINC X 50 CAP",
         "precio": 3.0,
-        "cantidad": 647,
+        "cantidad": 644,
         "categoria": "Vitaminas y Minerales",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -1334,11 +1337,11 @@
     "9": {
         "nombre": "CARDO MARIANO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 786,
+        "cantidad": 780,
         "categoria": "Protector Hepatico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -1580,11 +1583,11 @@
     "10": {
         "nombre": "CASTAÑA DE INDIA X 60  CAP",
         "precio": 3.0,
-        "cantidad": 542,
+        "cantidad": 539,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -2242,7 +2245,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
             }
-        ]
+        ],
+        "stock": 101
     },
     "12": {
         "nombre": "CENTELLA ASIATICA X 60 CAP",
@@ -3107,7 +3111,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000724"
             }
-        ]
+        ],
+        "stock": 100
     },
     "15": {
         "nombre": "COLA DE CABALLO X 60 CAP",
@@ -3230,7 +3235,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
             }
-        ]
+        ],
+        "stock": 6
     },
     "16": {
         "nombre": "COLON CLEANSER X 60 CAP",
@@ -3471,7 +3477,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000726"
             }
-        ]
+        ],
+        "stock": 88
     },
     "17": {
         "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP",
@@ -3742,16 +3749,17 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
             }
-        ]
+        ],
+        "stock": 10
     },
     "18": {
         "nombre": "DIENTE DE LEON X 60 CAP",
         "precio": 3.0,
-        "cantidad": 931,
+        "cantidad": 925,
         "categoria": "Protector Hepatico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-16 00:31:41",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -3888,7 +3896,7 @@
                 "observaciones": "Venta por factura fiscal FAC-00000728"
             }
         ],
-        "stock": 0
+        "stock": 25
     },
     "19": {
         "nombre": "ESCOBA DE CARNICERO X 60 CAP",
@@ -4147,7 +4155,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
             }
-        ]
+        ],
+        "stock": 166
     },
     "20": {
         "nombre": "GINKGO C/ GINSENG X 60 CAP",
@@ -4292,7 +4301,8 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
             }
-        ]
+        ],
+        "stock": 10
     },
     "21": {
         "nombre": "GINKGO LOCHITA X 60 CAP",
@@ -4931,11 +4941,11 @@
     "27": {
         "nombre": "MACA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 926,
+        "cantidad": 923,
         "categoria": "Repontesiador Sexsual",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-16 00:36:46",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -5095,11 +5105,11 @@
     "28": {
         "nombre": "MAPURITE X 60 CAP",
         "precio": 3.0,
-        "cantidad": 949,
+        "cantidad": 946,
         "categoria": "Antitumorales - anticancerigeno",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-16 00:36:50",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -6266,11 +6276,11 @@
     "34": {
         "nombre": "SAW PALMETO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 650,
+        "cantidad": 644,
         "categoria": "hiperplasia prostatica",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-10T20:50:52.330607",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-17 12:29:57",
@@ -6928,11 +6938,11 @@
     "37": {
         "nombre": "VITAMINA E C/SELENIUM X 50 CAP",
         "precio": 4.2,
-        "cantidad": 931,
+        "cantidad": 921,
         "categoria": "Vitaminas y Minerales",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -7828,11 +7838,11 @@
     "46": {
         "nombre": "DOC QUENOPODIO X 12 UND",
         "precio": 8.0,
-        "cantidad": 937,
+        "cantidad": 936,
         "categoria": "Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -8023,11 +8033,11 @@
     "48": {
         "nombre": "CITRATO DE MAGNESIO",
         "precio": 4.2,
-        "cantidad": 678,
+        "cantidad": 666,
         "categoria": "Vitaminas y Minerales",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-14 22:24:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -8711,11 +8721,11 @@
     "53": {
         "nombre": "CHAMPU 4 EN 1",
         "precio": 1.5,
-        "cantidad": 982,
+        "cantidad": 979,
         "categoria": "Cosmetico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
-        "ultima_salida": "2025-05-16 00:32:12",
+        "ultima_salida": "2025-08-25 22:46:55",
         "historial_ajustes": [
             {
                 "fecha": "2025-05-14 22:24:12",
@@ -9216,6 +9226,7 @@
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
             }
-        ]
+        ],
+        "stock": 41
     }
 }

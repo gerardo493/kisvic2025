@@ -455,8 +455,8 @@
                                 <td>${{ factura.total_usd|es_number }}</td>
                                 <td>Bs {{ factura.total_bs|es_number }}</td>
                                 <td>
-                                    <span class="badge {% if factura.estado == 'cobrada' %}badge-success{% elif factura.estado == 'pendiente' %}badge-warning{% else %}badge-danger{% endif %}">
-                                        {% if factura.estado == 'cobrada' %}Cobrada{% else %}{{ factura.estado|title }}{% endif %}
+                                    <span class="badge {% if factura.estado == 'pagada' %}badge-success{% elif factura.estado == 'cobrada' %}badge-success{% elif factura.estado == 'pendiente' %}badge-warning{% else %}badge-danger{% endif %}">
+                                        {% if factura.estado == 'pagada' %}Pagada{% elif factura.estado == 'cobrada' %}Cobrada{% else %}{{ factura.estado|title }}{% endif %}
                                     </span>
                                 </td>
                             </tr>

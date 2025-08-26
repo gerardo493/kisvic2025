@@ -27,7 +27,9 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body text-center">
                     <h5 class="card-title mb-3">Estado de la Factura</h5>
-            {% if factura.estado == 'cobrada' %}
+            {% if factura.estado == 'pagada' %}
+                        <div class="badge bg-success fs-6 px-4 py-2 mb-3">✅ PAGADA</div>
+            {% elif factura.estado == 'cobrada' %}
                         <div class="badge bg-success fs-6 px-4 py-2 mb-3">✅ COBRADA</div>
             {% elif factura.estado == 'abonada' %}
                         <div class="badge bg-info text-dark fs-6 px-4 py-2 mb-3">💰 ABONADA</div>
@@ -126,7 +128,7 @@
                                 <span>Editar</span>
                             </a>
                         </div>
-                        {% if factura.estado != 'cobrada' %}
+                        {% if factura.estado != 'cobrada' and factura.estado != 'pagada' %}
                         <div class="col-md-2 col-6">
                             <a href="{{ url_for('registrar_pago', id=factura.id) }}" class="btn btn-outline-info w-100 h-100 d-flex flex-column align-items-center justify-content-center">
                                 <i class="fas fa-dollar-sign fa-2x mb-2"></i>
@@ -397,7 +399,9 @@
                             <div class="info-item">
                                 <label class="form-label fw-bold text-muted">Estado:</label>
                                 <p class="h5">
-                                    {% if factura.estado == 'cobrada' %}
+                                    {% if factura.estado == 'pagada' %}
+                                        <span class="badge bg-success fs-6">✅ PAGADA</span>
+                                    {% elif factura.estado == 'cobrada' %}
                                         <span class="badge bg-success fs-6">✅ COBRADA</span>
                                     {% elif factura.estado == 'abonada' %}
                                         <span class="badge bg-info text-dark fs-6">💰 ABONADA</span>
@@ -410,7 +414,7 @@
                     </div>
 
                     <!-- Sistema de Recordatorios WhatsApp - SOLO ENVÍO DIRECTO -->
-                    {% if factura.estado != 'cobrada' %}
+                    {% if factura.estado != 'cobrada' and factura.estado != 'pagada' %}
                     <div class="alert alert-info border-0 shadow-sm">
                         <div class="d-flex align-items-center mb-3">
                             <i class="fas fa-bell text-primary me-2 fa-lg"></i>

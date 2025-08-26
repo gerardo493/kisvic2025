@@ -45,31 +45,8 @@ app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# --- Configuración CSRF ---
-# DESHABILITADO COMPLETAMENTE PARA RESOLVER ERRORES
-app.config['WTF_CSRF_ENABLED'] = False
-app.config['WTF_CSRF_TIME_LIMIT'] = 3600  # 1 hora
-app.config['WTF_CSRF_SSL_STRICT'] = False  # Para desarrollo local
-app.config['WTF_CSRF_HEADERS'] = ['X-CSRFToken']  # Headers personalizados
-
 # --- Inicializar CSRF ---
-# DESHABILITADO COMPLETAMENTE PARA RESOLVER ERRORES
-# --- Inicializar CSRF ---
-# try:
-#     csrf = CSRFProtect(app)
-#     print("✅ CSRF habilitado correctamente")
-# except Exception as e:
-#     print(f"⚠️ Error inicializando CSRF: {e}")
-#     csrf = None
-csrf = None
-print("🚫 CSRF deshabilitado completamente")
-
-# --- Helper para Tokens CSRF ---
-def get_csrf_token():
-    """Genera un token CSRF válido"""
-    if csrf:
-        return csrf._get_token()
-    return None
+csrf = CSRFProtect(app)
 
 # --- Constantes ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -1356,20 +1333,8 @@ def mostrar_facturas():
                 except Exception:
                     continue
             saldo_pendiente = max(total_usd - total_abonado, 0.0)
-            
-            # Solo actualizar estado si no existe o si hay inconsistencias
-            estado_actual = factura.get('estado', '')
-            if not estado_actual or estado_actual == 'cobrada':
-                # Calcular estado correcto solo si no existe o si era 'cobrada' (antiguo)
-                if abs(saldo_pendiente) < 0.01 or total_abonado >= total_usd:
-                    estado = 'pagada'
-                elif total_abonado > 0:
-                    estado = 'abonada'
-                else:
-                    estado = 'pendiente'
-            else:
-                # Mantener el estado existente si ya es correcto
-                estado = estado_actual
+            # Estado segun abonado
+            estado = factura.get('estado') or ('abonada' if 0 < total_abonado < total_usd else ('cobrada' if total_abonado >= total_usd and total_usd > 0 else 'pendiente'))
 
             factura.update({
                 'subtotal_usd': subtotal_usd,
@@ -3082,7 +3047,88 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 csrf = CSRFProtect(app)
 
+# --- Configuración de rutas de capturas (compatibles con Render y local) ---
+# En Render no podemos escribir en /data. Usamos una carpeta del proyecto
+# que en despliegue se enlaza a un disco persistente (storage) en el start command.
+IS_RENDER = bool(os.environ.get('RENDER') or os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+CAPTURAS_FOLDER = os.path.join(BASE_PATH, 'uploads', 'capturas')
+CAPTURAS_URL = '/uploads/capturas'
 
+# Asegurar que las carpetas de capturas existen
+os.makedirs(CAPTURAS_FOLDER, exist_ok=True)
+
+# NOTA: La función serve_captura ya está definida anteriormente
+
+# --- Healthcheck ---
+# NOTA: La función healthcheck ya está definida anteriormente
+
+# --- Funciones de Utilidad ---
+def allowed_file(filename):
+    """Verifica si la extensión del archivo está permitida."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def guardar_imagen_producto(imagen, producto_id):
+    """Guarda la imagen de un producto y retorna la ruta relativa con '/' como separador."""
+    if imagen and allowed_file(imagen.filename):
+        # Generar nombre único para la imagen
+        extension = imagen.filename.rsplit('.', 1)[1].lower()
+        nombre_archivo = f"producto_{producto_id}.{extension}"
+        ruta_archivo = os.path.join(IMAGENES_PRODUCTOS_FOLDER, nombre_archivo)
+        
+        # Guardar la imagen
+        imagen.save(ruta_archivo)
+        
+        # Retornar la ruta relativa para guardar en la base de datos (siempre con /)
+        return f"imagenes_productos/{nombre_archivo}"
+    return None
+
+def cargar_clientes_desde_csv(archivo_csv):
+    """Carga clientes desde un archivo CSV."""
+    clientes = cargar_datos(ARCHIVO_CLIENTES)
+    try:
+        with open(archivo_csv, 'r', encoding='utf-8') as f:
+            lector = csv.DictReader(f)
+            for fila in lector:
+                tipo_id = fila.get('tipo_id', 'V')
+                numero_id = fila.get('numero_id', '').strip()
+                if not numero_id.isdigit():
+                    continue
+                nuevo_id = f"{tipo_id}-{numero_id}"
+                if nuevo_id not in clientes:
+                    clientes[nuevo_id] = {
+                        'id': nuevo_id,
+                        'nombre': fila.get('nombre', '').strip(),
+                        'email': fila.get('email', '').strip() if 'email' in fila else '',
+                        'telefono': fila.get('telefono', '').strip() if 'telefono' in fila else '',
+                        'direccion': fila.get('direccion', '').strip() if 'direccion' in fila else ''
+                    }
+        return guardar_datos(ARCHIVO_CLIENTES, clientes)
+    except Exception as e:
+        print(f"Error cargando clientes desde CSV: {e}")
+        return False
+
+def cargar_productos_desde_csv(archivo_csv):
+    """Carga productos desde un archivo CSV."""
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    try:
+        with open(archivo_csv, 'r', encoding='utf-8') as f:
+            lector = csv.DictReader(f)
+            for fila in lector:
+                nuevo_id = str(len(inventario) + 1)
+                inventario[nuevo_id] = {
+                    'nombre': fila.get('nombre', '').strip(),
+                    'precio': float(fila.get('precio', 0)),
+                    'cantidad': int(fila.get('cantidad', 0)),
+                    'categoria': fila.get('categoria', '').strip(),
+                    'ruta_imagen': "",
+                    'ultima_entrada': None,
+                    'ultima_salida': None
+                }
+        return guardar_datos(ARCHIVO_INVENTARIO, inventario)
+    except Exception as e:
+        print(f"Error cargando productos desde CSV: {e}")
+        return False
 
 def limpiar_valor_monetario(valor):
     """Limpia y convierte un valor monetario a float."""
@@ -3141,12 +3187,22 @@ def limpiar_monto(monto):
 
 # NOTA: La función editar_producto ya está definida anteriormente
 # NOTA: La función eliminar_producto ya está definida anteriormente
-# NOTA: La función ver_producto ya está definida anteriormente
+@app.route('/inventario/<id>')
+def ver_producto(id):
+    """Muestra los detalles de un producto del inventario."""
+    inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    producto = inventario.get(id)
+    if not producto:
+        flash('Producto no encontrado', 'danger')
+        return redirect(url_for('mostrar_inventario'))
+    return render_template('producto_detalle.html', producto=producto, id=id)
 
 # NOTA: La función mostrar_facturas ya está definida anteriormente
 # NOTA: La función imprimir_factura ya está definida anteriormente
 # NOTA: La función ver_factura ya está definida anteriormente
-# NOTA: La función test_whatsapp ya está definida anteriormente
+@app.route('/test-whatsapp')
+def test_whatsapp():
+    return jsonify({'message': 'Ruta de prueba funcionando'})
 
 # Rutas para capturar URLs malformadas específicas
 # NOTA: La función editar_factura_url_malformada ya está definida anteriormente
@@ -5806,15 +5862,6 @@ def registrar_pago(id):
         saldo_pendiente = factura.get('total_usd', 0) - total_abonado
         factura['saldo_pendiente'] = saldo_pendiente
         
-        # Actualizar estado de la factura según el pago
-        if abs(saldo_pendiente) < 0.01 or total_abonado >= factura.get('total_usd', 0):
-            saldo_pendiente = 0
-            factura['estado'] = 'pagada'
-        else:
-            factura['estado'] = 'pendiente'
-        
-        factura['saldo_pendiente'] = saldo_pendiente
-        
         # Sincronizar automáticamente con cuentas por cobrar
         sincronizar_cuentas_por_cobrar(factura)
         
@@ -8366,24 +8413,19 @@ def editar_nota_entrega(id):
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
     return render_template('nota_entrega_form.html', nota=nota, clientes=clientes, inventario=inventario, editar=True)
 
-@app.route('/notas-entrega/<id>/marcar-entregado', methods=['GET', 'POST'])
+@app.route('/notas-entrega/<id>/marcar-entregado', methods=['POST'])
 @login_required
 def marcar_nota_entregada(id):
     """Marca una nota de entrega como entregada."""
-    notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
-    
-    if id not in notas:
-        flash('Nota de entrega no encontrada', 'danger')
-        return redirect(url_for('mostrar_notas_entrega'))
-    
-    nota = notas[id]
-    
-    if request.method == 'GET':
-        # Mostrar formulario con token CSRF
-        return render_template('marcar_entregado.html', nota=nota, id=id)
-    
-    # POST: Procesar formulario
     try:
+        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
+        
+        if id not in notas:
+            flash('Nota de entrega no encontrada', 'danger')
+            return redirect(url_for('mostrar_notas_entrega'))
+        
+        nota = notas[id]
+        
         # Obtener datos de entrega
         recibido_por = request.form.get('recibido_por', '').strip()
         documento_identidad = request.form.get('documento_identidad', '').strip()
@@ -8498,9 +8540,9 @@ def test_eliminar_nota(id):
     return f"Ruta de prueba funcionando para nota {id}"
 
 @app.route('/notas-entrega/<id>/eliminar', methods=['GET'])
-@login_required
+# @login_required
 def eliminar_nota_entrega(id):
-    """Elimina o anula una nota de entrega según su estado."""
+    """Elimina una nota de entrega."""
     print(f"🔍 Función eliminar_nota_entrega llamada con ID: {id}")
     print(f"🔍 Método HTTP: {request.method}")
     print(f"🔍 URL: {request.url}")
@@ -8517,27 +8559,11 @@ def eliminar_nota_entrega(id):
         nota = notas[id]
         print(f"✅ Nota {id} encontrada: {nota.get('numero', 'N/A')}")
         
-        # Si la nota está entregada, marcarla como ANULADA en lugar de eliminar
+        # Solo permitir eliminar si no está entregada
         if nota.get('estado') == 'ENTREGADO':
-            print(f"🔄 Nota {id} ya entregada, marcando como ANULADA")
-            
-            # Marcar como anulada
-            nota['estado'] = 'ANULADO'
-            nota['fecha_anulacion'] = datetime.now().strftime('%Y-%m-%d')
-            nota['hora_anulacion'] = datetime.now().strftime('%H:%M:%S')
-            nota['anulado_por'] = session['usuario']
-            nota['motivo_anulacion'] = 'Anulada por usuario'
-            
-            # Guardar cambios
-            guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
-            print(f"✅ Nota {id} marcada como ANULADA exitosamente")
-            
-            flash(f'Nota de entrega #{id} marcada como ANULADA', 'warning')
-            registrar_bitacora(session['usuario'], 'Anular nota de entrega', f"Nota: {id} - Estado: ENTREGADO -> ANULADO")
+            print(f"❌ Nota {id} ya entregada, no se puede eliminar")
+            flash('No se puede eliminar una nota de entrega ya entregada', 'danger')
             return redirect(url_for('mostrar_notas_entrega'))
-        
-        # Si la nota NO está entregada, eliminarla completamente
-        print(f"🗑️ Nota {id} no entregada, eliminando completamente")
         
         # Restaurar stock del inventario antes de eliminar
         try:
@@ -8563,58 +8589,18 @@ def eliminar_nota_entrega(id):
             print(f"❌ Error restaurando stock: {e}")
             # Continuar con la eliminación aunque falle la restauración de stock
         
-        # Eliminar nota completamente
+        # Eliminar nota directamente
         del notas[id]
         guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
-        print(f"✅ Nota {id} eliminada completamente exitosamente")
+        print(f"✅ Nota {id} eliminada exitosamente")
         
-        flash(f'Nota de entrega #{id} eliminada completamente', 'success')
-        registrar_bitacora(session['usuario'], 'Eliminar nota de entrega', f"Nota: {id}")
+        flash(f'Nota de entrega #{id} eliminada exitosamente', 'success')
+        # registrar_bitacora(session['usuario'], 'Eliminar nota de entrega', f"Nota: {id}")
         return redirect(url_for('mostrar_notas_entrega'))
         
     except Exception as e:
-        print(f"❌ Error procesando nota {id}: {e}")
-        flash(f'Error procesando nota de entrega: {e}', 'danger')
-        return redirect(url_for('mostrar_notas_entrega'))
-
-@app.route('/notas-entrega/<id>/anular', methods=['GET'])
-@login_required
-def anular_nota_entrega(id):
-    """Anula una nota de entrega entregada (marca como ANULADO)."""
-    print(f"🔄 Función anular_nota_entrega llamada con ID: {id}")
-    
-    try:
-        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
-        
-        if id not in notas:
-            flash('Nota de entrega no encontrada', 'danger')
-            return redirect(url_for('mostrar_notas_entrega'))
-        
-        nota = notas[id]
-        
-        # Solo permitir anular si está entregada
-        if nota.get('estado') != 'ENTREGADO':
-            flash('Solo se pueden anular notas de entrega que estén entregadas', 'warning')
-            return redirect(url_for('mostrar_notas_entrega'))
-        
-        # Marcar como anulada
-        nota['estado'] = 'ANULADO'
-        nota['fecha_anulacion'] = datetime.now().strftime('%Y-%m-%d')
-        nota['hora_anulacion'] = datetime.now().strftime('%H:%M:%S')
-        nota['anulado_por'] = session['usuario']
-        nota['motivo_anulacion'] = 'Anulada por usuario'
-        
-        # Guardar cambios
-        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
-        print(f"✅ Nota {id} anulada exitosamente")
-        
-        flash(f'Nota de entrega #{id} anulada exitosamente', 'warning')
-        registrar_bitacora(session['usuario'], 'Anular nota de entrega', f"Nota: {id} - Estado: ENTREGADO -> ANULADO")
-        return redirect(url_for('mostrar_notas_entrega'))
-        
-    except Exception as e:
-        print(f"❌ Error anulando nota {id}: {e}")
-        flash(f'Error anulando nota de entrega: {e}', 'danger')
+        print(f"❌ Error eliminando nota {id}: {e}")
+        flash(f'Error eliminando nota de entrega: {e}', 'danger')
         return redirect(url_for('mostrar_notas_entrega'))
 
 @app.route('/notas-entrega/<id>/imprimir')
@@ -8869,210 +8855,10 @@ def notificar_pago_recibido(factura, pago):
         print(f"❌ Error creando notificación: {e}")
         return None
 
-# --- FUNCIONALIDAD DE PAGOS EN NOTAS DE ENTREGA ---
-# ===================================================
-
-def procesar_pago_nota_entrega(nota_id, monto_pago, metodo_pago, referencia_pago=""):
-    """
-    Procesa un pago en una nota de entrega y actualiza el inventario.
-    Esta función se ejecuta cuando se recibe un pago directo en una nota de entrega.
-    """
-    try:
-        # Cargar datos
-        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
-        inventario = cargar_datos(ARCHIVO_INVENTARIO)
-        
-        if nota_id not in notas:
-            print(f"❌ Nota de entrega {nota_id} no encontrada")
-            return False, "Nota de entrega no encontrada"
-        
-        nota = notas[nota_id]
-        
-        # Verificar que la nota esté en estado válido
-        if nota.get('estado') not in ['PENDIENTE_ENTREGA', 'ENTREGADO']:
-            return False, f"La nota no puede recibir pagos en estado: {nota.get('estado')}"
-        
-        # Inicializar pagos si no existe
-        if 'pagos' not in nota:
-            nota['pagos'] = []
-        
-        # Crear registro de pago
-        nuevo_pago = {
-            'id': str(len(nota['pagos']) + 1),
-            'fecha': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'monto': float(monto_pago),
-            'metodo': metodo_pago,
-            'referencia': referencia_pago,
-            'timestamp': datetime.now().isoformat()
-        }
-        
-        # Agregar pago a la nota
-        nota['pagos'].append(nuevo_pago)
-        
-        # Calcular total pagado
-        total_pagado = sum(pago['monto'] for pago in nota['pagos'])
-        total_nota = float(nota.get('subtotal_usd', 0))
-        
-        # Actualizar estado de la nota
-        if total_pagado >= total_nota:
-            nota['estado'] = 'PAGADA'
-            nota['fecha_pago_completo'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        else:
-            nota['estado'] = 'ABONADA'
-        
-        # Guardar nota actualizada
-        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
-        
-        # DESCONTAR DEL INVENTARIO
-        if nota.get('estado') in ['ENTREGADO', 'PAGADA']:
-            productos = nota.get('productos', [])
-            cantidades = nota.get('cantidades', [])
-            
-            for i, producto_id in enumerate(productos):
-                cantidad = int(cantidades[i]) if i < len(cantidades) else 0
-                
-                if producto_id in inventario:
-                    stock_actual = int(inventario[producto_id].get('cantidad', 0))
-                    nuevo_stock = max(0, stock_actual - cantidad)
-                    
-                    inventario[producto_id]['cantidad'] = nuevo_stock
-                    inventario[producto_id]['ultima_salida'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                    
-                    print(f"📦 Producto {producto_id}: Stock {stock_actual} -> {nuevo_stock} (descontado: {cantidad})")
-                else:
-                    print(f"⚠️ Producto {producto_id} no encontrado en inventario")
-            
-            # Guardar inventario actualizado
-            guardar_datos(ARCHIVO_INVENTARIO, inventario)
-            print(f"✅ Inventario actualizado para nota {nota_id}")
-        
-        # SINCRONIZAR CON CUENTAS POR COBRAR SIEMPRE que se procese un pago
-        if nota.get('estado') == 'PAGADA':
-            # Crear factura automáticamente para sincronización
-            factura = crear_factura_desde_nota_pagada(nota)
-            if factura:
-                sincronizar_cuentas_por_cobrar(factura)
-                print(f"✅ Factura creada y sincronizada: {factura['numero']}")
-            else:
-                # Si no se puede crear factura, sincronizar directamente la nota
-                print(f"📊 Sincronizando nota de entrega con cuentas por cobrar")
-                # Crear entrada en cuentas por cobrar para la nota pagada
-                cuentas = cargar_datos(ARCHIVO_CUENTAS)
-                entrada_cuenta = {
-                    'rif': nota.get('cliente_id', ''),
-                    'total_usd': float(nota.get('subtotal_usd', 0)),
-                    'abonado_usd': float(nota.get('subtotal_usd', 0)),
-                    'estado': 'Cobrada',
-                    'tipo_pago': 'Nota de Entrega',
-                    'fecha_ultimo_abono': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    'fecha_emision': nota.get('fecha', ''),
-                    'referencia_pago': f"Nota {nota_id} - Pago completo",
-                    'nota_entrega_origen': nota_id
-                }
-                cuentas[f"NE-{nota_id}"] = entrada_cuenta
-                guardar_datos(ARCHIVO_CUENTAS, cuentas)
-                print(f"✅ Nota sincronizada con cuentas por cobrar")
-        
-        # Registrar en bitácora
-        registrar_bitacora(
-            'SISTEMA',
-            'Pago procesado en nota de entrega',
-            f"Nota: {nota_id}, Monto: ${monto_pago:.2f}, Estado: {nota['estado']}"
-        )
-        
-        print(f"✅ Pago procesado exitosamente en nota {nota_id}")
-        return True, f"Pago procesado. Estado actual: {nota['estado']}"
-        
-    except Exception as e:
-        print(f"❌ Error procesando pago en nota de entrega: {e}")
-        return False, f"Error: {str(e)}"
-
-def crear_factura_desde_nota_pagada(nota):
-    """
-    Crea una factura automáticamente cuando una nota de entrega a crédito se paga completamente.
-    """
-    try:
-        # Obtener numeración fiscal
-        usuario_actual = 'SISTEMA'
-        numero_fiscal, numero_secuencial = control_numeracion.obtener_siguiente_numero('FACTURA', usuario_actual)
-        
-        # Crear factura
-        factura = {
-            'numero': numero_fiscal,
-            'numero_secuencial': numero_secuencial,
-            'fecha': datetime.now().strftime('%Y-%m-%d'),
-            'hora': datetime.now().strftime('%H:%M:%S'),
-            'timestamp_creacion': datetime.now().isoformat(),
-            'cliente_id': nota['cliente_id'],
-            'productos': nota['productos'],
-            'cantidades': nota['cantidades'],
-            'precios': nota['precios'],
-            'subtotal_usd': nota['subtotal_usd'],
-            'descuento': 0,
-            'tipo_descuento': 'bs',
-            'descuento_total': 0,
-            'iva': 16,
-            'iva_total': nota['subtotal_usd'] * 0.16,
-            'total_usd': nota['subtotal_usd'] * 1.16,
-            'condicion_pago': 'contado',  # Ya está pagada
-            'dias_credito': 0,
-            'fecha_vencimiento': datetime.now().strftime('%Y-%m-%d'),
-            'nota_entrega_origen': nota['numero'],
-            'estado': 'PAGADA',
-            'pagos': nota.get('pagos', []),
-            'tasa_bcv': 36.00,
-            'total_abonado': nota['subtotal_usd'] * 1.16,
-            'saldo_pendiente': 0
-        }
-        
-        # Guardar factura
-        facturas = cargar_datos(ARCHIVO_FACTURAS)
-        facturas[factura['numero']] = factura
-        guardar_datos(ARCHIVO_FACTURAS, facturas)
-        
-        # Actualizar nota con referencia a la factura
-        nota['factura_generada'] = factura['numero']
-        notas = cargar_datos(ARCHIVO_NOTAS_ENTREGA)
-        notas[nota['numero']] = nota
-        guardar_datos(ARCHIVO_NOTAS_ENTREGA, notas)
-        
-        return factura
-        
-    except Exception as e:
-        print(f"❌ Error creando factura desde nota pagada: {e}")
-        return None
-
-@app.route('/notas-entrega/<id>/procesar-pago', methods=['POST'])
-@login_required
-def procesar_pago_nota_entrega_route(id):
-    """
-    Ruta para procesar pagos en notas de entrega.
-    """
-    try:
-        monto = float(request.form.get('monto', 0))
-        metodo = request.form.get('metodo', 'efectivo')
-        referencia = request.form.get('referencia', '')
-        
-        if monto <= 0:
-            flash('El monto debe ser mayor a 0', 'danger')
-            return redirect(url_for('mostrar_notas_entrega'))
-        
-        # Procesar el pago
-        exito, mensaje = procesar_pago_nota_entrega(id, monto, metodo, referencia)
-        
-        if exito:
-            flash(f'Pago procesado exitosamente: {mensaje}', 'success')
-        else:
-            flash(f'Error procesando pago: {mensaje}', 'danger')
-        
-        return redirect(url_for('mostrar_notas_entrega'))
-        
-    except Exception as e:
-        flash(f'Error procesando pago: {e}', 'danger')
-        return redirect(url_for('mostrar_notas_entrega'))
-
 # --- Ruta de prueba ---
-# NOTA: La función index ya está definida anteriormente
+@app.route('/')
+def index():
+    return "¡Sistema funcionando correctamente! 🚀"
 
 @app.route('/test')
 def test():

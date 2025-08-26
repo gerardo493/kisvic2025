@@ -55,13 +55,24 @@
         "tasa_bcv": null,
         "fecha_tasa_bcv": null,
         "observaciones": "",
-        "estado": "PENDIENTE_ENTREGA",
+        "estado": "PAGADA",
         "usuario_creacion": "admin",
-        "firma_recibido": false,
-        "fecha_entrega": null,
-        "hora_entrega": null,
-        "entregado_por": null,
-        "recibido_por": null,
-        "documento_identidad": null
+        "firma_recibido": true,
+        "fecha_entrega": "2025-08-25",
+        "hora_entrega": "21:27:58",
+        "entregado_por": "admin",
+        "recibido_por": "oasis natural",
+        "documento_identidad": "",
+        "pagos": [
+            {
+                "id": "1",
+                "fecha": "2025-08-25 22:46:55",
+                "monto": 201.5,
+                "metodo": "efectivo",
+                "referencia": "PAGO_PRUEBA_20250825_224655",
+                "timestamp": "2025-08-25T22:46:55.825146"
+            }
+        ],
+        "fecha_pago_completo": "2025-08-25 22:46:55"
     }
 }

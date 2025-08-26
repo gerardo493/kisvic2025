@@ -341,7 +341,9 @@
                                 <td class="text-end">${{ (factura.total_usd or 0)|es_number }}</td>
                                 <td class="text-end">{{ (factura.total_bs or 0)|es_number }} Bs</td>
                                 <td>
-                                    {% if factura.estado == 'cobrada' %}
+                                    {% if factura.estado == 'pagada' %}
+                                    <span class="badge bg-success">Pagada</span>
+                                    {% elif factura.estado == 'cobrada' %}
                                     <span class="badge bg-success">Cobrada</span>
                                     {% elif factura.estado == 'abonada' %}
                                     <span class="badge bg-info text-dark">Abonada</span>

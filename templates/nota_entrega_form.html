@@ -342,8 +342,14 @@
         // Mostrar modalidad de pago por defecto
         mostrarModalidadPago('contado');
         
-        // Agregar primer producto por defecto
-        addProducto();
+        // Verificar si estamos editando una nota existente
+        if (typeof notaExiste !== 'undefined' && notaExiste) {
+            // Cargar productos existentes
+            cargarProductosExistentes();
+        } else {
+            // Agregar primer producto por defecto para nueva nota
+            addProducto();
+        }
         
         // Event listeners para modalidades de pago
         document.querySelectorAll('input[name="modalidad_pago"]').forEach(radio => {
@@ -436,6 +442,11 @@
                 btn.disabled = false;
             });
         }
+    }
+    
+    // Función para cargar productos existentes al editar
+    function cargarProductosExistentes() {
+        // Esta función se implementará después
     }
     
     // Función para eliminar producto
@@ -602,5 +613,52 @@
         
         return true;
     }
+    
+
 </script>
+
+<!-- Script para cargar productos existentes al editar -->
+{% if nota and nota.productos %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Esperar un momento para que se cargue todo
+    setTimeout(function() {
+        const productos = {{ nota.productos|tojson }};
+        const cantidades = {{ nota.cantidades|tojson }};
+        const precios = {{ nota.precios|tojson }};
+        
+        // Limpiar contenedor de productos
+        document.getElementById('productos-container').innerHTML = '';
+        productCounter = 0;
+        
+        // Agregar cada producto existente
+        for (let i = 0; i < productos.length; i++) {
+            addProducto();
+            
+            // Obtener la fila recién creada
+            const productoRow = document.querySelector('.producto-row:last-child');
+            
+            // Seleccionar el producto
+            const productoSelect = productoRow.querySelector('select[name="productos[]"]');
+            productoSelect.value = productos[i];
+            
+            // Establecer cantidad
+            const cantidadInput = productoRow.querySelector('input[name="cantidades[]"]');
+            cantidadInput.value = cantidades[i];
+            
+            // Establecer precio
+            const precioInput = productoRow.querySelector('input[name="precios[]"]');
+            precioInput.value = precios[i];
+            
+            // Calcular subtotal
+            calcularSubtotal(precioInput);
+        }
+        
+        // Actualizar totales
+        calcularTotales();
+    }, 100);
+});
+</script>
+{% endif %}
+
 {% endblock %}
