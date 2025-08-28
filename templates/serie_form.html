@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar Serie' if editar else 'Nueva Serie' }}{% endblock %}
+
+{% block content %}
+<style>
+    .serie-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 2rem;
+    }
+
+    .form-card .card-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px 15px 0 0;
+        border-bottom: none;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #1a237e;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 71, 161, 0.25);
+        border-color: #0d47a1;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .preview-card {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .preview-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1a237e;
+        font-family: 'Courier New', monospace;
+    }
+</style>
+
+<div class="serie-container">
+    <div class="container">
+        <div class="page-header">
+            <h2>
+                <i class="fas fa-{{ 'edit' if editar else 'plus' }} me-2"></i>
+                {{ 'Editar Serie' if editar else 'Nueva Serie' }}
+            </h2>
+            {% if editar %}
+                <p class="mb-0">Código: <strong>{{ codigo }}</strong></p>
+            {% endif %}
+        </div>
+
+        <form method="POST" id="serieForm">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <!-- Información Básica -->
+            <div class="form-card">
+                <div class="card-header">
+                    <h4><i class="fas fa-info-circle me-2"></i>Información Básica</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="codigo" class="form-label">Código de Serie</label>
+                            <input type="text" class="form-control" id="codigo" name="codigo" 
+                                   value="{{ codigo if editar else '' }}" 
+                                   {% if editar %}readonly{% else %}required{% endif %}
+                                   maxlength="10" 
+                                   pattern="[A-Z0-9]+"
+                                   title="Solo letras mayúsculas y números">
+                            <div class="form-text">
+                                {% if editar %}
+                                    El código no se puede modificar
+                                {% else %}
+                                    Máximo 10 caracteres, solo letras y números
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="nombre" class="form-label">Nombre de la Serie</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   value="{{ serie.nombre if editar else '' }}" 
+                                   required maxlength="100">
+                            <div class="form-text">Nombre descriptivo para identificar la serie</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="prefijo" class="form-label">Prefijo</label>
+                            <input type="text" class="form-control" id="prefijo" name="prefijo" 
+                                   value="{{ serie.prefijo if editar else '' }}" 
+                                   maxlength="20">
+                            <div class="form-text">Texto que aparece antes del número (ej: FAC-, 2024-)</div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="longitud_numero" class="form-label">Longitud del Número</label>
+                            <select class="form-select" id="longitud_numero" name="longitud_numero">
+                                {% for i in range(1, 11) %}
+                                <option value="{{ i }}" 
+                                        {% if editar and serie.longitud_numero == i %}selected{% elif not editar and i == 6 %}selected{% endif %}>
+                                    {{ i }} dígitos
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="siguiente_numero" class="form-label">Siguiente Número</label>
+                            <input type="number" class="form-control" id="siguiente_numero" name="siguiente_numero" 
+                                   value="{{ serie.siguiente_numero if editar else 1 }}" 
+                                   min="1" readonly>
+                            <div class="form-text">Solo lectura</div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ serie.descripcion if editar else '' }}</textarea>
+                            <div class="form-text">Descripción opcional de la serie</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración -->
+            <div class="form-card">
+                <div class="card-header">
+                    <h4><i class="fas fa-cog me-2"></i>Configuración</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="tipo" class="form-label">Tipo de Serie</label>
+                            <select class="form-select" id="tipo" name="tipo">
+                                <option value="general" {% if editar and serie.tipo == 'general' %}selected{% endif %}>General</option>
+                                <option value="sucursal" {% if editar and serie.tipo == 'sucursal' %}selected{% endif %}>Por Sucursal</option>
+                                <option value="especial" {% if editar and serie.tipo == 'especial' %}selected{% endif %}>Especial</option>
+                                <option value="temporal" {% if editar and serie.tipo == 'temporal' %}selected{% endif %}>Temporal</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sucursal" class="form-label">Sucursal</label>
+                            <input type="text" class="form-control" id="sucursal" name="sucursal" 
+                                   value="{{ serie.sucursal if editar else 'principal' }}">
+                            <div class="form-text">Sucursal asociada a esta serie</div>
+                        </div>
+                    </div>
+
+                    {% if editar %}
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="activa" name="activa" 
+                                       {% if serie.activa %}checked{% endif %}>
+                                <label class="form-check-label" for="activa">
+                                    Serie activa
+                                </label>
+                                <div class="form-text">Las series inactivas no se pueden usar para crear facturas</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Preview -->
+            <div class="form-card">
+                <div class="card-header">
+                    <h4><i class="fas fa-eye me-2"></i>Vista Previa</h4>
+                </div>
+                <div class="card-body">
+                    <div class="preview-card">
+                        <p class="mb-2">El siguiente número generado será:</p>
+                        <div class="preview-number" id="numeroPreview">
+                            <span id="prefijoPreview">{{ serie.prefijo if editar else 'FAC-' }}</span><span id="numeroFormateado">{{ '000001' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="{{ url_for('gestionar_series') }}" class="btn btn-secondary me-md-2">
+                    <i class="fas fa-times me-2"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>{{ 'Actualizar' if editar else 'Crear' }} Serie
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Actualizar preview en tiempo real
+function actualizarPreview() {
+    const prefijo = document.getElementById('prefijo').value || '';
+    const longitud = parseInt(document.getElementById('longitud_numero').value) || 6;
+    const siguienteNumero = parseInt(document.getElementById('siguiente_numero').value) || 1;
+    
+    const numeroFormateado = siguienteNumero.toString().padStart(longitud, '0');
+    
+    document.getElementById('prefijoPreview').textContent = prefijo;
+    document.getElementById('numeroFormateado').textContent = numeroFormateado;
+}
+
+// Convertir código a mayúsculas automáticamente
+document.getElementById('codigo').addEventListener('input', function() {
+    this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+});
+
+// Actualizar preview cuando cambien los campos
+document.getElementById('prefijo').addEventListener('input', actualizarPreview);
+document.getElementById('longitud_numero').addEventListener('change', actualizarPreview);
+document.getElementById('siguiente_numero').addEventListener('input', actualizarPreview);
+
+// Validación del formulario
+document.getElementById('serieForm').addEventListener('submit', function(e) {
+    const codigo = document.getElementById('codigo').value.trim();
+    const nombre = document.getElementById('nombre').value.trim();
+    
+    if (!codigo) {
+        alert('El código de serie es obligatorio');
+        e.preventDefault();
+        return;
+    }
+    
+    if (codigo.length < 2 || codigo.length > 10) {
+        alert('El código debe tener entre 2 y 10 caracteres');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!nombre) {
+        alert('El nombre de la serie es obligatorio');
+        e.preventDefault();
+        return;
+    }
+    
+    if (!/^[A-Z0-9]+$/.test(codigo)) {
+        alert('El código solo puede contener letras mayúsculas y números');
+        e.preventDefault();
+        return;
+    }
+});
+
+// Inicializar preview
+document.addEventListener('DOMContentLoaded', function() {
+    actualizarPreview();
+});
+</script>
+{% endblock %} 

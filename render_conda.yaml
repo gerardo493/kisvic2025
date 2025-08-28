@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: mi-app-web
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: |
+      # Instalar conda
+      wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+      bash miniconda.sh -b -p $HOME/miniconda
+      export PATH="$HOME/miniconda/bin:$PATH"
+      
+      # Crear entorno conda con Python 3.10
+      conda create -n app_env python=3.10 -y
+      source activate app_env
+      
+      # Instalar dependencias del sistema
+      apt-get update && apt-get install -y \
+        libxml2-dev \
+        libxslt1-dev \
+        gcc \
+        g++ \
+        pkg-config \
+        libffi-dev
+      
+      # Instalar dependencias con conda (más estable)
+      conda install -c conda-forge lxml=4.9.1 -y
+      conda install -c conda-forge flask=2.2.5 -y
+      conda install -c conda-forge flask-wtf=1.0.1 -y
+      conda install -c conda-forge gunicorn=20.1.0 -y
+      
+      # Instalar el resto con pip
+      pip install -r requirements_minimo.txt
+      
+      # Activar entorno para el start command
+      echo "source activate app_env" >> ~/.bashrc
+    startCommand: |
+      source activate app_env
+      gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 180
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: CONDA_ENV
+        value: "app_env"

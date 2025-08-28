@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Series de Numeración{% endblock %}
+
+{% block content %}
+<style>
+    .series-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .page-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: none;
+        margin-bottom: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stats-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .series-table {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: none;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background: #f8f9fa;
+        color: #1a237e;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    .badge-active {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+    }
+
+    .badge-inactive {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        color: white;
+    }
+
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+
+    .modal-content {
+        border-radius: 15px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 1.5rem;
+    }
+</style>
+
+<div class="series-container">
+    <div class="container-fluid">
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <h2>
+                <i class="fas fa-list-ol me-2"></i>Series de Numeración
+            </h2>
+            <a href="{{ url_for('nueva_serie') }}" class="btn btn-light">
+                <i class="fas fa-plus me-2"></i>Nueva Serie
+            </a>
+        </div>
+
+        <!-- Configuración General -->
+        <div class="card stats-card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-cog me-2"></i>Configuración General</h5>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p><strong>Serie por defecto:</strong> {{ configuracion.serie_default or 'No definida' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Edición manual:</strong> 
+                            {% if configuracion.permitir_edicion_manual %}
+                                <span class="badge badge-active">Permitida</span>
+                            {% else %}
+                                <span class="badge badge-inactive">Bloqueada</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Formato con fecha:</strong>
+                            {% if configuracion.formato_fecha %}
+                                <span class="badge badge-active">Sí</span>
+                            {% else %}
+                                <span class="badge badge-inactive">No</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Reinicio anual:</strong>
+                            {% if configuracion.reiniciar_anual %}
+                                <span class="badge badge-active">Sí</span>
+                            {% else %}
+                                <span class="badge badge-inactive">No</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas de Series -->
+        <div class="series-table">
+            <div class="card-body">
+                <h5 class="card-title mb-4"><i class="fas fa-chart-bar me-2"></i>Series Configuradas</h5>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Prefijo</th>
+                                <th>Siguiente #</th>
+                                <th>Total Facturas</th>
+                                <th>Última Factura</th>
+                                <th>Estado</th>
+                                <th>Tipo</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for codigo, stats in estadisticas.items() %}
+                            <tr>
+                                <td>
+                                    <strong>{{ codigo }}</strong>
+                                </td>
+                                <td>{{ stats.serie.nombre }}</td>
+                                <td>
+                                    <code>{{ stats.serie.prefijo or 'Sin prefijo' }}</code>
+                                </td>
+                                <td>
+                                    <strong>{{ stats.siguiente_numero }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ stats.total_facturas }}</span>
+                                </td>
+                                <td>
+                                    {{ stats.ultima_factura }}
+                                    {% if stats.fecha_ultima != 'N/A' %}
+                                        <br><small class="text-muted">{{ stats.fecha_ultima }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if stats.serie.activa %}
+                                        <span class="badge badge-active">Activa</span>
+                                    {% else %}
+                                        <span class="badge badge-inactive">Inactiva</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ stats.serie.tipo.title() }}</span>
+                                    {% if stats.serie.sucursal != 'principal' %}
+                                        <br><small class="text-muted">{{ stats.serie.sucursal }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('editar_serie', codigo=codigo) }}" 
+                                           class="btn btn-sm btn-warning" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-info" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalReiniciar"
+                                                data-codigo="{{ codigo }}"
+                                                data-nombre="{{ stats.serie.nombre }}"
+                                                data-siguiente="{{ stats.siguiente_numero }}"
+                                                title="Reiniciar numeración">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-success"
+                                                onclick="generarNumeroPreview('{{ codigo }}')"
+                                                title="Generar número de prueba">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para reiniciar numeración -->
+<div class="modal fade" id="modalReiniciar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-redo me-2"></i>Reiniciar Numeración
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formReiniciar" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <p>¿Está seguro que desea reiniciar la numeración de la serie <strong id="serieNombre"></strong>?</p>
+                    <div class="mb-3">
+                        <label for="nuevo_numero" class="form-label">Nuevo número inicial</label>
+                        <input type="number" class="form-control" id="nuevo_numero" name="nuevo_numero" value="1" min="1" required>
+                        <div class="form-text">La próxima factura usará este número.</div>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Esta acción no se puede deshacer. Use con precaución.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-redo me-2"></i>Reiniciar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para preview de número -->
+<div class="modal fade" id="modalPreview" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-eye me-2"></i>Preview del Siguiente Número
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>El siguiente número generado será:</p>
+                <div class="alert alert-info text-center">
+                    <h4 id="numeroPreview" class="mb-0"></h4>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Manejar modal de reiniciar
+const modalReiniciar = document.getElementById('modalReiniciar');
+modalReiniciar.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    const codigo = button.getAttribute('data-codigo');
+    const nombre = button.getAttribute('data-nombre');
+    const siguiente = button.getAttribute('data-siguiente');
+    
+    document.getElementById('serieNombre').textContent = `${codigo} - ${nombre}`;
+    document.getElementById('nuevo_numero').value = siguiente;
+    document.getElementById('formReiniciar').action = `/configuracion/series/${codigo}/reiniciar`;
+});
+
+// Generar número de preview
+function generarNumeroPreview(codigo) {
+    fetch('/api/generar-numero-serie', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrf_token]').value
+        },
+        body: JSON.stringify({ serie: codigo })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.exito) {
+            document.getElementById('numeroPreview').textContent = data.numero;
+            new bootstrap.Modal(document.getElementById('modalPreview')).show();
+        } else {
+            alert('Error: ' + data.mensaje);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al generar el número de preview');
+    });
+}
+</script>
+{% endblock %} 

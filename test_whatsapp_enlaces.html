@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enlaces WhatsApp - KISVIC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .enlace-card {
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+        .enlace-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-color: #25d366;
+        }
+        .enlace-card.success {
+            border-color: #28a745;
+            background-color: #f8fff9;
+        }
+        .enlace-card.error {
+            border-color: #dc3545;
+            background-color: #fff8f8;
+        }
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-whatsapp:hover {
+            background: linear-gradient(135deg, #128c7e 0%, #075e54 100%);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .status-pending { background-color: #ffc107; }
+        .status-success { background-color: #28a745; }
+        .status-error { background-color: #dc3545; }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-5">
+                    <h1 class="display-4 text-primary">
+                        <i class="fab fa-whatsapp me-3"></i>
+                        Test Enlaces WhatsApp
+                    </h1>
+                    <p class="lead text-muted">
+                        Verifica que los enlaces de WhatsApp funcionen correctamente
+                    </p>
+                </div>
+
+                <!-- Formulario de prueba -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Configuración de Prueba
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label fw-bold">
+                                    <i class="fas fa-phone me-2"></i>Número de Teléfono
+                                </label>
+                                <input type="text" class="form-control" id="telefono" 
+                                       placeholder="584121447869" value="584121447869">
+                                <small class="text-muted">Formato: 58 + código de área + número</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="mensaje" class="form-label fw-bold">
+                                    <i class="fas fa-comment me-2"></i>Mensaje de Prueba
+                                </label>
+                                <textarea class="form-control" id="mensaje" rows="2" 
+                                          placeholder="Mensaje de prueba...">Hola, este es un mensaje de prueba desde KISVIC 🚀</textarea>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-whatsapp btn-lg" onclick="probarEnlaces()">
+                                <i class="fas fa-play me-2"></i>
+                                Probar Enlaces
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados -->
+                <div id="resultados" style="display: none;">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Enlaces Generados
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="enlaces-container">
+                                <!-- Los enlaces se generarán aquí dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de compatibilidad -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Información de Compatibilidad
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <h6 class="text-success">
+                                    <i class="fas fa-mobile-alt me-2"></i>
+                                    App Móvil (wa.me)
+                                </h6>
+                                <p class="text-muted small">
+                                    ✅ Funciona en todos los dispositivos móviles<br>
+                                    ✅ Abre directamente la app de WhatsApp<br>
+                                    ✅ Más confiable y estable
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-warning">
+                                    <i class="fas fa-desktop me-2"></i>
+                                    WhatsApp Web
+                                </h6>
+                                <p class="text-muted small">
+                                    ⚠️ Puede fallar en algunos navegadores<br>
+                                    ⚠️ Requiere WhatsApp Web activo<br>
+                                    ⚠️ A veces muestra error 404
+                                </p>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Recomendación:</strong> Usa siempre el enlace de la app móvil (wa.me) para máxima compatibilidad.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function probarEnlaces() {
+            const telefono = document.getElementById('telefono').value.trim();
+            const mensaje = document.getElementById('mensaje').value.trim();
+            
+            if (!telefono) {
+                alert('Por favor, ingresa un número de teléfono');
+                return;
+            }
+            
+            // Limpiar resultados anteriores
+            document.getElementById('resultados').style.display = 'none';
+            document.getElementById('enlaces-container').innerHTML = '';
+            
+            try {
+                // Generar enlaces localmente primero
+                const enlaces = generarEnlacesLocales(telefono, mensaje);
+                mostrarEnlaces(enlaces);
+                
+                // Luego probar con el servidor
+                await probarConServidor(telefono, mensaje);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al generar enlaces: ' + error.message);
+            }
+        }
+        
+        function generarEnlacesLocales(telefono, mensaje) {
+            const mensajeCodificado = encodeURIComponent(mensaje);
+            
+            return {
+                'app_movil': {
+                    url: `https://wa.me/${telefono}?text=${mensajeCodificado}`,
+                    nombre: 'App Móvil (wa.me)',
+                    descripcion: 'Para dispositivos móviles - más confiable',
+                    icono: 'fas fa-mobile-alt',
+                    color: 'success'
+                },
+                'web_whatsapp': {
+                    url: `https://web.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}`,
+                    nombre: 'WhatsApp Web',
+                    descripcion: 'Para navegadores web',
+                    icono: 'fas fa-desktop',
+                    color: 'primary'
+                },
+                'web_whatsapp_alt': {
+                    url: `https://web.whatsapp.com/send?phone=${telefono}&text=${mensajeCodificado}&app_absent=0`,
+                    nombre: 'WhatsApp Web (Alternativo)',
+                    descripcion: 'Versión alternativa con parámetros adicionales',
+                    icono: 'fas fa-laptop',
+                    color: 'info'
+                },
+                'fallback': {
+                    url: `https://wa.me/${telefono}`,
+                    nombre: 'Solo Chat (Fallback)',
+                    descripcion: 'Solo abre el chat sin mensaje - último recurso',
+                    icono: 'fas fa-comments',
+                    color: 'secondary'
+                }
+            };
+        }
+        
+        function mostrarEnlaces(enlaces) {
+            const container = document.getElementById('enlaces-container');
+            let html = '';
+            
+            Object.entries(enlaces).forEach(([key, enlace]) => {
+                html += `
+                    <div class="enlace-card card mb-3" id="enlace-${key}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="card-title text-${enlace.color}">
+                                        <i class="${enlace.icono} me-2"></i>
+                                        ${enlace.nombre}
+                                    </h6>
+                                    <p class="card-text text-muted small mb-2">
+                                        ${enlace.descripcion}
+                                    </p>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control form-control-sm" 
+                                               value="${enlace.url}" readonly>
+                                        <button class="btn btn-outline-secondary btn-sm" 
+                                                onclick="copiarEnlace('${enlace.url}')">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="ms-3">
+                                    <span class="status-indicator status-pending" id="status-${key}"></span>
+                                    <button class="btn btn-${enlace.color} btn-sm" 
+                                            onclick="probarEnlace('${enlace.url}', '${key}')">
+                                        <i class="fas fa-external-link-alt me-1"></i>
+                                        Probar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('resultados').style.display = 'block';
+        }
+        
+        async function probarConServidor(telefono, mensaje) {
+            try {
+                const response = await fetch(`/test-whatsapp-enlaces/${telefono}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('Enlaces del servidor:', data.enlaces);
+                    // Aquí podrías comparar con los enlaces locales si quieres
+                } else {
+                    console.warn('Error del servidor:', data.error);
+                }
+            } catch (error) {
+                console.warn('No se pudo conectar con el servidor:', error);
+                // No es crítico, los enlaces locales ya están funcionando
+            }
+        }
+        
+        function probarEnlace(url, key) {
+            const statusElement = document.getElementById(`status-${key}`);
+            const cardElement = document.getElementById(`enlace-${key}`);
+            
+            // Cambiar estado a "probando"
+            statusElement.className = 'status-indicator status-pending';
+            
+            try {
+                // Abrir enlace en nueva pestaña
+                window.open(url, '_blank');
+                
+                // Marcar como exitoso después de un breve delay
+                setTimeout(() => {
+                    statusElement.className = 'status-indicator status-success';
+                    cardElement.classList.add('success');
+                }, 1000);
+                
+            } catch (error) {
+                // Marcar como error
+                statusElement.className = 'status-indicator status-error';
+                cardElement.classList.add('error');
+                console.error('Error al abrir enlace:', error);
+            }
+        }
+        
+        function copiarEnlace(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                // Mostrar notificación temporal
+                const btn = event.target.closest('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i>';
+                btn.className = 'btn btn-success btn-sm';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.className = 'btn btn-outline-secondary btn-sm';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+                alert('Error al copiar el enlace');
+            });
+        }
+        
+        // Inicializar con valores por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Test de Enlaces WhatsApp listo');
+        });
+    </script>
+</body>
+</html>

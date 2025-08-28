@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Configurar Secuencia{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="card">
+    <div class="card-header">
+      <h5 class="mb-0"><i class="fas fa-sort-numeric-up me-2"></i>Configurar secuencia de facturas</h5>
+    </div>
+    <form method="POST" class="card-body">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="mb-3">
+        <label class="form-label">Prefijo</label>
+        <input type="text" class="form-control" name="prefijo" value="{{ serie.prefijo if serie else 'FAC-' }}">
+        <div class="form-text">Prefijo que precede al consecutivo (ej. FAC-). Se respetará la longitud de relleno con ceros.</div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Siguiente número (secuencial)</label>
+        <input type="number" class="form-control" name="siguiente_numero" min="1" value="{{ serie.siguiente_numero if serie else 1 }}" required>
+        <div class="form-text">El formato aplicado será FAC-{{ "%08d"|format(serie.siguiente_numero if serie else 1) }}. Último emitido: {{ serie.ultimo_numero_emitido if serie else 0 }}.</div>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{{ url_for('mostrar_facturas') }}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+  <div class="alert alert-warning mt-3">
+    Nota: Esta acción solo ajusta el próximo número a emitir. No renumera facturas ya emitidas.
+  </div>
+  </div>
+{% endblock %}
+

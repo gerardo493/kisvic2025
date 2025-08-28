@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}Cuentas por Cobrar - Dashboard Integrado{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Header con estadísticas integradas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="mb-2"><i class="fas fa-money-bill-wave me-3"></i>Dashboard de Cuentas por Cobrar</h1>
+                            <p class="mb-0 opacity-75">Sistema integrado con Notas de Entrega y Facturación</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ total_por_cobrar|length }}</h3>
+                                    <small>Por Cobrar</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ total_abonadas|length }}</h3>
+                                    <small>Abonadas</small>
+                                </div>
+                                <div class="col-4">
+                                    <h3 class="mb-0">{{ total_cobradas|length }}</h3>
+                                    <small>Cobradas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros avanzados -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros Avanzados</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-3">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select name="estado" id="estado" class="form-select">
+                                <option value="por_cobrar" {% if request.args.get('estado') == 'por_cobrar' %}selected{% endif %}>Por Cobrar</option>
+                                <option value="abonada" {% if request.args.get('estado') == 'abonada' %}selected{% endif %}>Abonadas</option>
+                                <option value="cobrada" {% if request.args.get('estado') == 'cobrada' %}selected{% endif %}>Cobradas</option>
+                                <option value="todas" {% if request.args.get('estado') == 'todas' %}selected{% endif %}>Todas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="cliente" class="form-label">Cliente</label>
+                            <select name="cliente" id="cliente" class="form-select">
+                                <option value="">Todos los clientes</option>
+                                {% for cliente in clientes_disponibles %}
+                                <option value="{{ cliente.id }}" {% if request.args.get('cliente') == cliente.id %}selected{% endif %}>
+                                    {{ cliente.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="mes" class="form-label">Mes</label>
+                            <select name="mes" id="mes" class="form-select">
+                                <option value="">Todos</option>
+                                {% for mes in range(1, 13) %}
+                                <option value="{{ mes }}" {% if request.args.get('mes')|int == mes %}selected{% endif %}>
+                                    {{ ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][mes-1] }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="anio" class="form-label">Año</label>
+                            <select name="anio" id="anio" class="form-select">
+                                <option value="">Todos</option>
+                                {% for anio in anios_disponibles %}
+                                <option value="{{ anio }}" {% if request.args.get('anio')|int == anio %}selected{% endif %}>
+                                    {{ anio }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search me-2"></i>Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Filtros adicionales -->
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="solo_vencidas" name="solo_vencidas" value="1" 
+                                       {% if request.args.get('solo_vencidas') == '1' %}checked{% endif %}>
+                                <label class="form-check-label" for="solo_vencidas">
+                                    Solo facturas vencidas
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{{ url_for('mostrar_cuentas_por_cobrar') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-undo me-2"></i>Limpiar filtros
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resumen de totales -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">${{ "%.2f"|format(total_por_cobrar_usd) }}</h4>
+                    <small>Por Cobrar (USD)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">${{ "%.2f"|format(total_abonadas_usd) }}</h4>
+                    <small>Abonadas (USD)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">${{ "%.2f"|format(total_cobradas_usd) }}</h4>
+                    <small>Cobradas (USD)</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h4 class="mb-0">{{ vencidas_count }}</h4>
+                    <small>Vencidas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de cuentas por cobrar -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Cuentas por Cobrar
+                        <span class="badge bg-secondary ms-2">{{ cuentas_filtradas|length }}</span>
+                    </h5>
+                    <div>
+                        <button class="btn btn-success btn-sm me-2" onclick="exportarCSV()">
+                            <i class="fas fa-download me-2"></i>Exportar CSV
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="mostrarEstadisticas()">
+                            <i class="fas fa-chart-bar me-2"></i>Estadísticas
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if cuentas_filtradas %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Factura</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Total USD</th>
+                                    <th>Abonado USD</th>
+                                    <th>Saldo USD</th>
+                                    <th>Estado</th>
+                                    <th>Último Pago</th>
+                                    <th>Nota Entrega</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for id, cuenta in cuentas_filtradas.items() %}
+                                <tr class="{% if cuenta.vencida %}table-danger{% elif cuenta.estado == 'Por Cobrar' %}table-warning{% elif cuenta.estado == 'Abonada' %}table-info{% else %}table-success{% endif %}">
+                                    <td>
+                                        <strong>{{ cuenta.numero_factura }}</strong>
+                                        {% if cuenta.nota_entrega_origen %}
+                                        <br><small class="text-muted">Desde NE: {{ cuenta.nota_entrega_origen }}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ cuenta.cliente_nombre }}</strong>
+                                        <br><small class="text-muted">{{ cuenta.rif }}</small>
+                                    </td>
+                                    <td>{{ cuenta.fecha_emision }}</td>
+                                    <td>${{ "%.2f"|format(cuenta.total_usd) }}</td>
+                                    <td>${{ "%.2f"|format(cuenta.abonado_usd) }}</td>
+                                    <td>
+                                        <strong>${{ "%.2f"|format(cuenta.saldo_pendiente) }}</strong>
+                                        {% if cuenta.vencida %}
+                                        <br><span class="badge bg-danger">Vencida</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if cuenta.estado == 'Por Cobrar' %}bg-warning{% elif cuenta.estado == 'Abonada' %}bg-info{% else %}bg-success{% endif %}">
+                                            {{ cuenta.estado }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if cuenta.fecha_ultimo_abono %}
+                                        {{ cuenta.fecha_ultimo_abono }}
+                                        <br><small class="text-muted">{{ cuenta.tipo_pago }}</small>
+                                        {% else %}
+                                        <span class="text-muted">Sin pagos</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if cuenta.nota_entrega_origen %}
+                                        <span class="badge bg-info">{{ cuenta.nota_entrega_origen }}</span>
+                                        {% else %}
+                                        <span class="text-muted">Directa</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('ver_factura', id=cuenta.numero_factura) }}" 
+                                               class="btn btn-sm btn-outline-primary" title="Ver factura">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if cuenta.estado != 'Cobrada' %}
+                                            <button class="btn btn-sm btn-outline-success" 
+                                                    onclick="registrarPago('{{ cuenta.numero_factura }}')" 
+                                                    title="Registrar pago">
+                                                <i class="fas fa-dollar-sign"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" 
+                                                    onclick="enviarRecordatorio('{{ cuenta.cliente_id }}', '{{ cuenta.cliente_nombre }}')" 
+                                                    title="Enviar recordatorio">
+                                                <i class="fas fa-bell"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No se encontraron cuentas por cobrar</h5>
+                        <p class="text-muted">Ajusta los filtros o crea nuevas facturas</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para registrar pago -->
+<div class="modal fade" id="modalPago" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Registrar Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formPago">
+                    <div class="mb-3">
+                        <label for="monto_pago" class="form-label">Monto del Pago</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" step="0.01" class="form-control" id="monto_pago" name="monto_pago" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="metodo_pago" class="form-label">Método de Pago</label>
+                        <select class="form-select" id="metodo_pago" name="metodo_pago" required>
+                            <option value="">Seleccionar método</option>
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Transferencia">Transferencia</option>
+                            <option value="Pago Móvil">Pago Móvil</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="referencia_pago" class="form-label">Referencia</label>
+                        <input type="text" class="form-control" id="referencia_pago" name="referencia_pago" 
+                               placeholder="Número de referencia, comprobante, etc.">
+                    </div>
+                    <div class="mb-3">
+                        <label for="banco" class="form-label">Banco (si aplica)</label>
+                        <input type="text" class="form-control" id="banco" name="banco" 
+                               placeholder="Nombre del banco">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarPago()">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de estadísticas -->
+<div class="modal fade" id="modalEstadisticas" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Estadísticas de Cuentas por Cobrar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Resumen por Estado</h6>
+                        <canvas id="chartEstados" width="300" height="300"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Distribución por Cliente</h6>
+                        <canvas id="chartClientes" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6>Análisis de Vencimientos</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Rango de Días</th>
+                                        <th>Cantidad</th>
+                                        <th>Total USD</th>
+                                        <th>% del Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaVencimientos">
+                                    <!-- Se llena dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let facturaActual = null;
+
+function registrarPago(numeroFactura) {
+    facturaActual = numeroFactura;
+    const modal = new bootstrap.Modal(document.getElementById('modalPago'));
+    modal.show();
+}
+
+function confirmarPago() {
+    if (!facturaActual) return;
+    
+    const formData = new FormData(document.getElementById('formPago'));
+    formData.append('monto_pago', document.getElementById('monto_pago').value);
+    formData.append('metodo_pago', document.getElementById('metodo_pago').value);
+    formData.append('referencia_pago', document.getElementById('referencia_pago').value);
+    formData.append('banco', document.getElementById('banco').value);
+    
+    fetch(`/facturas/${facturaActual}/registrar_pago`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Error al registrar el pago');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al registrar el pago');
+    });
+}
+
+function enviarRecordatorio(clienteId, clienteNombre) {
+    if (confirm(`¿Enviar recordatorio de cuentas por cobrar a ${clienteNombre}?`)) {
+        fetch('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ cliente_id: clienteId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Recordatorio enviado exitosamente');
+            } else {
+                alert('Error al enviar recordatorio: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al enviar recordatorio');
+        });
+    }
+}
+
+function exportarCSV() {
+    const url = new URL(window.location);
+    url.searchParams.set('export', 'csv');
+    window.location.href = url.toString();
+}
+
+function mostrarEstadisticas() {
+    const modal = new bootstrap.Modal(document.getElementById('modalEstadisticas'));
+    modal.show();
+    
+    // Aquí se podrían cargar las estadísticas con Chart.js
+    setTimeout(() => {
+        cargarEstadisticas();
+    }, 100);
+}
+
+function cargarEstadisticas() {
+    // Implementar carga de estadísticas con Chart.js
+    console.log('Cargando estadísticas...');
+}
+
+// Auto-reload cada 5 minutos para mantener datos actualizados
+setInterval(() => {
+    if (document.visibilityState === 'visible') {
+        location.reload();
+    }
+}, 300000);
+</script>
+{% endblock %}

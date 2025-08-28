@@ -1,0 +1,61 @@
+services:
+  - type: web
+    name: mi-app-web
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: |
+      # Configurar Python 3.10
+      python3.10 --version
+      
+      # Actualizar pip
+      python3.10 -m pip install --upgrade pip
+      
+      # Instalar dependencias del sistema para lxml
+      apt-get update && apt-get install -y \
+        libxml2-dev \
+        libxslt1-dev \
+        gcc \
+        g++ \
+        python3.10-dev \
+        pkg-config \
+        libffi-dev
+      
+      # Configurar variables de entorno para lxml
+      export LXML_USE_SYSTEM_LIBRARIES=1
+      export STATIC_DEPS=true
+      
+      # Instalar requirements definitivos
+      python3.10 -m pip install -r requirements_render_definitivo.txt
+      
+      # Verificar instalación
+      python3.10 -c "import flask; print(f'Flask instalado: {flask.__version__}')"
+      python3.10 -c "import flask_wtf; print(f'Flask-WTF instalado: {flask_wtf.__version__}')"
+      
+    startCommand: |
+      python3.10 -m gunicorn app:app \
+        --bind 0.0.0.0:$PORT \
+        --workers 1 \
+        --threads 2 \
+        --timeout 180 \
+        --keep-alive 5 \
+        --max-requests 1000 \
+        --max-requests-jitter 100
+    
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: LXML_USE_SYSTEM_LIBRARIES
+        value: "1"
+      - key: STATIC_DEPS
+        value: "true"
+      - key: PYTHONPATH
+        value: "/usr/local/lib/python3.10/site-packages"
+    
+    healthCheckPath: /healthz
+    autoDeploy: true
+    branch: main

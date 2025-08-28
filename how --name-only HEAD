@@ -1,0 +1,10 @@
+[33m0fdeb22[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m Actualización automática - 2025-08-18 22:15:17
+[33mb9fcb23[m[33m ([m[1;31morigin/main[m[33m)[m Actualización automática - 2025-08-16 22:26:42
+[33m5df90c0[m Sistema de despliegue automático implementado
+[33m3de1cdf[m Primera versión de la aplicación web KISVIC 2025
+[33ma2d3d96[m deploy: incluir datos locales y migrarlos al disk en Render (con logs y FORCE_REPO_SYNC)
+[33md06787d[m infra(render): log detallado y copia condicional en start (set -x, mensajes, soporte FORCE_REPO_SYNC)
+[33m84e6421[m infra(render): sincronizar TODOS los datos actuales al disk (dirs + archivos raíz) y crear symlinks; soporta FORCE_REPO_SYNC=1
+[33ma97d215[m infra(render): migrar datos locales a disk en primer arranque y forzar symlinks (facturas, cotizaciones, reportes)
+[33mc384268[m fix(render): eliminar referencias a /data y unificar CAPTURAS_FOLDER a uploads/capturas
+[33m4a979d4[m infra(render): usar /healthz como healthCheckPath en Render para evitar auth en /
