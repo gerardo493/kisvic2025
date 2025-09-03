@@ -402,5 +402,61 @@
         "cliente_nombre": "NELLYDA",
         "factura_origen": "FAC-00000621",
         "ultima_actualizacion": "2025-08-28 02:15:56"
+    },
+    "FAC-00000616": {
+        "rif": "J-308435380",
+        "total_usd": 78.0,
+        "abonado_usd": 78.0,
+        "estado": "Cobrada",
+        "fecha_emision": "2025-05-15",
+        "fecha_ultimo_abono": "2025-08-28 23:05:05",
+        "tipo_pago": "efectivo_usd",
+        "referencia_pago": "",
+        "cliente_id": "J-308435380",
+        "cliente_nombre": "PERFUMERIA LA GRAN OFERTA",
+        "factura_origen": "FAC-00000616",
+        "ultima_actualizacion": "2025-08-28 23:05:05"
+    },
+    "FAC-000007261": {
+        "rif": "V-8576138",
+        "total_usd": 36.0,
+        "abonado_usd": 36.0,
+        "estado": "Cobrada",
+        "fecha_emision": "2025-08-18",
+        "fecha_ultimo_abono": "2025-08-28 23:05:37",
+        "tipo_pago": "efectivo_usd",
+        "referencia_pago": "",
+        "cliente_id": "V-8576138",
+        "cliente_nombre": "JOSE GREGORIO RUIZ",
+        "factura_origen": "FAC-000007261",
+        "ultima_actualizacion": "2025-08-28 23:05:37"
+    },
+    "FAC-00000728": {
+        "rif": "J-504304603",
+        "total_usd": 84.0,
+        "abonado_usd": 84.0,
+        "estado": "Cobrada",
+        "fecha_emision": "2025-08-06",
+        "fecha_ultimo_abono": "2025-08-28 23:06:04",
+        "tipo_pago": "efectivo_usd",
+        "referencia_pago": "",
+        "cliente_id": "J-504304603",
+        "cliente_nombre": "T/N  TU MUNDO NATURAL",
+        "factura_origen": "FAC-00000728",
+        "ultima_actualizacion": "2025-08-28 23:06:04"
+    },
+    "FAC-00000747": {
+        "rif": "V-8576138",
+        "total_usd": 36.0,
+        "abonado_usd": 36.0,
+        "estado": "Cobrada",
+        "fecha_emision": "2025-08-18",
+        "fecha_ultimo_abono": "2025-09-02 23:07:52",
+        "tipo_pago": "pago_movil",
+        "referencia_pago": "5656",
+        "cliente_id": "V-8576138",
+        "cliente_nombre": "JOSE GREGORIO RUIZ",
+        "factura_origen": "FAC-00000747",
+        "ultima_actualizacion": "2025-09-02 23:07:52"
     }
 }

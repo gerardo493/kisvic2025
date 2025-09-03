@@ -2,7 +2,7 @@
     "1": {
         "nombre": "ADELGALAX  X 60 CAP",
         "precio": 3.0,
-        "cantidad": 781,
+        "cantidad": 757,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "imagenes_productos/producto_1.jpg",
         "ultima_entrada": "2025-05-24 22:06:30",
@@ -291,6 +291,22 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
             }
         ],
         "precio_detal": 3.0,
@@ -448,7 +464,7 @@
     "3": {
         "nombre": "ARANDANO NEGRO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 427,
+        "cantidad": 411,
         "categoria": "Protector Ocular",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -587,6 +603,38 @@
                 "motivo": "Venta por factura fiscal FAC-00000729",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
             }
         ],
         "stock": 10
@@ -594,7 +642,7 @@
     "4": {
         "nombre": "ARANDANO ROJO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 679,
+        "cantidad": 636,
         "categoria": "Bactericida",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -857,6 +905,46 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ]
     },
@@ -1078,7 +1166,7 @@
     "8": {
         "nombre": "CARDO LECHOZO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 675,
+        "cantidad": 629,
         "categoria": "Protector Hepatico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -1331,13 +1419,61 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:04:59",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000732",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000732"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
             }
         ]
     },
     "9": {
         "nombre": "CARDO MARIANO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 780,
+        "cantidad": 716,
         "categoria": "Protector Hepatico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -1576,6 +1712,62 @@
                 "motivo": "Venta por factura fiscal FAC-00000724",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000724"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
+            },
+            {
+                "fecha": "2025-09-02 22:04:59",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000732",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000732"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ],
         "stock": 0
@@ -1583,7 +1775,7 @@
     "10": {
         "nombre": "CASTAÑA DE INDIA X 60  CAP",
         "precio": 3.0,
-        "cantidad": 539,
+        "cantidad": 500,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -2030,6 +2222,46 @@
                 "motivo": "Venta por factura fiscal FAC-00000729",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:49:57",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000740",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000740"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ],
         "stock": 0
@@ -2037,7 +2269,7 @@
     "11": {
         "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 881,
+        "cantidad": 879,
         "categoria": "Adelgazante-Diuretico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -2244,6 +2476,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000728",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
             }
         ],
         "stock": 101
@@ -2251,7 +2491,7 @@
     "12": {
         "nombre": "CENTELLA ASIATICA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 532,
+        "cantidad": 453,
         "categoria": "Adelgazante-Diuretico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -2642,13 +2882,69 @@
                 "motivo": "Venta por factura fiscal FAC-00000728",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
+            },
+            {
+                "fecha": "2025-09-02 22:04:59",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000732",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000732"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:49:57",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000740",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000740"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 25,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ]
     },
     "13": {
         "nombre": "CHANCA PIEDRA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 202,
+        "cantidad": 166,
         "categoria": "Calculo Renal",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -2963,13 +3259,45 @@
                 "motivo": "Venta por factura fiscal FAC-00000725",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000725"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 15,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ]
     },
     "14": {
         "nombre": "CLORURO DE MAGNESIO X 33 GR",
-        "precio": 3.0,
-        "cantidad": 798,
+        "precio": 1.0,
+        "cantidad": 752,
         "categoria": "Regenerador osio",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3110,14 +3438,48 @@
                 "motivo": "Venta por factura fiscal FAC-00000724",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000724"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:53:35",
+                "tipo": "salida",
+                "cantidad": 36,
+                "motivo": "Venta por factura fiscal FAC-00000742",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000742"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
+            },
+            {
+                "fecha": "2025-09-02 23:05:47",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000745",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000745"
             }
         ],
-        "stock": 100
+        "stock": 100,
+        "precio_detal": 1.0,
+        "precio_distribuidor": 1.0
     },
     "15": {
         "nombre": "COLA DE CABALLO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 833,
+        "cantidad": 827,
         "categoria": "Calculo Renal",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3234,6 +3596,22 @@
                 "motivo": "Venta por factura fiscal FAC-00000728",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ],
         "stock": 6
@@ -3241,7 +3619,7 @@
     "16": {
         "nombre": "COLON CLEANSER X 60 CAP",
         "precio": 3.0,
-        "cantidad": 484,
+        "cantidad": 469,
         "categoria": "Limpieza De colon",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3476,6 +3854,30 @@
                 "motivo": "Venta por factura fiscal FAC-00000726",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000726"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 10,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
             }
         ],
         "stock": 88
@@ -3483,7 +3885,7 @@
     "17": {
         "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 780,
+        "cantidad": 728,
         "categoria": "Anti-inflamatorio",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -3748,6 +4150,46 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ],
         "stock": 10
@@ -3901,7 +4343,7 @@
     "19": {
         "nombre": "ESCOBA DE CARNICERO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 808,
+        "cantidad": 782,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4154,6 +4596,30 @@
                 "motivo": "Venta por factura fiscal FAC-00000728",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ],
         "stock": 166
@@ -4161,7 +4627,7 @@
     "20": {
         "nombre": "GINKGO C/ GINSENG X 60 CAP",
         "precio": 3.0,
-        "cantidad": 932,
+        "cantidad": 925,
         "categoria": "Oxigenante/ Energizante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4300,6 +4766,30 @@
                 "motivo": "Venta por factura fiscal FAC-00000729",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
             }
         ],
         "stock": 10
@@ -4307,7 +4797,7 @@
     "21": {
         "nombre": "GINKGO LOCHITA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 908,
+        "cantidad": 880,
         "categoria": "Oxigenante Cerebral",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4430,13 +4920,29 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
             }
         ]
     },
     "22": {
         "nombre": "GINKGOBILOBA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 849,
+        "cantidad": 847,
         "categoria": "Oxigenate Cerebral",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4655,6 +5161,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
             }
         ]
     },
@@ -4662,7 +5176,7 @@
         "id": "23",
         "nombre": "JARABE BERRO MIEL PLUS X 240 ML",
         "precio": 1.8,
-        "cantidad": 957,
+        "cantidad": 953,
         "categoria": "Bronco-Dilatadores",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4719,6 +5233,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
             }
         ]
     },
@@ -4726,7 +5248,7 @@
         "id": "24",
         "nombre": "JARABE MIEL  EUCALIPTAL X 240 ML",
         "precio": 1.8,
-        "cantidad": 844,
+        "cantidad": 757,
         "categoria": "Bronco-Dilatadores",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4807,13 +5329,45 @@
                 "motivo": "Venta por factura fiscal FAC-00000725",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000725"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 40,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
+            },
+            {
+                "fecha": "2025-09-02 22:45:56",
+                "tipo": "salida",
+                "cantidad": 40,
+                "motivo": "Venta por factura fiscal FAC-00000738",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000738"
+            },
+            {
+                "fecha": "2025-09-02 22:58:51",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000743",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000743"
             }
         ]
     },
     "25": {
         "nombre": "JARABE REGENERADOR PULMONAR X 240 ML",
         "precio": 1.8,
-        "cantidad": 931,
+        "cantidad": 847,
         "categoria": "Bronco-Dilatadores",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -4852,6 +5406,22 @@
                 "motivo": "Venta por factura N°000672",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000672"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 80,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
             }
         ]
     },
@@ -4941,7 +5511,7 @@
     "27": {
         "nombre": "MACA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 923,
+        "cantidad": 915,
         "categoria": "Repontesiador Sexsual",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -5098,6 +5668,22 @@
                 "motivo": "Venta por factura N°000712",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000712"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
             }
         ],
         "stock": 0
@@ -5105,7 +5691,7 @@
     "28": {
         "nombre": "MAPURITE X 60 CAP",
         "precio": 3.0,
-        "cantidad": 946,
+        "cantidad": 927,
         "categoria": "Antitumorales - anticancerigeno",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -5206,6 +5792,38 @@
                 "motivo": "Venta por factura N°000688",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000688"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 10,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ],
         "stock": 0
@@ -5213,7 +5831,7 @@
     "29": {
         "nombre": "ÑAME SALVAJE X 60 CAP",
         "precio": 3.0,
-        "cantidad": 769,
+        "cantidad": 735,
         "categoria": "Menopausia",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -5458,13 +6076,37 @@
                 "motivo": "Venta por factura fiscal FAC-00000728",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000728"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 25,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ]
     },
     "30": {
         "nombre": "OMEGA 3 X 30 UND",
         "precio": 4.2,
-        "cantidad": 752,
+        "cantidad": 733,
         "categoria": "Cardiovascular",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -5765,13 +6407,45 @@
                 "motivo": "Venta por factura fiscal FAC-00000729",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:04:59",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000732",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000732"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ]
     },
     "31": {
         "nombre": "PIRA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 933,
+        "cantidad": 930,
         "categoria": "Oxigenante Cerebral",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -5896,13 +6570,29 @@
                 "motivo": "Venta por factura N°000711",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000711"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
             }
         ]
     },
     "32": {
         "nombre": "SABILA + LINAZA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 849,
+        "cantidad": 847,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6123,13 +6813,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
             }
         ]
     },
     "33": {
         "nombre": "SABILAX-6 X 12 SOBRES X 12 UNDS",
         "precio": 8.5,
-        "cantidad": 974,
+        "cantidad": 973,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6270,13 +6968,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-09-02 22:58:51",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000743",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000743"
             }
         ]
     },
     "34": {
         "nombre": "SAW PALMETO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 644,
+        "cantidad": 600,
         "categoria": "hiperplasia prostatica",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6621,6 +7327,46 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 22:04:59",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000732",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000732"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 20,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
             }
         ],
         "stock": 0
@@ -6628,7 +7374,7 @@
     "35": {
         "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP",
         "precio": 3.0,
-        "cantidad": 862,
+        "cantidad": 838,
         "categoria": "Antitumorales - anticancerigeno",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6799,13 +7545,53 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 10,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
+            },
+            {
+                "fecha": "2025-09-02 23:11:18",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000748",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000748"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
             }
         ]
     },
     "36": {
         "nombre": "VENA CLEASNER X 60 CAP",
         "precio": 3.0,
-        "cantidad": 957,
+        "cantidad": 956,
         "categoria": "Circulación Insuficiencia Venosa",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -6932,6 +7718,14 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
             }
         ]
     },
@@ -7112,7 +7906,7 @@
     "38": {
         "nombre": "ZARZAPARRILLA X 60CAP",
         "precio": 3.0,
-        "cantidad": 928,
+        "cantidad": 922,
         "categoria": "Depurativo Desintoxicante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7239,6 +8033,14 @@
                 "motivo": "Venta por factura N°000713",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000713"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
             }
         ]
     },
@@ -7330,7 +8132,7 @@
     "40": {
         "nombre": "SANGRE DE DRAGO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 948,
+        "cantidad": 944,
         "categoria": "Ulcera Gastrica",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7425,6 +8227,14 @@
                 "motivo": "Venta por factura N°000715",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000715"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
             }
         ]
     },
@@ -7548,7 +8358,7 @@
     "42": {
         "nombre": "RUI BARDO X 60 CAP",
         "precio": 3.0,
-        "cantidad": 981,
+        "cantidad": 978,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7617,6 +8427,14 @@
                 "motivo": "Venta por factura N°000710",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000710"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
             }
         ]
     },
@@ -7676,7 +8494,7 @@
     "44": {
         "nombre": "ORTIGA X 60 CAP",
         "precio": 3.0,
-        "cantidad": 953,
+        "cantidad": 948,
         "categoria": "Bactericida",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7771,13 +8589,29 @@
                 "motivo": "Venta por factura fiscal FAC-00000729",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000729"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
             }
         ]
     },
     "45": {
         "nombre": "PIÑA + GRAPPEFRUIT X 60 CAP",
         "precio": 3.0,
-        "cantidad": 985,
+        "cantidad": 983,
         "categoria": "Adelgazante-Diuretico",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7832,13 +8666,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000723",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000723"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
             }
         ]
     },
     "46": {
         "nombre": "DOC QUENOPODIO X 12 UND",
         "precio": 8.0,
-        "cantidad": 936,
+        "cantidad": 922,
         "categoria": "Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -7981,6 +8823,46 @@
                 "motivo": "Venta por factura fiscal FAC-00000721",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000721"
+            },
+            {
+                "fecha": "2025-09-02 22:11:17",
+                "tipo": "salida",
+                "cantidad": 5,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:21:32",
+                "tipo": "salida",
+                "cantidad": 6,
+                "motivo": "Venta por factura fiscal FAC-00000734",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000734"
+            },
+            {
+                "fecha": "2025-09-02 22:28:24",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000735",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000735"
+            },
+            {
+                "fecha": "2025-09-02 22:46:50",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000739",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000739"
+            },
+            {
+                "fecha": "2025-09-02 22:58:51",
+                "tipo": "salida",
+                "cantidad": 1,
+                "motivo": "Venta por factura fiscal FAC-00000743",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000743"
             }
         ],
         "stock": 0
@@ -8033,7 +8915,7 @@
     "48": {
         "nombre": "CITRATO DE MAGNESIO",
         "precio": 4.2,
-        "cantidad": 666,
+        "cantidad": 615,
         "categoria": "Vitaminas y Minerales",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -8280,6 +9162,38 @@
                 "motivo": "Venta por factura fiscal FAC-00000725",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000725"
+            },
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            },
+            {
+                "fecha": "2025-09-02 21:56:51",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000731",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000731"
+            },
+            {
+                "fecha": "2025-09-02 23:22:38",
+                "tipo": "salida",
+                "cantidad": 12,
+                "motivo": "Venta por factura fiscal FAC-00000749",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000749"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ],
         "stock": 0
@@ -8569,7 +9483,7 @@
     "51": {
         "nombre": "REDUCTIL FAST X 60CAPS",
         "precio": 3.2,
-        "cantidad": 942,
+        "cantidad": 922,
         "categoria": "Adelgazante-Laxante",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -8632,13 +9546,21 @@
                 "motivo": "Venta por factura fiscal FAC-00000724",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000724"
+            },
+            {
+                "fecha": "2025-09-02 22:52:15",
+                "tipo": "salida",
+                "cantidad": 20,
+                "motivo": "Venta por factura fiscal FAC-00000741",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000741"
             }
         ]
     },
     "52": {
         "nombre": "CHAMPU DE ROMERO",
         "precio": 1.5,
-        "cantidad": 961,
+        "cantidad": 861,
         "categoria": "Cosmetico",
         "ruta_imagen": "0",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -8715,6 +9637,14 @@
                 "motivo": "Venta por factura N°000714",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000714"
+            },
+            {
+                "fecha": "2025-09-02 22:41:58",
+                "tipo": "salida",
+                "cantidad": 100,
+                "motivo": "Venta por factura fiscal FAC-00000736",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000736"
             }
         ]
     },
@@ -8810,7 +9740,7 @@
     "55": {
         "nombre": "TOTUMO Y JEMGIBRE X 240 ML",
         "precio": 1.8,
-        "cantidad": 949,
+        "cantidad": 919,
         "categoria": "Via Respiratoria",
         "ruta_imagen": "",
         "ultima_entrada": "2025-05-22 19:57:11",
@@ -8845,6 +9775,14 @@
                 "motivo": "Venta por factura N°000676",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000676"
+            },
+            {
+                "fecha": "2025-09-02 22:44:48",
+                "tipo": "salida",
+                "cantidad": 30,
+                "motivo": "Venta por factura fiscal FAC-00000737",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000737"
             }
         ]
     },
@@ -8852,7 +9790,7 @@
         "nombre": "SABILAX-6 X  30 UNDS",
         "categoria": "Protector Hepatico",
         "precio": 1.5,
-        "cantidad": 931,
+        "cantidad": 928,
         "ultima_entrada": "2025-05-24T21:45:07.607403",
         "historial_ajustes": [
             {
@@ -8902,6 +9840,14 @@
                 "motivo": "Venta por factura N°000704",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000704"
+            },
+            {
+                "fecha": "2025-09-02 23:05:47",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000745",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000745"
             }
         ]
     },
@@ -8909,7 +9855,7 @@
         "nombre": "QUINCHONCHO X 60 CAP",
         "categoria": "Via Respiratoria",
         "precio": 3.0,
-        "cantidad": 958,
+        "cantidad": 946,
         "ultima_entrada": "2025-05-24T22:59:25.626786",
         "historial_ajustes": [
             {
@@ -8983,6 +9929,22 @@
                 "motivo": "Venta por factura N°000712",
                 "usuario": "admin",
                 "observaciones": "Venta por factura N°000712"
+            },
+            {
+                "fecha": "2025-09-02 22:10:12",
+                "tipo": "salida",
+                "cantidad": 2,
+                "motivo": "Venta por factura fiscal FAC-00000733",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000733"
+            },
+            {
+                "fecha": "2025-09-02 22:49:57",
+                "tipo": "salida",
+                "cantidad": 10,
+                "motivo": "Venta por factura fiscal FAC-00000740",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000740"
             }
         ]
     },
@@ -9058,7 +10020,7 @@
         "precio": 4.2,
         "precio_detal": 4.2,
         "precio_distribuidor": 3.6,
-        "cantidad": 922,
+        "cantidad": 895,
         "ultima_entrada": "2025-05-30T17:11:32.780890",
         "ruta_imagen": "imagenes_productos/producto_59.png",
         "historial_ajustes": [
@@ -9125,6 +10087,22 @@
                 "motivo": "Venta por factura fiscal FAC-00000727",
                 "usuario": "admin",
                 "observaciones": "Venta por factura fiscal FAC-00000727"
+            },
+            {
+                "fecha": "2025-09-02 23:01:40",
+                "tipo": "salida",
+                "cantidad": 3,
+                "motivo": "Venta por factura fiscal FAC-00000744",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000744"
+            },
+            {
+                "fecha": "2025-09-02 23:30:05",
+                "tipo": "salida",
+                "cantidad": 24,
+                "motivo": "Venta por factura fiscal FAC-00000750",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000750"
             }
         ]
     },
@@ -9228,5 +10206,71 @@
             }
         ],
         "stock": 41
+    },
+    "63": {
+        "nombre": "ANTIASMATICO",
+        "categoria": "Expectorante",
+        "precio": 1.8,
+        "precio_detal": 1.8,
+        "precio_distribuidor": 1.5,
+        "cantidad": 996,
+        "ultima_entrada": "2025-08-29T18:51:39.012238",
+        "ruta_imagen": null,
+        "historial_ajustes": [
+            {
+                "fecha": "2025-08-29 19:12:11",
+                "tipo": "salida",
+                "cantidad": 4,
+                "motivo": "Venta por factura fiscal FAC-00000730",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000730"
+            }
+        ]
+    },
+    "64": {
+        "nombre": "CHAMPU VARIADO",
+        "categoria": "Cosmetico",
+        "precio": 1.8,
+        "precio_detal": 1.8,
+        "precio_distribuidor": 1.5,
+        "cantidad": 1000,
+        "ultima_entrada": "2025-09-02T22:56:06.566309",
+        "ruta_imagen": null
+    },
+    "65": {
+        "nombre": "PRODUCTOS VARIOS KISVIC ",
+        "categoria": "Adelgazante-Laxante",
+        "precio": 3.0,
+        "precio_detal": 3.0,
+        "precio_distribuidor": 3.0,
+        "cantidad": 914,
+        "ultima_entrada": "2025-09-02T22:56:46.789363",
+        "ruta_imagen": null,
+        "historial_ajustes": [
+            {
+                "fecha": "2025-09-02 22:58:51",
+                "tipo": "salida",
+                "cantidad": 57,
+                "motivo": "Venta por factura fiscal FAC-00000743",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000743"
+            },
+            {
+                "fecha": "2025-09-02 23:05:47",
+                "tipo": "salida",
+                "cantidad": 22,
+                "motivo": "Venta por factura fiscal FAC-00000745",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000745"
+            },
+            {
+                "fecha": "2025-09-02 23:05:47",
+                "tipo": "salida",
+                "cantidad": 7,
+                "motivo": "Venta por factura fiscal FAC-00000745",
+                "usuario": "admin",
+                "observaciones": "Venta por factura fiscal FAC-00000745"
+            }
+        ]
     }
 }
