@@ -2,13 +2,13 @@
   "series": {
     "FACTURA": {
       "prefijo": "FAC-",
-      "siguiente_numero": 751,
+      "siguiente_numero": 765,
       "longitud_numero": 8,
       "formato": "FAC-{numero:08d}",
       "activa": true,
       "fecha_inicio": "2025-07-29T22:51:47.350007",
-      "ultimo_numero_emitido": 750,
-      "total_documentos": 54
+      "ultimo_numero_emitido": 764,
+      "total_documentos": 66
     },
     "NOTA_CREDITO": {
       "prefijo": "NC-",
@@ -40,7 +40,7 @@
   },
   "auditoria": {
     "fecha_creacion": "2025-07-29T22:51:47.350007",
-    "ultima_modificacion": "2025-09-02T23:30:05.035988",
-    "total_documentos_emitidos": 54
+    "ultima_modificacion": "2025-09-04T21:47:06.588029",
+    "total_documentos_emitidos": 66
   }
 }
