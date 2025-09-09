@@ -5916,10 +5916,17 @@ def obtener_saldo_factura(id):
 def enviar_recordatorio_whatsapp(id):
     # Validación simple del ID
     if not id or str(id).strip() == '':
-        flash('ID de factura inválido', 'danger')
-        return redirect(url_for('mostrar_facturas'))
+        print("❌ ID de factura inválido")
+        return jsonify({'error': 'ID de factura inválido'}), 400
+    
     try:
         print(f"🔍 Iniciando envío de recordatorio WhatsApp para factura: {id}")
+        print(f"🔍 Método de petición: {request.method}")
+        print(f"🔍 Headers: {dict(request.headers)}")
+        print(f"🔍 Content-Type: {request.content_type}")
+        
+        # Ignorar datos del body si existen - solo usar el ID de la URL
+        print("🔍 Usando solo el ID de la URL, ignorando datos del body")
         
         # Cargar datos necesarios
         facturas = cargar_datos(ARCHIVO_FACTURAS)
@@ -6073,115 +6080,192 @@ def probar_recordatorio_whatsapp(id):
         facturas = cargar_datos(ARCHIVO_FACTURAS)
         clientes = cargar_datos(ARCHIVO_CLIENTES)
         
-        resultado = {
-            'factura_id': id,
-            'factura_encontrada': id in facturas,
-            'cliente_id': None,
-            'cliente_encontrado': False,
-            'telefono_disponible': False,
-            'telefono_original': None,
-            'telefono_formateado': None,
-            'mensaje_generado': False,
-            'enlace_generado': False,
-            'errores': []
-        }
-        
         if id not in facturas:
-            resultado['errores'].append('Factura no encontrada')
-            return jsonify(resultado)
+            return jsonify({'error': 'Factura no encontrada'}), 404
         
         factura = facturas[id]
         cliente_id = factura.get('cliente_id')
-        resultado['cliente_id'] = cliente_id
         
-        if not cliente_id:
-            resultado['errores'].append('Factura no tiene cliente_id')
-            return jsonify(resultado)
+        if not cliente_id or cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
         
-        if cliente_id not in clientes:
-            resultado['errores'].append('Cliente no encontrado')
-            return jsonify(resultado)
-        
-        resultado['cliente_encontrado'] = True
         cliente = clientes[cliente_id]
         telefono = cliente.get('telefono', '')
-        resultado['telefono_original'] = telefono
         
         if not telefono:
-            resultado['errores'].append('Cliente no tiene teléfono')
-            return jsonify(resultado)
+            return jsonify({'error': 'Cliente no tiene teléfono'}), 400
         
-        resultado['telefono_disponible'] = True
+        # Limpiar y formatear el número de teléfono
+        telefono_limpio = limpiar_numero_telefono(telefono)
         
-        # Probar formateo de teléfono
-        try:
-            telefono_formateado = limpiar_numero_telefono(telefono)
-            resultado['telefono_formateado'] = telefono_formateado
-        except Exception as e:
-            resultado['errores'].append(f'Error formateando teléfono: {e}')
-            return jsonify(resultado)
+        # Crear mensaje personalizado
+        mensaje = crear_mensaje_recordatorio(factura, cliente)
         
-        # Probar creación de mensaje
-        try:
-            mensaje = crear_mensaje_recordatorio(factura, cliente)
-            resultado['mensaje_generado'] = True
-            resultado['mensaje_preview'] = mensaje[:100] + '...' if len(mensaje) > 100 else mensaje
-        except Exception as e:
-            resultado['errores'].append(f'Error creando mensaje: {e}')
-            return jsonify(resultado)
+        # Generar enlace de WhatsApp
+        enlace_whatsapp = generar_enlace_whatsapp(telefono_limpio, mensaje)
         
-        # Probar generación de enlace
-        try:
-            enlace = generar_enlace_whatsapp(telefono_formateado, mensaje)
-            resultado['enlace_generado'] = True
-            resultado['enlace_preview'] = enlace[:100] + '...' if len(enlace) > 100 else enlace
-        except Exception as e:
-            resultado['errores'].append(f'Error generando enlace: {e}')
-            return jsonify(resultado)
-        
-        resultado['success'] = True
-        resultado['message'] = 'Todas las funciones funcionan correctamente'
-        return jsonify(resultado)
-        
-    except Exception as e:
-        import traceback
-        error_info = {
-            'success': False,
-            'error': str(e),
-            'error_type': type(e).__name__,
-            'traceback': traceback.format_exc()
-        }
-        print(f"❌ Error en prueba: {error_info}")
-        return jsonify(error_info), 500
-        
-        # Probar generación de mensaje
-        try:
-            mensaje = crear_mensaje_recordatorio(factura, cliente)
-            resultado['mensaje_generado'] = True
-        except Exception as e:
-            resultado['errores'].append(f'Error generando mensaje: {e}')
-            return jsonify(resultado)
-        
-        # Probar generación de enlace
-        try:
-            enlace = generar_enlace_whatsapp(telefono_formateado, mensaje)
-            resultado['enlace_generado'] = True
-            resultado['enlace_ejemplo'] = enlace
-        except Exception as e:
-            resultado['errores'].append(f'Error generando enlace: {e}')
-            return jsonify(resultado)
-        
-        resultado['success'] = True
-        resultado['message'] = 'Sistema funcionando correctamente'
-        
-        return jsonify(resultado)
-        
-    except Exception as e:
         return jsonify({
-            'success': False,
-            'error': str(e),
-            'factura_id': id
-        }), 500
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono_limpio,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A')
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en prueba: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/whatsapp-ultra-simple/<id>', methods=['GET', 'POST'])
+@csrf.exempt
+def whatsapp_ultra_simple(id):
+    """Función ultra simple que funciona con GET y POST para máxima compatibilidad."""
+    try:
+        print(f"🚀 WHATSAPP ULTRA SIMPLE para factura: {id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if id not in facturas:
+            return jsonify({'error': 'Factura no encontrada'}), 404
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        
+        if not cliente_id or cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono:
+            print(f"❌ Cliente {cliente_id} no tiene número de teléfono registrado")
+            return jsonify({'error': 'Cliente no tiene número de teléfono registrado'}), 400
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_limpio = limpiar_numero_telefono(telefono)
+        
+        # Crear mensaje personalizado
+        mensaje = crear_mensaje_recordatorio(factura, cliente)
+        
+        # Generar enlace de WhatsApp
+        enlace_whatsapp = generar_enlace_whatsapp(telefono_limpio, mensaje)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono_limpio,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A')
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en WhatsApp ultra simple: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/whatsapp-simple/<id>', methods=['POST'])
+@csrf.exempt
+def whatsapp_simple(id):
+    """Función ultra simple para recordatorios de WhatsApp sin autenticación.
+    
+    Nota: Si el cliente no tiene número de teléfono registrado, devuelve HTTP 400
+    con el mensaje 'Cliente no tiene número de teléfono registrado'.
+    """
+    try:
+        print(f"🚀 WHATSAPP SIMPLE para factura: {id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if id not in facturas:
+            return jsonify({'error': 'Factura no encontrada'}), 404
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        
+        if not cliente_id or cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono:
+            print(f"❌ Cliente {cliente_id} no tiene número de teléfono registrado")
+            return jsonify({'error': 'Cliente no tiene número de teléfono registrado'}), 400
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_limpio = limpiar_numero_telefono(telefono)
+        
+        # Crear mensaje personalizado
+        mensaje = crear_mensaje_recordatorio(factura, cliente)
+        
+        # Generar enlace de WhatsApp
+        enlace_whatsapp = generar_enlace_whatsapp(telefono_limpio, mensaje)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono_limpio,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A')
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en WhatsApp simple: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/facturas/<id>/whatsapp-backup', methods=['POST'])
+@login_required
+def whatsapp_backup(id):
+    """Función de respaldo para recordatorios de WhatsApp."""
+    try:
+        print(f"🔄 FUNCIÓN DE RESPALDO WhatsApp para factura: {id}")
+        
+        # Cargar datos necesarios
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        
+        if id not in facturas:
+            return jsonify({'error': 'Factura no encontrada'}), 404
+        
+        factura = facturas[id]
+        cliente_id = factura.get('cliente_id')
+        
+        if not cliente_id or cliente_id not in clientes:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+        
+        cliente = clientes[cliente_id]
+        telefono = cliente.get('telefono', '')
+        
+        if not telefono:
+            return jsonify({'error': 'Cliente no tiene teléfono'}), 400
+        
+        # Limpiar y formatear el número de teléfono
+        telefono_limpio = limpiar_numero_telefono(telefono)
+        
+        # Crear mensaje personalizado
+        mensaje = crear_mensaje_recordatorio(factura, cliente)
+        
+        # Generar enlace de WhatsApp
+        enlace_whatsapp = generar_enlace_whatsapp(telefono_limpio, mensaje)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Recordatorio preparado para WhatsApp (función de respaldo)',
+            'enlace_whatsapp': enlace_whatsapp,
+            'telefono': telefono_limpio,
+            'mensaje': mensaje,
+            'cliente_nombre': cliente.get('nombre', 'N/A')
+        })
+        
+    except Exception as e:
+        print(f"❌ Error en función de respaldo: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/forzar-actualizacion-tasa-bcv')
 def forzar_actualizacion_tasa_bcv():

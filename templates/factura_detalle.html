@@ -933,21 +933,22 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
 // Función para enviar recordatorio WhatsApp - SIMPLE Y DIRECTO
 function enviarRecordatorioWhatsAppSimple() {
     console.log('🚀 Enviando recordatorio WhatsApp para factura:', '{{ factura.id }}');
+    console.log('🔄 Versión actualizada - usando función ultra simple');
     
-    // Llamar directamente a la API
-    fetch(`/facturas/{{ factura.id }}/enviar_recordatorio_whatsapp`, {
-        method: 'POST',
+    // Intentar primero con la función ultra simple (GET)
+    fetch(`/whatsapp-ultra-simple/{{ factura.id }}`, {
+        method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            factura_id: '{{ factura.id }}',
-            tipo: 'recordatorio_pago'
-        })
+            'Content-Type': 'application/json'
+        }
     })
     .then(response => {
-        console.log('📡 Respuesta del servidor:', response.status);
-        return response.json();
+        console.log('📡 Respuesta del servidor (GET):', response.status);
+        if (response.status === 200) {
+            return response.json();
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
     })
     .then(data => {
         console.log('📊 Datos recibidos:', data);
@@ -957,12 +958,53 @@ function enviarRecordatorioWhatsAppSimple() {
             mostrarModalWhatsAppExitoso(data);
         } else {
             console.error('❌ Error en la respuesta:', data);
-            alert(`Error: ${data.error || 'No se pudo enviar el recordatorio'}`);
+            // Mostrar mensaje más claro si el cliente no tiene teléfono
+            if (data.error && data.error.includes('teléfono')) {
+                alert(`⚠️ No se puede enviar recordatorio: ${data.error}\n\n💡 Solución: Agregar un número de teléfono al cliente en la sección de clientes.`);
+            } else {
+                alert(`Error: ${data.error || 'No se pudo enviar el recordatorio'}`);
+            }
         }
     })
     .catch(error => {
-        console.error('❌ Error en la petición:', error);
-        alert(`Error de conexión: ${error.message}`);
+        console.error('❌ Error en la petición GET:', error);
+        console.log('🔄 Intentando con función POST...');
+        
+        // Intentar con función POST como respaldo
+        fetch(`/whatsapp-simple/{{ factura.id }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            console.log('📡 Respuesta del servidor (POST):', response.status);
+            if (response.status === 200) {
+                return response.json();
+            } else {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+        })
+        .then(data => {
+            console.log('📊 Datos recibidos (POST):', data);
+            
+            if (data.success) {
+                // Mostrar modal de WhatsApp exitoso
+                mostrarModalWhatsAppExitoso(data);
+            } else {
+                console.error('❌ Error en la respuesta (POST):', data);
+                // Mostrar mensaje más claro si el cliente no tiene teléfono
+                if (data.error && data.error.includes('teléfono')) {
+                    alert(`⚠️ No se puede enviar recordatorio: ${data.error}\n\n💡 Solución: Agregar un número de teléfono al cliente en la sección de clientes.`);
+                } else {
+                    alert(`Error: ${data.error || 'No se pudo enviar el recordatorio'}`);
+                }
+            }
+        })
+        .catch(backupError => {
+            console.error('❌ Error en la petición de respaldo:', backupError);
+            alert(`Error de conexión: ${backupError.message}`);
+        });
     });
 }
 
