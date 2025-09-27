@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Factura #{{ factura.numero }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @page {
             size: A4;
-            margin: 5mm 4mm 5mm 4mm; /* Márgenes más pequeños */
+            margin: 4mm 3mm 4mm 3mm; /* Márgenes optimizados para legibilidad */
         }
         
         * {
@@ -17,10 +18,10 @@
         
         body {
             font-family: 'Helvetica Neue', 'Arial', sans-serif;
-            font-size: 11px;
-            line-height: 1.3;
-            color: #0e0e0e;
-            background: #f8f9fa;
+            font-size: 10px; /* Reducido para ahorrar espacio */
+            line-height: 1.2; /* Reducido para ahorrar espacio */
+            color: #000000; /* Negro puro */
+            background: #ffffff; /* Fondo blanco */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
@@ -50,18 +51,18 @@
             max-width: 200mm;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-radius: 8px;
+            box-shadow: none; /* Sin sombra para ahorrar espacio */
+            border-radius: 0; /* Sin bordes redondeados */
             overflow: hidden;
-            border: 1px solid #e9ecef;
+            border: 1px solid #000000; /* Borde negro */
         }
         
         .header {
-            background: #1e3a8a;
-            color: white;
-            padding: 16px 24px 12px 24px;
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Texto negro */
+            padding: 12px 20px 10px 20px; /* Optimizado para mejor distribución */
             position: relative;
-            border-bottom: 2px solid #1d4ed8;
+            border-bottom: 2px solid #000000; /* Borde negro */
         }
         
         .header::before {
@@ -71,20 +72,20 @@
         .header-content {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            text-align: center;
+            justify-content: space-between; /* Mejor distribución del espacio */
+            gap: 15px;
+            text-align: left; /* Alineación izquierda para mejor organización */
         }
         
         .logo-section {
             flex: 0 0 auto;
-            text-align: center;
-            margin-right: 16px;
+            text-align: left;
+            margin-right: 20px;
         }
         
         .logo-section img {
-            width: 120px;
-            height: 120px;
+            width: 100px; /* Optimizado para mejor distribución */
+            height: 100px; /* Optimizado para mejor distribución */
             border-radius: 0;
             border: none;
             background: transparent;
@@ -94,28 +95,28 @@
         }
         
         .company-info {
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             margin-left: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start; /* Alineación izquierda para mejor organización */
             justify-content: center;
         }
         
         .company-name {
-            font-size: 18px;
+            font-size: 20px; /* Aumentado para mayor prominencia */
             font-weight: 900;
-            margin-bottom: 6px;
-            color: white;
-            text-align: center;
+            margin-bottom: 6px; /* Optimizado */
+            color: #000000; /* Negro */
+            text-align: left; /* Alineación izquierda */
             letter-spacing: 1px;
         }
         
         .company-details {
-            font-size: 11px;
-            line-height: 1.4;
-            text-align: center;
-            color: rgba(255,255,255,0.9);
+            font-size: 12px; /* Aumentado para mayor prominencia */
+            line-height: 1.4; /* Optimizado */
+            text-align: left; /* Alineación izquierda */
+            color: #000000; /* Negro */
         }
         
         .seniat-badge { 
@@ -124,17 +125,17 @@
         
         .document-title {
             text-align: center;
-            background: #059669;
-            color: white;
-            padding: 12px 20px;
-            font-size: 16px;
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 10px 20px; /* Optimizado */
+            font-size: 18px; /* Aumentado para mayor prominencia */
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            border: none;
-            border-radius: 8px;
-            margin: 16px 20px 0 20px;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            letter-spacing: 2px;
+            border: 2px solid #000000; /* Borde negro */
+            border-radius: 0; /* Sin bordes redondeados */
+            margin: 10px 18px 0 18px; /* Optimizado */
+            box-shadow: none; /* Sin sombra */
         }
         
         .document-title::after {
@@ -142,22 +143,22 @@
         }
         
         .content-section {
-            padding: 20px 20px;
+            padding: 8px 12px; /* Optimizado para mejor legibilidad */
         }
         
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
+            gap: 12px; /* Optimizado para mejor distribución */
+            margin-bottom: 12px; /* Optimizado para mejor distribución */
         }
         
         .info-card {
-            background: #1e3a8a;
-            border-radius: 12px;
-            padding: 20px;
-            border: none;
-            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.15);
+            background: #ffffff; /* Fondo blanco */
+            border-radius: 0; /* Sin bordes redondeados */
+            padding: 8px; /* Optimizado para mejor legibilidad */
+            border: 1px solid #000000; /* Borde negro */
+            box-shadow: none; /* Sin sombra */
         }
         
         .info-card::before {
@@ -165,89 +166,96 @@
         }
         
         .info-card h3 {
-            font-size: 13px;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 16px;
+            font-size: 14px; /* Aumentado para mayor prominencia */
+            font-weight: 900; /* Aumentado el grosor */
+            color: #000000; /* Negro */
+            margin-bottom: 8px; /* Optimizado */
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.2px; /* Aumentado */
         }
         
         .info-item {
-            margin-bottom: 8px;
-            font-size: 11px;
-            line-height: 1.4;
+            margin-bottom: 4px; /* Optimizado para mejor legibilidad */
+            font-size: 10px; /* Aumentado para mayor legibilidad */
+            line-height: 1.4; /* Optimizado para mejor legibilidad */
         }
         
         .info-label {
-            font-weight: 600;
-            color: rgba(255,255,255,0.8);
+            font-weight: 800; /* Aumentado el grosor */
+            color: #000000; /* Negro */
+            font-size: 11px; /* Aumentado para mayor prominencia */
         }
         
         .info-value {
-            font-weight: 800;
-            color: white;
+            font-weight: 900; /* Aumentado el grosor */
+            color: #000000; /* Negro */
+            font-size: 11px; /* Aumentado para mayor prominencia */
         }
         
         .highlight-value {
-            color: #fbbf24;
+            color: #000000; /* Negro */
             font-weight: 900;
+            font-size: 12px; /* Aumentado para mayor prominencia */
         }
         
         .success-badge {
-            background: #059669;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 10px;
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 4px 8px; /* Reducido */
+            border-radius: 0; /* Sin bordes redondeados */
+            font-size: 8px; /* Reducido */
             font-weight: 700;
             display: inline-block;
-            margin-top: 8px;
-            box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+            margin-top: 4px; /* Reducido */
+            box-shadow: none; /* Sin sombra */
+            border: 1px solid #000000; /* Borde negro */
         }
         
         .warning-badge {
-            background: #f59e0b;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 10px;
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 4px 8px; /* Reducido */
+            border-radius: 0; /* Sin bordes redondeados */
+            font-size: 8px; /* Reducido */
             font-weight: 700;
             display: inline-block;
-            margin-top: 8px;
-            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+            margin-top: 4px; /* Reducido */
+            box-shadow: none; /* Sin sombra */
+            border: 1px solid #000000; /* Borde negro */
         }
         
         .products-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 24px 0;
-            border-radius: 12px;
+            margin: 12px 0; /* Optimizado para mejor distribución */
+            border-radius: 0; /* Sin bordes redondeados */
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            box-shadow: none; /* Sin sombra */
             background: white;
+            border: 1px solid #000000; /* Borde negro */
         }
         
         .products-table th {
-            background: #1e3a8a;
-            color: white;
-            padding: 12px 8px;
-            font-size: 11px;
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 6px 4px; /* Aumentado para mejor legibilidad */
+            font-size: 11px; /* Aumentado para mejor legibilidad */
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px; /* Aumentado */
             text-align: left;
             white-space: normal;
-            line-height: 1.2;
-            border-bottom: 2px solid #1d4ed8;
+            line-height: 1.2; /* Aumentado para mejor legibilidad */
+            border-bottom: 1px solid #000000; /* Borde negro */
         }
         
         .products-table td {
-            padding: 10px 8px;
-            font-size: 11px;
-            border-bottom: 1px solid #e9ecef;
-            color: #2c3e50;
+            padding: 5px 4px; /* Aumentado para mejor legibilidad */
+            font-size: 10px; /* Aumentado para mejor legibilidad */
+            border-bottom: 1px solid #000000; /* Borde negro */
+            color: #000000; /* Negro */
             background: white;
+            line-height: 1.3; /* Aumentado para mejor legibilidad */
         }
 
         /* Mejor legibilidad y orden en números */
@@ -306,14 +314,14 @@
         
         .product-name {
             font-weight: 800;
-            color: #2c3e50;
-            font-size: 11px;
+            color: #000000; /* Negro */
+            font-size: 11px; /* Aumentado para mejor legibilidad */
         }
         
         .product-details {
-            font-size: 8px;
-            color: #6c757d;
-            margin-top: 2px;
+            font-size: 9px; /* Aumentado para mejor legibilidad */
+            color: #000000; /* Negro */
+            margin-top: 2px; /* Aumentado */
             font-style: italic;
         }
         
@@ -391,12 +399,12 @@
         }
         
         .totals-section {
-            background: #1e3a8a;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 16px;
-            box-shadow: 0 4px 16px rgba(30, 58, 138, 0.15);
-            border: none;
+            background: #ffffff; /* Fondo blanco - SIN COLOR */
+            border-radius: 0; /* Sin bordes redondeados */
+            padding: 12px; /* Optimizado para mejor legibilidad */
+            margin-top: 12px; /* Optimizado para mejor distribución */
+            box-shadow: none; /* Sin sombra */
+            border: 1px solid #000000; /* Borde negro */
         }
         
         .totals-section::before {
@@ -411,11 +419,11 @@
         }
         
         .totals-title {
-            font-size: 16px;
+            font-size: 14px; /* Aumentado para mejor legibilidad */
             font-weight: 900;
-            color: white;
+            color: #000000; /* Negro */
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 1px; /* Reducido */
         }
         
         .totals-table {
@@ -425,21 +433,22 @@
         }
         
         .totals-table th {
-            background: #e9f2ff;
-            color: #0b2e57;
-            padding: 6px 8px; /* Padding reducido */
-            font-size: 9px; /* Texto más pequeño */
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 4px 6px; /* Padding reducido */
+            font-size: 8px; /* Texto más pequeño */
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.3px; /* Espaciado reducido */
-            text-align: left;
-            border-bottom: 1px solid #0d6efd; /* Borde más delgado */
+            text-align: right; /* ALINEADO A LA DERECHA */
+            border-bottom: 1px solid #000000; /* Borde negro */
         }
         
         .totals-table td {
-            padding: 6px 8px; /* Padding reducido */
-            font-size: 10px; /* Texto más pequeño */
-            border-bottom: 1px solid #e9ecef;
+            padding: 4px 6px; /* Padding reducido */
+            font-size: 9px; /* Texto más pequeño */
+            border-bottom: 1px solid #000000; /* Borde negro */
+            text-align: right; /* ALINEADO A LA DERECHA */
         }
         
         .totals-table tr:nth-child(even) {
@@ -465,73 +474,73 @@
         
         .amount-label {
             font-weight: 600;
-            color: #6c757d;
+            color: #000000; /* Negro */
         }
         
         .amount-value {
             font-weight: 700;
-            color: #2c3e50;
+            color: #000000; /* Negro */
             text-align: right;
         }
         
         .subtotal-amount {
-            color: #495057;
+            color: #000000; /* Negro */
         }
         
         .discount-amount {
-            color: #e74c3c;
+            color: #000000; /* Negro */
         }
         
         .tax-amount {
-            color: #17a2b8;
+            color: #000000; /* Negro */
         }
         
         .main-total {
-            font-size: 12px; /* Texto más pequeño */
+            font-size: 10px; /* Texto más pequeño */
             font-weight: 800;
-            color: #e74c3c;
-            text-shadow: 0 1px 2px rgba(231, 76, 60, 0.2);
+            color: #000000; /* Negro */
+            text-shadow: none; /* Sin sombra */
         }
         
         .secondary-total {
-            font-size: 10px; /* Texto más pequeño */
+            font-size: 9px; /* Texto más pequeño */
             font-weight: 800;
-            color: #27ae60;
-            text-shadow: 0 1px 2px rgba(39, 174, 96, 0.2);
+            color: #000000; /* Negro */
+            text-shadow: none; /* Sin sombra */
         }
         
         .exchange-rate {
             text-align: center;
-            margin-top: 8px; /* Margen reducido */
-            padding: 6px 8px; /* Padding reducido */
-            background: #eef5ff;
-            border-radius: 4px; /* Radio más pequeño */
-            border: 1px solid #0d6efd; /* Borde más delgado */
+            margin-top: 4px; /* Margen reducido */
+            padding: 4px 6px; /* Padding reducido */
+            background: #ffffff; /* Fondo blanco */
+            border-radius: 0; /* Sin bordes redondeados */
+            border: 1px solid #000000; /* Borde negro */
             box-shadow: none; /* Sin sombra para ahorrar espacio */
         }
         
         .exchange-rate-label {
-            font-size: 8px; /* Texto más pequeño */
+            font-size: 7px; /* Texto más pequeño */
             font-weight: 700;
-            color: #0a1f44;
+            color: #000000; /* Negro */
             text-transform: uppercase;
             letter-spacing: 0.4px; /* Espaciado reducido */
         }
         
         .exchange-rate-value {
-            font-size: 10px; /* Texto más pequeño */
+            font-size: 8px; /* Texto más pequeño */
             font-weight: 900;
-            color: #0a1f44;
-            margin-top: 2px; /* Margen reducido */
+            color: #000000; /* Negro */
+            margin-top: 1px; /* Margen reducido */
         }
         
         .notes-section {
-            background: #059669;
-            border-radius: 12px;
-            padding: 16px 18px;
-            margin-top: 16px;
-            border: none;
-            box-shadow: 0 12px 32px rgba(5, 150, 105, 0.25);
+            background: #ffffff; /* Fondo blanco */
+            border-radius: 0; /* Sin bordes redondeados */
+            padding: 8px 12px; /* Optimizado para mejor legibilidad */
+            margin-top: 12px; /* Optimizado para mejor distribución */
+            border: 1px solid #000000; /* Borde negro */
+            box-shadow: none; /* Sin sombra */
             position: relative;
             overflow: hidden;
         }
@@ -541,30 +550,30 @@
         }
         
         .notes-title {
-            font-size: 11px;
+            font-size: 9px; /* Reducido */
             font-weight: 800;
-            color: white;
-            margin-bottom: 6px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            color: #000000; /* Negro */
+            margin-bottom: 4px; /* Reducido */
+            text-shadow: none; /* Sin sombra */
             position: relative;
             z-index: 2;
         }
         
         .notes-content {
-            font-size: 10px;
-            line-height: 1.4;
-            color: rgba(255,255,255,0.95);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            font-size: 8px; /* Reducido */
+            line-height: 1.3; /* Reducido */
+            color: #000000; /* Negro */
+            text-shadow: none; /* Sin sombra */
             position: relative;
             z-index: 2;
         }
         
         .footer {
-            background: #2c3e50;
-            color: white;
-            padding: 6px 20px; /* Padding reducido */
+            background: #ffffff; /* Fondo blanco */
+            color: #000000; /* Negro */
+            padding: 4px 12px; /* Padding reducido */
             text-align: center;
-            font-size: 8px; /* Texto más pequeño */
+            font-size: 7px; /* Texto más pequeño */
         }
         
         /* Totales ultra-compactos para ahorrar espacio */
@@ -582,10 +591,10 @@
         .totals-compact .row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 16px;
-            padding: 12px 18px;
-            border-bottom: 1px solid rgba(30, 58, 138, 0.2);
-            font-size: 12px;
+            gap: 12px; /* Aumentado para mejor legibilidad */
+            padding: 8px 16px; /* Aumentado para mejor legibilidad */
+            border-bottom: 1px solid #000000; /* Borde negro */
+            font-size: 11px; /* Aumentado para mejor legibilidad */
             align-items: center;
         }
         
@@ -595,54 +604,57 @@
         }
         
         .totals-compact .label { 
-            color: #2c3e50; 
+            color: #000000; /* Negro */
             font-weight: 800; 
-            text-align: left;
-            padding-left: 8px;
+            text-align: right; /* ALINEADO A LA DERECHA */
+            padding-right: 8px;
+            font-size: 11px; /* Aumentado para mejor legibilidad */
         }
         
         .totals-compact .value { 
-            text-align: center;
+            text-align: right; /* ALINEADO A LA DERECHA */
             font-weight: 900; 
-            color: #2c3e50; 
+            color: #000000; /* Negro */
             font-variant-numeric: tabular-nums;
-            border-left: 2px solid rgba(30, 58, 138, 0.3);
-            border-right: 2px solid rgba(30, 58, 138, 0.3);
+            border-left: 1px solid #000000; /* Borde negro */
+            border-right: 1px solid #000000; /* Borde negro */
             padding: 4px 0;
+            font-size: 11px; /* Aumentado para mejor legibilidad */
         }
         
         .totals-compact .value-usd {
             text-align: right;
-            color: #1e3a8a;
+            color: #000000; /* Negro */
             font-weight: 800;
             padding-right: 8px;
+            font-size: 11px; /* Aumentado para mejor legibilidad */
         }
         
         .totals-compact .grand { 
-            background: #059669;
+            background: #ffffff; /* Fondo blanco */
             font-weight: 900; 
-            color: white; 
-            border-left: 4px solid #10b981; 
-            font-size: 13px;
-            border-radius: 8px;
-            margin: 8px 0;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            color: #000000; /* Negro */
+            border: 2px solid #000000; /* Borde negro */
+            font-size: 10px; /* Reducido */
+            border-radius: 0; /* Sin bordes redondeados */
+            margin: 4px 0; /* Reducido */
+            box-shadow: none; /* Sin sombra */
         }
         
         .totals-compact .grand .label {
-            color: white;
-            font-size: 13px;
+            color: #000000; /* Negro */
+            font-size: 10px; /* Reducido */
         }
         
         .totals-compact .grand .value {
-            color: white;
-            font-size: 13px;
-            border-color: rgba(255,255,255,0.3);
+            color: #000000; /* Negro */
+            font-size: 10px; /* Reducido */
+            border-color: #000000; /* Borde negro */
         }
 
         .totals-compact .grand .value-usd {
-            color: white;
-            font-size: 13px;
+            color: #000000; /* Negro */
+            font-size: 10px; /* Reducido */
         }
 
         /* Mejorar separación visual entre secciones */
@@ -718,22 +730,35 @@
             display: flex; 
             align-items: center; 
             justify-content: center;
-            gap: 12px;
-            margin-top: 12px;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 8px;
-            border: 2px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            gap: 8px; /* Reducido */
+            margin-top: 6px; /* Reducido */
+            padding: 6px 12px; /* Reducido */
+            background: #ffffff; /* Fondo blanco */
+            border-radius: 0; /* Sin bordes redondeados */
+            border: 1px solid #000000; /* Borde negro */
+            box-shadow: none; /* Sin sombra */
             width: 100%;
         }
         
         .exchange-rate-label { 
-            font-size: 11px;
+            font-size: 8px; /* Reducido */
             font-weight: 800; 
-            color: #1e3a8a;
+            color: #000000; /* Negro */
             text-transform: none;
             letter-spacing: 0.5px;
+        }
+        
+        /* Estilos para conteo de productos */
+        .products-count {
+            text-align: right;
+            margin: 6px 0;
+            padding: 6px 10px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #000000;
+            background: #ffffff;
+            border: 1px solid #000000;
+            border-radius: 0;
         }
         
         @media print {
@@ -757,129 +782,182 @@
                 border: 1px solid #dee2e6;
             }
             .header { 
-                background: #1e3a8a !important; 
-                border-bottom: 2px solid #1d4ed8; 
-                padding: 8px 16px 6px 16px; 
+                background: #ffffff !important; /* Fondo blanco */
+                border-bottom: 2px solid #000000; /* Borde negro */
+                padding: 10px 18px 8px 18px; /* Optimizado para mejor distribución */
                 box-shadow: none;
             }
-            .company-name { font-size: 16pt; }
+            .company-name { font-size: 18pt; color: #000000 !important; }
             .logo-section { flex-basis: auto; margin-right: 12px; }
             .logo-section img { 
-                width: 100px; 
-                height: 100px; 
+                width: 80px; /* Reducido */
+                height: 80px; /* Reducido */
                 border: none; 
                 padding: 0; 
                 box-shadow: none;
                 background: transparent;
             }
             .document-title { 
-                background: #059669 !important; 
-                color: white !important; 
-                border-color: transparent !important; 
-                padding: 10px 16px; 
-                font-size: 14pt; 
+                background: #ffffff !important; /* Fondo blanco */
+                color: #000000 !important; /* Negro */
+                border: 2px solid #000000 !important; /* Borde negro */
+                padding: 8px 16px; /* Optimizado */
+                font-size: 16pt; /* Aumentado para mayor prominencia */
                 box-shadow: none;
             }
-            .content-section { padding: 6px 4mm; }
+            .content-section { padding: 4px 2mm; }
             .info-card { 
-                padding: 12px; 
-                background: #1e3a8a !important;
+                padding: 6px; /* Optimizado para mejor legibilidad */
+                background: #ffffff !important; /* Fondo blanco */
                 box-shadow: none;
+                border: 1px solid #000000 !important; /* Borde negro */
             }
-            .info-card h3 { font-size: 11pt; margin-bottom: 8px; color: white !important; }
-            .info-item { margin-bottom: 4px; font-size: 10pt; color: white !important; }
+            .info-card h3 { font-size: 13pt; margin-bottom: 6px; color: #000000 !important; font-weight: 900 !important; }
+            .info-item { margin-bottom: 3px; font-size: 10pt; color: #000000 !important; }
             .products-table { 
                 box-shadow: none;
-                border: 1px solid #dee2e6;
+                border: 1px solid #000000; /* Borde negro */
             }
             .products-table th { 
-                padding: 6px 6px; 
-                font-size: 10pt; 
-                color: white !important; 
-                background: #1e3a8a !important; 
-                border-bottom: 1px solid #1d4ed8;
+                padding: 4px 3px; /* Aumentado para mejor legibilidad */
+                font-size: 9pt; /* Aumentado para mejor legibilidad */
+                color: #000000 !important; /* Negro */
+                background: #ffffff !important; /* Fondo blanco */
+                border-bottom: 1px solid #000000; /* Borde negro */
             }
             .products-table td { 
-                padding: 4px 6px; 
-                font-size: 10pt; 
-                line-height: 1.2; 
-                color: #2c3e50 !important; 
-                border-bottom-color: #dee2e6; 
+                padding: 3px 3px; /* Aumentado para mejor legibilidad */
+                font-size: 9pt; /* Aumentado para mejor legibilidad */
+                line-height: 1.2; /* Aumentado para mejor legibilidad */
+                color: #000000 !important; /* Negro */
+                border-bottom-color: #000000; /* Borde negro */
                 background: white !important;
             }
             .products-table tr:nth-child(even) {
-                background: #f8f9fa !important;
+                background: #ffffff !important; /* Fondo blanco */
             }
             .products-table td:nth-child(3),
             .products-table td:nth-child(4),
             .products-table td:nth-child(5),
-            .products-table td:nth-child(6) { font-size: 10pt; }
+            .products-table td:nth-child(6) { font-size: 9pt; }
             .products-table td:nth-child(2) { font-weight: 700 !important; }
             .product-details { display: none; }
+            .products-count { 
+                font-size: 8pt; 
+                color: #000000 !important; 
+                text-align: right !important;
+                margin: 3px 0 !important;
+                padding: 3px 6px !important;
+            }
             .totals-section { 
-                padding: 12px; 
-                background: #1e3a8a !important;
+                padding: 8px; /* Optimizado para mejor legibilidad */
+                background: #ffffff !important; /* Fondo blanco - SIN COLOR */
                 box-shadow: none;
-                border: 1px solid #1d4ed8;
+                border: 1px solid #000000; /* Borde negro */
             }
             .totals-compact { 
                 box-shadow: none;
-                border: 1px solid #dee2e6;
+                border: 1px solid #000000; /* Borde negro */
             }
             .totals-compact .row { 
-                padding: 8px 16px; 
-                font-size: 10pt; 
-                border-bottom: 1px solid #dee2e6;
+                padding: 6px 12px; /* Aumentado para mejor legibilidad */
+                font-size: 10pt; /* Aumentado para mejor legibilidad */
+                border-bottom: 1px solid #000000; /* Borde negro */
             }
-            .totals-compact .row .label { font-size: 10pt; color: #2c3e50 !important; }
-            .totals-compact .row .value { font-size: 10pt; color: #2c3e50 !important; }
-            .totals-compact .row .value-usd { font-size: 10pt; color: #1e3a8a !important; }
+            .totals-compact .row .label { font-size: 10pt; color: #000000 !important; text-align: right !important; }
+            .totals-compact .row .value { font-size: 10pt; color: #000000 !important; text-align: right !important; }
+            .totals-compact .row .value-usd { font-size: 10pt; color: #000000 !important; text-align: right !important; }
             .totals-compact .grand {
-                background: #059669 !important;
-                color: white !important;
+                background: #ffffff !important; /* Fondo blanco */
+                color: #000000 !important; /* Negro */
+                border: 2px solid #000000 !important; /* Borde negro */
             }
-            .totals-compact .grand .label { color: white !important; }
-            .totals-compact .grand .value { color: white !important; }
-            .totals-compact .grand .value-usd { color: white !important; }
-            .totals-title { font-size: 14pt; color: white !important; }
+            .totals-compact .grand .label { color: #000000 !important; }
+            .totals-compact .grand .value { color: #000000 !important; }
+            .totals-compact .grand .value-usd { color: #000000 !important; }
+            .totals-title { font-size: 12pt; color: #000000 !important; }
             .exchange-rate { 
-                padding: 8px 14px; 
-                margin-top: 8px; 
+                padding: 4px 8px; /* Reducido */
+                margin-top: 4px; /* Reducido */
                 background: white !important;
                 box-shadow: none;
-                border: 1px solid #dee2e6;
+                border: 1px solid #000000; /* Borde negro */
             }
-            .exchange-rate-label { font-size: 9pt; color: #1e3a8a !important; }
+            .exchange-rate-label { font-size: 7pt; color: #000000 !important; }
             .notes-section { 
-                padding: 10px 12px; 
-                margin-top: 12px; 
-                background: #059669 !important;
+                padding: 6px 8px; /* Optimizado para mejor legibilidad */
+                margin-top: 8px; /* Optimizado para mejor distribución */
+                background: #ffffff !important; /* Fondo blanco */
                 box-shadow: none;
+                border: 1px solid #000000; /* Borde negro */
             }
-            .notes-content { font-size: 8pt; color: white !important; }
+            .notes-content { font-size: 7pt; color: #000000 !important; }
             .header, .document-title, .info-grid, .totals-section { page-break-inside: avoid; }
             .products-table { page-break-inside: auto; }
             .products-table tr { page-break-inside: avoid; page-break-after: auto; }
             .watermark { display: none; }
+            .print-button { display: none !important; }
         }
 
         /* Ajustes específicos para Chrome (Blink) en impresión */
         @media print and (-webkit-min-device-pixel-ratio:0) {
             /* Ajuste fino para Chrome sin zoom (consistencia en impresoras) */
-            body { font-size: 10pt; }
-            .company-name { font-size: 14pt; }
-            .document-title { font-size: 12pt; padding: 8px 10px; }
-            .info-card h3 { font-size: 10pt; }
-            .info-item { font-size: 9pt; }
+            body { font-size: 8pt; }
+            .company-name { font-size: 16pt; }
+            .document-title { font-size: 14pt; padding: 6px 8px; }
+            .info-card h3 { font-size: 12pt; font-weight: 900; }
+            .info-item { font-size: 10pt; }
             .products-table th { font-size: 9pt; }
             .products-table td { font-size: 9pt; }
-            .totals-title { font-size: 12pt; }
+            .totals-title { font-size: 10pt; }
             .totals-compact .row { font-size: 9pt; }
+        }
+
+        /* Print Button Styles */
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .print-button:hover {
+            background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+        }
+
+        .print-button:active {
+            transform: translateY(0);
+        }
+
+        .print-button i {
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
     {% macro fmt_num(value) %}{{ '{:,.2f}'.format((value or 0)|float)|replace(',', 'X')|replace('.', ',')|replace('X', '.') }}{% endmacro %}
+    
+    <!-- Print Button -->
+    <button class="print-button" onclick="window.print()">
+        <i class="fas fa-print"></i>
+        Imprimir
+    </button>
+    
     <!-- Watermark -->
     <div class="watermark">
         <div class="watermark-content">
@@ -939,9 +1017,9 @@
                     </div>
                     
                     {% if cliente.validado_seniat %}
-                        <div class="success-badge">✓ Cliente Verificado SENIAT</div>
+                        <!-- <div class="success-badge">✓ Cliente Verificado SENIAT</div> -->
                     {% else %}
-                        <div class="warning-badge">⚠ Cliente No Verificado</div>
+                        <!-- <div class="warning-badge">⚠ Cliente No Verificado</div> -->
                     {% endif %}
                 </div>
                 
@@ -1072,6 +1150,17 @@
                     {% endif %}
                 </tbody>
             </table>
+            
+            <!-- Conteo de productos -->
+            <div class="products-count">
+                {% set total_productos = 0 %}
+                {% if factura.items and factura.items is iterable and factura.items is not string %}
+                    {% set total_productos = factura.items|length %}
+                {% elif factura.productos and factura.productos is iterable and factura.productos is not string %}
+                    {% set total_productos = factura.productos|length %}
+                {% endif %}
+                Total de items: {{ total_productos }}
+            </div>
             
             <!-- Totals Section - Ultra Compacta -->
             <div class="totals-section">

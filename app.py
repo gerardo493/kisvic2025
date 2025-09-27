@@ -21,6 +21,7 @@ from seguridad_fiscal import seguridad_fiscal
 from numeracion_fiscal import control_numeracion
 from comunicacion_seniat import comunicador_seniat
 from exportacion_seniat import exportador_seniat
+from filtros_dashboard import obtener_estadisticas_filtradas, obtener_opciones_filtro, obtener_metricas_tarjeta, obtener_opciones_filtro_avanzado
 try:
     import pdfkit
 except ImportError:
@@ -928,6 +929,219 @@ def index():
         advertencia_tasa = '¡Advertencia! No se ha podido obtener la tasa BCV actual.'
     stats['tasa_bcv_eur'] = tasa_bcv_eur
     return render_template('index.html', **stats, advertencia_tasa=advertencia_tasa, total_facturado_usd=total_facturado_usd, promedio_factura_usd=promedio_factura_usd)
+
+@app.route('/api/dashboard-filtros')
+@login_required
+def api_dashboard_filtros():
+    """API para obtener estadísticas filtradas del dashboard."""
+    filtro_tipo = request.args.get('tipo')
+    filtro_valor = request.args.get('valor')
+    
+    try:
+        stats = obtener_estadisticas_filtradas(filtro_tipo, filtro_valor)
+        return jsonify({
+            'success': True,
+            'data': stats
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
+
+@app.route('/api/tarjeta-filtro')
+@login_required
+def api_tarjeta_filtro():
+    """API para obtener datos filtrados de una tarjeta específica."""
+    tarjeta = request.args.get('tarjeta')
+    filtro_tipo = request.args.get('tipo')
+    filtro_valor = request.args.get('valor')
+    
+    try:
+        # Cargar datos reales
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        tasa_bcv = obtener_tasa_bcv()
+        if hasattr(tasa_bcv, 'json'):
+            tasa_bcv = tasa_bcv.json().get('USD', {}).get('transferencia', 1.0)
+        else:
+            tasa_bcv = float(tasa_bcv) if tasa_bcv else 1.0
+        
+        # Obtener fecha actual
+        hoy = datetime.now()
+        mes_actual = hoy.month
+        año_actual = hoy.year
+        
+        # Aplicar filtros según el tipo
+        if filtro_tipo == 'hoy':
+            fecha_filtro = hoy.strftime('%Y-%m-%d')
+        elif filtro_tipo == 'mes' and filtro_valor:
+            try:
+                mes = int(filtro_valor)
+                fecha_filtro = f"{año_actual}-{mes:02d}-01"
+            except ValueError:
+                return jsonify({'success': False, 'error': 'Mes inválido'})
+        else:
+            fecha_filtro = None
+        
+        # Calcular estadísticas según la tarjeta
+        if tarjeta == 'cobranza':
+            total_cobrar_usd = 0
+            for f in facturas.values():
+                total_facturado = float(f.get('total_usd', 0))
+                total_abonado = float(f.get('total_abonado', 0))
+                saldo = max(0, total_facturado - total_abonado)
+                
+                # Aplicar filtro de fecha si existe
+                if fecha_filtro:
+                    fecha_factura = f.get('fecha', '')
+                    if fecha_filtro == 'hoy':
+                        if fecha_factura != hoy.strftime('%Y-%m-%d'):
+                            continue
+                    else:  # filtro por mes
+                        if fecha_factura and not fecha_factura.startswith(fecha_filtro[:7]):
+                            continue
+                
+                if saldo > 0:
+                    total_cobrar_usd += saldo
+            
+            total_cobrar_bs = total_cobrar_usd * tasa_bcv
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'total_cobrar_usd': total_cobrar_usd,
+                    'total_cobrar_bs': total_cobrar_bs
+                }
+            })
+            
+        elif tarjeta == 'pagos':
+            total_pagos_recibidos_usd = 0
+            for f in facturas.values():
+                if 'pagos' in f and f['pagos']:
+                    for pago in f['pagos']:
+                        try:
+                            fecha_pago = pago.get('fecha', '')
+                            if fecha_pago:
+                                # Aplicar filtro de fecha
+                                if fecha_filtro == 'hoy':
+                                    if fecha_pago != hoy.strftime('%Y-%m-%d'):
+                                        continue
+                                elif fecha_filtro and not fecha_pago.startswith(fecha_filtro[:7]):
+                                    continue
+                                
+                                monto = float(pago.get('monto', 0))
+                                total_pagos_recibidos_usd += monto
+                        except Exception:
+                            continue
+            
+            total_pagos_recibidos_bs = total_pagos_recibidos_usd * tasa_bcv
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'total_pagos_recibidos_usd': total_pagos_recibidos_usd,
+                    'total_pagos_recibidos_bs': total_pagos_recibidos_bs
+                }
+            })
+            
+        elif tarjeta == 'facturado':
+            total_facturado_usd = 0
+            cantidad_facturas = 0
+            
+            for f in facturas.values():
+                # Aplicar filtro de fecha
+                if fecha_filtro:
+                    fecha_factura = f.get('fecha', '')
+                    if fecha_filtro == 'hoy':
+                        if fecha_factura != hoy.strftime('%Y-%m-%d'):
+                            continue
+                    else:  # filtro por mes
+                        if fecha_factura and not fecha_factura.startswith(fecha_filtro[:7]):
+                            continue
+                
+                total_facturado_usd += float(f.get('total_usd', 0))
+                cantidad_facturas += 1
+            
+            promedio_factura_usd = total_facturado_usd / cantidad_facturas if cantidad_facturas > 0 else 0
+            
+            return jsonify({
+                'success': True,
+                'data': {
+                    'total_facturado_usd': total_facturado_usd,
+                    'promedio_factura_usd': promedio_factura_usd
+                }
+            })
+        
+        return jsonify({'success': False, 'error': 'Tarjeta no válida'})
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/opciones-filtro')
+@login_required
+def api_opciones_filtro():
+    """API para obtener las opciones disponibles para los filtros."""
+    try:
+        opciones = obtener_opciones_filtro()
+        return jsonify({
+            'success': True,
+            'data': opciones
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/opciones-filtro-avanzado')
+@login_required
+def api_opciones_filtro_avanzado():
+    """API para obtener las opciones de filtros avanzados con menús anidados."""
+    try:
+        opciones = obtener_opciones_filtro_avanzado()
+        return jsonify({
+            'success': True,
+            'data': opciones
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# Ruta de prueba sin autenticación para debugging
+@app.route('/api/test-tarjeta-filtro')
+def api_test_tarjeta_filtro():
+    """API de prueba para obtener métricas filtradas sin autenticación."""
+    tarjeta = request.args.get('tarjeta')
+    filtro_tipo = request.args.get('tipo')
+    filtro_valor = request.args.get('valor')
+    
+    print(f"🔍 DEBUG API: tarjeta={tarjeta}, tipo={filtro_tipo}, valor={filtro_valor}")
+    
+    if not tarjeta:
+        return jsonify({
+            'success': False,
+            'error': 'Tarjeta no especificada'
+        }), 400
+    
+    try:
+        metricas = obtener_metricas_tarjeta(tarjeta, filtro_tipo, filtro_valor)
+        print(f"✅ DEBUG API: Respuesta para {tarjeta}: {metricas}")
+        return jsonify({
+            'success': True,
+            'data': metricas
+        })
+    except Exception as e:
+        print(f"❌ DEBUG API: Error para {tarjeta}: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 
 @app.route('/mapa-avanzado')
 @login_required
@@ -2800,70 +3014,6 @@ def verify_password(username, password):
         print(f"Error verificando contraseña: {e}")
         return False
 
-def obtener_estadisticas():
-    """Obtiene estadísticas para el dashboard."""
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
-    facturas = cargar_datos(ARCHIVO_FACTURAS)
-    mes_actual = datetime.now().month
-    total_clientes = len(clientes)
-    total_productos = len(inventario)
-    facturas_mes = sum(1 for f in facturas.values() if datetime.strptime(f['fecha'], '%Y-%m-%d').month == mes_actual)
-    total_cobrar_usd = 0
-    for f in facturas.values():
-        total_facturado = float(f.get('total_usd', 0))
-        total_abonado = float(f.get('total_abonado', 0))
-        saldo = max(0, total_facturado - total_abonado)
-        if saldo > 0:  # Considerar cualquier saldo mayor a 0
-            total_cobrar_usd += saldo
-    # Asegura que tasa_bcv sea float y no Response
-    tasa_bcv = obtener_tasa_bcv()
-    if hasattr(tasa_bcv, 'json'):
-        # Si es un Response, extrae el valor
-        try:
-            tasa_bcv = tasa_bcv.json.get('tasa', 1.0)
-        except Exception:
-            tasa_bcv = 1.0
-    try:
-        tasa_bcv = float(tasa_bcv)
-    except Exception:
-        tasa_bcv = 1.0
-    total_cobrar_bs = total_cobrar_usd * tasa_bcv
-    # Crear lista de facturas con ID incluido para el dashboard
-    facturas_con_id = []
-    for factura_id, factura in facturas.items():
-        factura_copia = factura.copy()
-        factura_copia['id'] = factura_id  # Agregar el ID a la factura
-        facturas_con_id.append(factura_copia)
-    
-    ultimas_facturas = sorted(facturas_con_id, key=lambda x: datetime.strptime(x['fecha'], '%Y-%m-%d'), reverse=True)[:5]
-    productos_bajo_stock = [p for p in inventario.values() if int(p.get('cantidad', p.get('stock', 0))) < 10]
-    total_pagos_recibidos_usd = 0
-    total_pagos_recibidos_bs = 0
-    for f in facturas.values():
-        if 'pagos' in f and f['pagos']:
-            for pago in f['pagos']:
-                fecha_factura = f.get('fecha', '')
-                try:
-                    if fecha_factura and datetime.strptime(fecha_factura, '%Y-%m-%d').month == mes_actual:
-                        monto = float(pago.get('monto', 0))
-                        total_pagos_recibidos_usd += monto
-                        total_pagos_recibidos_bs += monto * float(f.get('tasa_bcv', tasa_bcv))
-                except Exception:
-                    continue
-    return {
-        'total_clientes': total_clientes,
-        'total_productos': total_productos,
-        'facturas_mes': facturas_mes,
-        'total_cobrar': f"{total_cobrar_usd:,.2f}",
-        'total_cobrar_usd': total_cobrar_usd,
-        'total_cobrar_bs': total_cobrar_bs,
-        'tasa_bcv': tasa_bcv,
-        'ultimas_facturas': ultimas_facturas,
-        'productos_bajo_stock': productos_bajo_stock,
-        'total_pagos_recibidos_usd': total_pagos_recibidos_usd,
-        'total_pagos_recibidos_bs': total_pagos_recibidos_bs
-    }
 
 def obtener_tasa_bcv():
     try:
