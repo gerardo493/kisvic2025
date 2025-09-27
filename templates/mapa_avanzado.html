@@ -9,9 +9,18 @@
             <div class="header-left">
                 <h2><i class="fas fa-map-marked-alt me-2"></i>Mapa Avanzado</h2>
                 <p class="subtitle">Visualización y gestión de ubicaciones de clientes</p>
+                <div class="client-counter" id="clientCounter" style="font-size: 0.9rem; opacity: 0.8;">
+                    <i class="fas fa-users"></i> <span id="clientCount">0</span> clientes cargados
+                </div>
             </div>
             <div class="header-right">
-                <button id="toggleFullscreen" class="btn btn-outline-light">
+                <button id="showAnalytics" class="btn btn-info me-2" onclick="showAnalytics()">
+                    <i class="fas fa-chart-bar me-1"></i>Analytics
+                </button>
+                <button id="exportData" class="btn btn-success me-2" onclick="exportMapData()">
+                    <i class="fas fa-download me-1"></i>Exportar
+                </button>
+                <button id="toggleFullscreen" class="btn btn-outline-light me-2">
                     <i class="fas fa-expand"></i>
                 </button>
                 <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-secondary">
@@ -44,6 +53,8 @@
                             <option value="">Todos</option>
                             <option value="activo">Activos</option>
                             <option value="inactivo">Inactivos</option>
+                            <option value="nuevo">Nuevos</option>
+                            <option value="vip">VIP</option>
                         </select>
                     </div>
                     <div class="filter-group">
@@ -54,6 +65,68 @@
                             <option value="medio">Medio ($100-$1000)</option>
                             <option value="bajo">Bajo (<$100)</option>
                         </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Filtros Especiales:</label>
+                        <div class="btn-group-vertical w-100" role="group">
+                            <button type="button" class="btn btn-outline-danger btn-sm filter-btn" data-filter="deudores">
+                                <span class="filter-icon" style="background: #dc3545;">⚠️</span> Deudores
+                            </button>
+                            <button type="button" class="btn btn-outline-warning btn-sm filter-btn" data-filter="vip">
+                                <span class="filter-icon" style="background: #ffc107;">👑</span> VIP (Top 20%)
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm filter-btn" data-filter="inactivos">
+                                <span class="filter-icon" style="background: #6c757d;">😴</span> Inactivos
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm filter-btn" data-filter="bajos">
+                                <span class="filter-icon" style="background: #17a2b8;">📉</span> Compras Bajas
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm filter-btn" data-filter="altos">
+                                <span class="filter-icon" style="background: #28a745;">💰</span> Alto Valor ($500+)
+                            </button>
+                            <button type="button" class="btn btn-outline-warning btn-sm filter-btn" data-filter="medios">
+                                <span class="filter-icon" style="background: #fd7e14;">💳</span> Valor Medio
+                            </button>
+                            <button type="button" class="btn btn-outline-dark btn-sm" id="clearSpecialFilters">
+                                <i class="fas fa-times"></i> Limpiar Filtros
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="refreshIcons">
+                                <i class="fas fa-sync-alt"></i> Actualizar Iconos
+                            </button>
+                            <button type="button" class="btn btn-outline-info btn-sm" id="debugIcons">
+                                <i class="fas fa-bug"></i> Debug Iconos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h5><i class="fas fa-info-circle"></i> Leyenda de Iconos</h5>
+                    <div class="legend-container">
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #dc3545;">⚠️</span>
+                            <span class="legend-text">Deudores</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #ffc107;">👑</span>
+                            <span class="legend-text">VIP (Top 20%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #6c757d;">😴</span>
+                            <span class="legend-text">Inactivos</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #17a2b8;">📉</span>
+                            <span class="legend-text">Compras Bajas</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #28a745;">💰</span>
+                            <span class="legend-text">Alto Valor ($500+)</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-icon" style="background: #fd7e14;">💳</span>
+                            <span class="legend-text">Valor Medio ($100-$499)</span>
+                        </div>
                     </div>
                 </div>
 
@@ -104,6 +177,10 @@
                             </button>
                         </div>
                     </div>
+                    <div class="alert alert-info mt-2" style="font-size: 0.8rem;">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Ubicación Inteligente:</strong> Se analizan las direcciones para ubicar clientes en la región correcta de Venezuela.
+                    </div>
                 </div>
 
                 <div class="control-section">
@@ -115,8 +192,14 @@
                         <button id="calculateRoute" class="btn btn-success btn-sm w-100 mb-2">
                             <i class="fas fa-route"></i> Calcular Ruta
                         </button>
-                        <button id="clearRoute" class="btn btn-warning btn-sm w-100">
+                        <button id="clearRoute" class="btn btn-warning btn-sm w-100 mb-2">
                             <i class="fas fa-times"></i> Limpiar Ruta
+                        </button>
+                        <button id="loadMoreClients" class="btn btn-info btn-sm w-100">
+                            <i class="fas fa-plus"></i> Cargar Todos los Clientes
+                        </button>
+                        <button id="reloadClients" class="btn btn-warning btn-sm w-100 mt-2" onclick="reloadAllClients()" style="display: none;">
+                            <i class="fas fa-refresh"></i> Recargar Clientes
                         </button>
                     </div>
                 </div>
@@ -136,17 +219,18 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="info-panel" id="infoPanel">
-            <div class="info-header">
-                <h5><i class="fas fa-info-circle"></i> Información del Cliente</h5>
-                <button class="btn-close" id="closeInfoPanel">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="info-content" id="infoContent">
-                <p class="text-muted">Selecciona un marcador para ver la información del cliente</p>
-            </div>
+    <!-- Panel de información debajo del mapa -->
+    <div class="info-panel-bottom" id="infoPanel">
+        <div class="info-header">
+            <h5><i class="fas fa-info-circle"></i> Información del Cliente</h5>
+            <button class="btn-close" id="closeInfoPanel">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="info-content" id="infoContent">
+            <p class="text-muted">Selecciona un marcador para ver la información del cliente</p>
         </div>
     </div>
 </div>
@@ -196,6 +280,14 @@
         min-height: 600px;
     }
 
+    .mapa-principal {
+        flex: 1;
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
     .sidebar-controls {
         width: 320px;
         background: white;
@@ -218,6 +310,174 @@
     .control-section:last-child {
         border-bottom: none;
         margin-bottom: 0;
+    }
+    
+    .filter-btn.active {
+        background-color: var(--bs-primary) !important;
+        color: white !important;
+        border-color: var(--bs-primary) !important;
+    }
+    
+    .filter-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .filter-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        margin-right: 8px;
+        border: 2px solid white;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .legend-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .legend-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border: 2px solid white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    .legend-text {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .analytics-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .analytics-section h6 {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .top-clients {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .top-client-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .rank {
+        font-weight: bold;
+        color: #007bff;
+        min-width: 20px;
+    }
+    
+    .client-name {
+        flex: 1;
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .client-amount {
+        font-weight: bold;
+        color: #28a745;
+    }
+    
+    .region-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .region-name {
+        font-weight: 500;
+        color: #333;
+    }
+    
+    .region-stats {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    /* Estilos específicos para el panel de analytics en la parte inferior */
+    .info-panel-bottom .analytics-info {
+        padding: 1.5rem;
+    }
+
+    .info-panel-bottom .analytics-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 8px;
+        border-left: 4px solid #007bff;
+    }
+
+    .info-panel-bottom .analytics-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .info-panel-bottom .stat-item {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+
+    .info-panel-bottom .stat-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .info-panel-bottom .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-panel-bottom .stat-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
     }
 
     .control-section h5 {
@@ -340,17 +600,24 @@
         font-family: monospace;
     }
 
-    .info-panel {
-        width: 300px;
+    .info-panel-bottom {
+        width: 100%;
+        max-width: 1200px;
+        margin: 1rem auto;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        display: none;
-        flex-shrink: 0;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        border: 1px solid #e9ecef;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
     }
 
-    .info-panel.active {
-        display: block;
+    .info-panel-bottom.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
     }
 
     .info-header {
@@ -473,9 +740,9 @@
             height: 500px;
         }
 
-        .info-panel {
+        .info-panel-bottom {
             width: 100%;
-            order: 3;
+            margin: 1rem;
         }
     }
 
@@ -498,6 +765,143 @@
             padding: 6px 8px;
         }
     }
+
+    /* Overlay de carga */
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        border-radius: 12px;
+    }
+
+    .loading-content {
+        text-align: center;
+        color: #1a237e;
+    }
+
+    .loading-content .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    /* Mejoras para analytics */
+    .analytics-info {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .analytics-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+    }
+
+    .analytics-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Mejoras para rutas */
+    .route-info {
+        background: #e3f2fd;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .route-details p {
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+    }
+
+    .route-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    /* Mejoras para marcadores */
+    .marker-tooltip {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        pointer-events: none;
+        z-index: 1000;
+        max-width: 200px;
+        word-wrap: break-word;
+    }
+
+    /* Mejoras para el panel de información */
+    .info-panel-bottom {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .info-panel-bottom::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .info-panel-bottom::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    .info-panel-bottom::-webkit-scrollbar-thumb {
+        background: #1a237e;
+        border-radius: 3px;
+    }
+
+    .info-panel-bottom::-webkit-scrollbar-thumb:hover {
+        background: #0d47a1;
+    }
+
+    /* Animaciones suaves */
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .stat-item {
+        transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: scale(1.05);
+    }
+
+    /* Mejoras para el mapa */
+    .mapa-principal {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mapa-principal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 0%, rgba(26, 35, 126, 0.1) 100%);
+        pointer-events: none;
+        z-index: 1;
+    }
 </style>
 {% endblock %}
 
@@ -507,8 +911,23 @@ let map, markers = [], markerClusterer, heatmapLayer, directionsService, directi
 let currentPosition = null;
 let selectedMarker = null;
 let clientesData = {{ clientes|tojson }};
+let clientesEstadisticas = {{ clientes_estadisticas|tojson }};
+let visibleMarkers = [];
+let geocodingQueue = [];
+let isGeocoding = false;
+let loadingOverlay = null;
+let currentClientIndex = 0;
+let clientsPerLoad = 51; // Cargar todos los clientes de una vez
 
 function initMap() {
+    // Mostrar overlay de carga
+    showLoadingOverlay('Inicializando mapa...');
+    
+    // Debug: Verificar datos
+    console.log('Inicializando mapa...');
+    console.log('Datos de clientes:', clientesData);
+    console.log('Estadísticas de clientes:', clientesEstadisticas);
+    
     // Configuración inicial del mapa
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 12,
@@ -516,19 +935,35 @@ function initMap() {
         mapTypeControl: false,
         streetViewControl: true,
         fullscreenControl: true,
-        zoomControl: false
+        zoomControl: false,
+        gestureHandling: 'greedy'
     });
 
     // Inicializar servicios
     directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer();
+    directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers: true,
+        polylineOptions: {
+            strokeColor: '#1a237e',
+            strokeWeight: 4,
+            strokeOpacity: 0.8
+        }
+    });
     directionsRenderer.setMap(map);
 
     // Configurar controles
     setupControls();
     
-    // Cargar marcadores de clientes
-    loadClientMarkers();
+    // Cargar marcadores de clientes con optimización
+    loadClientMarkersOptimized();
+    
+    // Fallback: Si no hay marcadores después de 5 segundos, crear marcadores de prueba
+    setTimeout(() => {
+        if (markers.length === 0) {
+            console.log('No se cargaron marcadores, creando marcadores de prueba...');
+            createTestMarkers();
+        }
+    }, 5000);
     
     // Obtener ubicación actual
     getCurrentLocation();
@@ -540,7 +975,17 @@ function initMap() {
     
     map.addListener('zoom_changed', function() {
         updateZoomLevel();
+        updateVisibleMarkers();
     });
+    
+    map.addListener('bounds_changed', function() {
+        updateVisibleMarkers();
+    });
+    
+    // Ocultar overlay de carga después de un delay
+    setTimeout(() => {
+        hideLoadingOverlay();
+    }, 2000);
 }
 
 function setupControls() {
@@ -556,6 +1001,47 @@ function setupControls() {
     // Filtros
     document.getElementById('estadoFilter').addEventListener('change', applyFilters);
     document.getElementById('comprasFilter').addEventListener('change', applyFilters);
+    
+    // Filtros especiales
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Remover clase activa de todos los botones
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            // Agregar clase activa al botón clickeado
+            this.classList.add('active');
+            
+            // Aplicar filtro especial
+            const filterType = this.getAttribute('data-filter');
+            applySpecialFilter(filterType);
+        });
+    });
+    
+    // Botón limpiar filtros especiales
+    document.getElementById('clearSpecialFilters').addEventListener('click', function() {
+        // Remover clase activa de todos los botones
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        
+        // Mostrar todos los marcadores
+        markers.forEach(marker => {
+            marker.setMap(map);
+        });
+        
+        // Actualizar marcadores visibles
+        visibleMarkers = markers.filter(marker => marker.getMap() === map);
+        
+        updateStatus(`Todos los filtros limpiados - Mostrando ${visibleMarkers.length} marcadores`);
+    });
+    
+    // Botón actualizar iconos
+    document.getElementById('refreshIcons').addEventListener('click', function() {
+        updateAllMarkerIcons();
+        updateStatus('Iconos actualizados correctamente');
+    });
+    
+    // Botón debug iconos
+    document.getElementById('debugIcons').addEventListener('click', function() {
+        debugIconStatus();
+    });
 
     // Capas
     document.getElementById('showMarkers').addEventListener('change', toggleMarkers);
@@ -593,6 +1079,7 @@ function setupControls() {
     document.getElementById('getMyLocation').addEventListener('click', getCurrentLocation);
     document.getElementById('calculateRoute').addEventListener('click', calculateRoute);
     document.getElementById('clearRoute').addEventListener('click', clearRoute);
+    document.getElementById('loadMoreClients').addEventListener('click', loadMoreClients);
 
     // Panel de información
     document.getElementById('closeInfoPanel').addEventListener('click', closeInfoPanel);
@@ -601,77 +1088,780 @@ function setupControls() {
     document.getElementById('toggleFullscreen').addEventListener('click', toggleFullscreen);
 }
 
-function loadClientMarkers() {
+function loadClientMarkersOptimized() {
     updateStatus('Cargando marcadores de clientes...');
+    showLoadingOverlay('Procesando ubicaciones...');
     
-    const geocoder = new google.maps.Geocoder();
-    let markersLoaded = 0;
     const totalClientes = Object.keys(clientesData).length;
+    console.log('Total clientes disponibles:', totalClientes);
+    console.log('Datos de clientes:', clientesData);
+    
+    if (totalClientes === 0) {
+        updateStatus('No hay clientes para mostrar');
+        hideLoadingOverlay();
+        return;
+    }
+    
+    // Cargar los primeros clientes
+    loadMoreClients();
+}
 
-    Object.keys(clientesData).forEach(function(clienteId) {
+function loadMoreClients() {
+    console.log('🚀 Iniciando loadMoreClients...');
+    console.log('📊 clientesData:', clientesData);
+    
+    const totalClientes = Object.keys(clientesData).length;
+    const clientesKeys = Object.keys(clientesData);
+    
+    console.log(`Cargando todos los ${totalClientes} clientes de una vez`);
+    console.log('🔑 Claves de clientes:', clientesKeys);
+    
+    // Ocultar botón de cargar más ya que cargamos todos
+    const loadMoreBtn = document.getElementById('loadMoreClients');
+    loadMoreBtn.style.display = 'none';
+    
+    // Mostrar botón de recargar
+    const reloadBtn = document.getElementById('reloadClients');
+    reloadBtn.style.display = 'block';
+    
+    let markersLoaded = 0;
+    
+    // Mostrar progreso en el overlay
+    showLoadingOverlay(`Cargando ${totalClientes} clientes...`);
+    
+    // Procesar todos los clientes directamente sin geocoding
+    try {
+        clientesKeys.forEach(function(clienteId, index) {
+            try {
         const cliente = clientesData[clienteId];
+                console.log(`Procesando cliente ${index + 1}/${totalClientes}:`, cliente.nombre, 'ID:', clienteId);
+                
+                // Usar dirección para determinar región inteligentemente
+                const location = getSmartLocation(cliente, index);
+                const marker = createMarker(cliente, location);
+                markers.push(marker);
+                console.log(`📍 Marcador creado para ${cliente.nombre} en: ${location.lat}, ${location.lng}`);
+                
+                markersLoaded++;
+                
+                // Actualizar progreso cada 5 clientes
+                if (markersLoaded % 5 === 0 || markersLoaded === totalClientes) {
+                    updateStatus(`Cargando clientes: ${markersLoaded}/${totalClientes}`);
+                    document.getElementById('clientCount').textContent = markersLoaded;
+                }
+                
+                if (markersLoaded === totalClientes) {
+                    updateStatus(`✅ Todos los ${markers.length} clientes cargados exitosamente`);
+                    
+                    // Actualizar contador final
+                    document.getElementById('clientCount').textContent = markers.length;
+                    
+                    // Regenerar todos los iconos con la lógica VIP correcta
+                    updateAllMarkerIcons();
+                    
+                    // Mostrar estadísticas de distribución
+                    showDistributionStats();
+                    
+                    // Configurar clustering solo si MarkerClusterer está disponible
+                    if (window.MarkerClusterer) {
+                        setupMarkerClustering();
+                    } else {
+                        console.log('MarkerClusterer no disponible, mostrando marcadores sin clustering');
+                    }
+                    
+                    hideLoadingOverlay();
+                }
+            } catch (error) {
+                console.error(`❌ Error procesando cliente ${index + 1}:`, error);
+                markersLoaded++;
+                
+                if (markersLoaded === totalClientes) {
+                    hideLoadingOverlay();
+                }
+            }
+        });
+    } catch (error) {
+        console.error('❌ Error en loadMoreClients:', error);
+        hideLoadingOverlay();
+    }
+    
+    // Función para determinar ubicación inteligente basada en la dirección
+    function getSmartLocation(cliente, index) {
+        const venezuelaRegions = [
+            { lat: 10.5, lng: -66.9, name: 'Caracas', keywords: ['caracas', 'distrito capital', 'dc', 'miranda', 'los teques', 'petare', 'chacao'] },
+            { lat: 8.0, lng: -72.0, name: 'Maracaibo', keywords: ['maracaibo', 'zulia', 'cabimas', 'ciudad ojeda', 'machiques'] },
+            { lat: 10.2, lng: -64.6, name: 'Barcelona', keywords: ['barcelona', 'anzoategui', 'puerto la cruz', 'lecheria', 'el tigre'] },
+            { lat: 8.6, lng: -71.2, name: 'Mérida', keywords: ['merida', 'merida', 'el vigia', 'tovar', 'ejido'] },
+            { lat: 9.7, lng: -69.2, name: 'Barquisimeto', keywords: ['barquisimeto', 'lara', 'cabudare', 'duaca', 'quibor'] },
+            { lat: 10.0, lng: -68.0, name: 'Valencia', keywords: ['valencia', 'carabobo', 'maracay', 'aragua', 'guacara', 'puerto cabello'] },
+            { lat: 7.8, lng: -72.2, name: 'San Cristóbal', keywords: ['san cristobal', 'tachira', 'tachira', 'rubio', 'colon', 'la fria'] },
+            { lat: 9.0, lng: -70.0, name: 'Trujillo', keywords: ['trujillo', 'valera', 'boconó', 'la puerta'] },
+            { lat: 8.1, lng: -63.5, name: 'Ciudad Bolívar', keywords: ['ciudad bolivar', 'bolivar', 'puerto ordaz', 'ciudad guayana', 'upata'] },
+            { lat: 8.9, lng: -64.3, name: 'Maturín', keywords: ['maturin', 'monagas', 'punta de mata', 'caripito'] },
+            { lat: 7.9, lng: -67.5, name: 'San Fernando', keywords: ['san fernando', 'apure', 'achaguas', 'elorza'] },
+            { lat: 10.3, lng: -67.6, name: 'Maracay', keywords: ['maracay', 'aragua', 'la victoria', 'el limon'] },
+            { lat: 7.8, lng: -72.5, name: 'Táriba', keywords: ['tariba', 'tachira', 'palmira'] },
+            { lat: 9.3, lng: -70.1, name: 'El Vigía', keywords: ['el vigia', 'merida', 'santa cruz'] },
+            { lat: 10.1, lng: -67.0, name: 'Los Teques', keywords: ['los teques', 'miranda', 'guarenas', 'guatire'] }
+        ];
         
-        if (cliente.direccion) {
-            geocoder.geocode({ 'address': cliente.direccion }, function(results, status) {
-                if (status === 'OK') {
-                    const location = results[0].geometry.location;
+        let selectedRegion = venezuelaRegions[0]; // Default a Caracas
+        
+        if (cliente.direccion && cliente.direccion.trim() !== '') {
+            const direccion = cliente.direccion.toLowerCase();
+            console.log(`Analizando dirección: ${direccion}`);
+            
+            // Buscar coincidencias de palabras clave
+            for (const region of venezuelaRegions) {
+                for (const keyword of region.keywords) {
+                    if (direccion.includes(keyword.toLowerCase())) {
+                        selectedRegion = region;
+                        console.log(`✅ Región encontrada: ${region.name} (palabra clave: ${keyword})`);
+                        break;
+                    }
+                }
+                if (selectedRegion !== venezuelaRegions[0]) break;
+            }
+        }
+        
+        // Si no se encontró coincidencia, usar distribución por índice
+        if (selectedRegion === venezuelaRegions[0] && !cliente.direccion?.toLowerCase().includes('caracas')) {
+            const regionIndex = index % venezuelaRegions.length;
+            selectedRegion = venezuelaRegions[regionIndex];
+            console.log(`📍 Usando distribución por índice: ${selectedRegion.name}`);
+        }
+        
+        // Agregar variación dentro de la región
+        const variation = 0.05;
+        const randomLat = selectedRegion.lat + (Math.random() - 0.5) * variation;
+        const randomLng = selectedRegion.lng + (Math.random() - 0.5) * variation;
+        
+        return {
+            lat: randomLat,
+            lng: randomLng,
+            region: selectedRegion.name
+        };
+    }
+}
+
+function showAllMarkers() {
+    // Mostrar todos los marcadores en el mapa
+    markers.forEach(marker => {
+        marker.setMap(map);
+        visibleMarkers.push(marker);
+    });
+    updateStatus(`Mostrando ${visibleMarkers.length} de ${markers.length} marcadores`);
+}
+
+function reloadAllClients() {
+    // Limpiar marcadores existentes
+    markers.forEach(marker => {
+        marker.setMap(null);
+    });
+    markers = [];
+    currentClientIndex = 0;
+    
+    // Mostrar botón de cargar
+    document.getElementById('loadMoreClients').style.display = 'block';
+    document.getElementById('reloadClients').style.display = 'none';
+    
+    // Resetear contador
+    document.getElementById('clientCount').textContent = '0';
+    
+    // Recargar clientes
+    loadMoreClients();
+}
+
+function showDistributionStats() {
+    const venezuelaRegions = [
+        { lat: 10.5, lng: -66.9, name: 'Caracas' },
+        { lat: 8.0, lng: -72.0, name: 'Maracaibo' },
+        { lat: 10.2, lng: -64.6, name: 'Barcelona' },
+        { lat: 8.6, lng: -71.2, name: 'Mérida' },
+        { lat: 9.7, lng: -69.2, name: 'Barquisimeto' },
+        { lat: 10.0, lng: -68.0, name: 'Valencia' },
+        { lat: 7.8, lng: -72.2, name: 'San Cristóbal' },
+        { lat: 9.0, lng: -70.0, name: 'Trujillo' },
+        { lat: 10.1, lng: -67.0, name: 'Los Teques' },
+        { lat: 8.1, lng: -63.5, name: 'Ciudad Bolívar' },
+        { lat: 7.8, lng: -72.5, name: 'Táriba' },
+        { lat: 9.3, lng: -70.1, name: 'El Vigía' },
+        { lat: 10.3, lng: -67.6, name: 'Maracay' },
+        { lat: 8.9, lng: -64.3, name: 'Maturín' },
+        { lat: 7.9, lng: -67.5, name: 'San Fernando' },
+    ];
+    
+    // Contar clientes por región
+    const regionStats = {};
+    venezuelaRegions.forEach(region => {
+        regionStats[region.name] = 0;
+    });
+    
+    // Contar marcadores por región (aproximado)
+    markers.forEach((marker, index) => {
+        const regionIndex = index % venezuelaRegions.length;
+        const region = venezuelaRegions[regionIndex];
+        regionStats[region.name]++;
+    });
+    
+    console.log('Distribución de clientes por región:');
+    Object.keys(regionStats).forEach(region => {
+        if (regionStats[region] > 0) {
+            console.log(`${region}: ${regionStats[region]} clientes`);
+        }
+    });
+    
+    // Mostrar en el status
+    const regionsWithClients = Object.keys(regionStats).filter(region => regionStats[region] > 0);
+    updateStatus(`Clientes distribuidos en ${regionsWithClients.length} regiones de Venezuela`);
+}
+
+function createTestMarkers() {
+    // Crear marcadores de prueba para verificar que el mapa funciona
+    const testLocations = [
+        { lat: 10.5, lng: -66.9, nombre: 'Cliente Test 1' },
+        { lat: 10.6, lng: -66.8, nombre: 'Cliente Test 2' },
+        { lat: 10.4, lng: -66.7, nombre: 'Cliente Test 3' }
+    ];
+    
+    testLocations.forEach((location, index) => {
+        const testCliente = {
+            id: `test_${index}`,
+            nombre: location.nombre,
+            direccion: 'Dirección de prueba',
+            email: 'test@ejemplo.com',
+            telefono: '1234567890'
+        };
                     
                     const marker = new google.maps.Marker({
                         position: location,
                         map: map,
-                        title: cliente.nombre,
+            title: location.nombre,
                         icon: {
-                            url: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                             scaledSize: new google.maps.Size(32, 32)
                         },
-                        clienteData: cliente
+            clienteData: testCliente,
+            stats: { total_facturado: 1000, total_facturas: 1 }
                     });
 
-                    // Evento click del marcador
+        markers.push(marker);
+        
                     marker.addListener('click', function() {
-                        showClientInfo(cliente, location);
+            showClientInfo(testCliente, location, { total_facturado: 1000, total_facturas: 1 });
                         selectedMarker = marker;
-                    });
+        });
+    });
+    
+    updateStatus(`Marcadores de prueba creados: ${markers.length}`);
+    setupMarkerClustering();
+    hideLoadingOverlay();
+}
 
+function processGeocodingQueue() {
+    if (isGeocoding || geocodingQueue.length === 0) return;
+    
+    isGeocoding = true;
+    const geocoder = new google.maps.Geocoder();
+    let processed = 0;
+    const batchSize = 3; // Procesar 3 geocodings a la vez
+    
+    function processNext() {
+        if (geocodingQueue.length === 0) {
+            isGeocoding = false;
+            return;
+        }
+        
+        const item = geocodingQueue.shift();
+        geocoder.geocode({ 'address': item.address }, function(results, status) {
+                if (status === 'OK') {
+                    const location = results[0].geometry.location;
+                const marker = createMarker(item.cliente, location);
+                markers.push(marker);
+            } else {
+                // Si falla el geocoding, usar ubicación por defecto
+                console.warn(`Geocoding falló para ${item.cliente.nombre}: ${status}`);
+                const marker = createMarker(item.cliente, { lat: 10.5, lng: -66.9 });
                     markers.push(marker);
                 }
                 
-                markersLoaded++;
-                if (markersLoaded === totalClientes) {
-                    updateStatus('Marcadores cargados: ' + markers.length);
-                    setupMarkerClustering();
+            processed++;
+            if (processed < batchSize && geocodingQueue.length > 0) {
+                setTimeout(processNext, 200); // Delay entre geocodings
+            } else {
+                isGeocoding = false;
+                if (geocodingQueue.length > 0) {
+                    setTimeout(processGeocodingQueue, 1000); // Delay entre lotes
                 }
-            });
+            }
+        });
+    }
+    
+    processNext();
+}
+
+function createMarker(cliente, location) {
+    const stats = clientesEstadisticas[cliente.id] || {};
+    const totalCompras = stats.total_facturado || 0;
+    const totalPorCobrar = stats.total_por_cobrar || 0;
+    
+    // Determinar categoría del cliente
+    let markerIcon = getMarkerIcon(cliente, stats);
+    
+    const marker = new google.maps.Marker({
+        position: location,
+        map: map, // Mostrar en el mapa inmediatamente
+        title: `${cliente.nombre} - $${totalCompras.toFixed(2)}`,
+        icon: markerIcon,
+        clienteData: cliente,
+        stats: stats
+    });
+
+    // Evento click del marcador
+    marker.addListener('click', function() {
+        showClientInfo(cliente, location, stats);
+        selectedMarker = marker;
+        
+        // Centrar mapa en el marcador
+        map.setCenter(location);
+        map.setZoom(Math.max(map.getZoom(), 15));
+    });
+    
+    // Evento hover del marcador
+    marker.addListener('mouseover', function() {
+        marker.setIcon({
+            url: `https://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png`,
+            scaledSize: new google.maps.Size(40, 40)
+        });
+    });
+    
+    marker.addListener('mouseout', function() {
+        marker.setIcon({
+            url: `https://maps.google.com/mapfiles/ms/icons/${markerColor}-dot.png`,
+            scaledSize: new google.maps.Size(32, 32)
+        });
+    });
+
+    return marker;
+}
+
+function getMarkerIcon(cliente, stats) {
+    const totalCompras = stats.total_facturado || 0;
+    const totalPorCobrar = stats.total_por_cobrar || 0;
+    const totalFacturas = stats.total_facturas || 0;
+    
+    // Determinar categoría del cliente y crear icono personalizado
+    let iconColor, iconSymbol;
+    
+    // VIP tiene prioridad sobre TODAS las demás categorías
+    if (isVIPClient(cliente.id)) {
+        iconColor = 'gold';
+        iconSymbol = '👑';
+    } else if (totalPorCobrar > 0) {
+        iconColor = 'red';
+        iconSymbol = '⚠️';
+    } else if (totalFacturas === 0 || totalCompras === 0) {
+        iconColor = 'gray';
+        iconSymbol = '😴';
+    } else if (totalCompras < 100) {
+        iconColor = 'lightblue';
+        iconSymbol = '📉';
+    } else if (totalCompras >= 500) {
+        iconColor = 'green';
+        iconSymbol = '💰';
+    } else if (totalCompras >= 100) {
+        iconColor = 'orange';
+        iconSymbol = '💳';
         } else {
-            markersLoaded++;
-            if (markersLoaded === totalClientes) {
-                updateStatus('Marcadores cargados: ' + markers.length);
-                setupMarkerClustering();
+        iconColor = 'blue';
+        iconSymbol = '❓';
+    }
+    
+    // Crear icono personalizado con símbolo
+    return {
+        url: createCustomIcon(iconColor, iconSymbol),
+        scaledSize: new google.maps.Size(40, 40),
+        color: iconColor,
+        symbol: iconSymbol
+    };
+}
+
+// Cache para VIP clients para evitar recálculos
+let vipClientsCache = null;
+
+function isVIPClient(clienteId) {
+    // Si no hay cache, calcular VIP clients
+    if (!vipClientsCache) {
+        calculateVIPClients();
+    }
+    
+    return vipClientsCache.has(clienteId);
+}
+
+function calculateVIPClients() {
+    console.log('🔄 Calculando clientes VIP...');
+    
+    // Obtener todos los clientes con sus facturaciones
+    const clientesConFacturacion = Object.keys(clientesEstadisticas).map(id => ({
+        id: id,
+        total_facturado: clientesEstadisticas[id].total_facturado || 0
+    }));
+    
+    // Ordenar por facturación descendente
+    clientesConFacturacion.sort((a, b) => b.total_facturado - a.total_facturado);
+    
+    // Calcular el 20% superior (top 20%)
+    const top20Percent = Math.ceil(clientesConFacturacion.length * 0.2);
+    const topClientes = clientesConFacturacion.slice(0, top20Percent);
+    
+    // Crear cache con Set para búsqueda rápida
+    vipClientsCache = new Set(topClientes.map(cliente => cliente.id));
+    
+    console.log(`👑 VIP calculados: ${topClientes.length} de ${clientesConFacturacion.length} clientes`);
+    console.log(`👑 Top clientes VIP:`, topClientes.map(c => `${c.id}: $${c.total_facturado.toFixed(2)}`));
+}
+
+function createCustomIcon(color, symbol) {
+    // Crear un canvas para generar el icono personalizado
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 40;
+    canvas.height = 40;
+    
+    // Colores para cada categoría
+    const colorMap = {
+        'red': '#dc3545',
+        'gold': '#ffc107', 
+        'gray': '#6c757d',
+        'lightblue': '#17a2b8',
+        'green': '#28a745',
+        'orange': '#fd7e14'
+    };
+    
+    const bgColor = colorMap[color] || '#007bff';
+    
+    // Dibujar círculo de fondo
+    ctx.beginPath();
+    ctx.arc(20, 20, 18, 0, 2 * Math.PI);
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+    
+    // Dibujar borde blanco
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Dibujar símbolo (emojis)
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Para emojis, usar fillText directamente
+    ctx.fillText(symbol, 20, 20);
+    
+    return canvas.toDataURL();
+}
+
+function applySpecialFilter(filterType) {
+    console.log(`🔍 Aplicando filtro especial: ${filterType}`);
+    
+    // Ocultar TODOS los marcadores primero
+    markers.forEach(marker => {
+        marker.setMap(null);
+    });
+    
+    let visibleCount = 0;
+    let filteredMarkers = [];
+    
+    markers.forEach(marker => {
+        const cliente = marker.clienteData;
+        const stats = marker.stats;
+        const totalCompras = stats.total_facturado || 0;
+        const totalPorCobrar = stats.total_por_cobrar || 0;
+        const totalFacturas = stats.total_facturas || 0;
+        let shouldShow = false;
+        
+        // Aplicar lógica de filtrado específica
+        switch(filterType) {
+            case 'deudores':
+                shouldShow = totalPorCobrar > 0 && !isVIPClient(cliente.id);
+                break;
+            case 'vip':
+                shouldShow = isVIPClient(cliente.id);
+                break;
+            case 'inactivos':
+                shouldShow = totalFacturas === 0 || totalCompras === 0;
+                break;
+            case 'bajos':
+                shouldShow = totalCompras > 0 && totalCompras < 100;
+                break;
+            case 'altos':
+                shouldShow = totalCompras >= 500 && !isVIPClient(cliente.id);
+                break;
+            case 'medios':
+                shouldShow = totalCompras >= 100 && totalCompras < 500;
+                break;
+        }
+        
+        if (shouldShow) {
+            // Mostrar solo este marcador
+            marker.setMap(map);
+            visibleCount++;
+            filteredMarkers.push(marker);
+            
+            // Log específico por tipo
+            switch(filterType) {
+                case 'deudores':
+                    console.log(`⚠️ Deudor: ${cliente.nombre} - Debe: $${totalPorCobrar.toFixed(2)}`);
+                    break;
+                case 'vip':
+                    console.log(`👑 VIP: ${cliente.nombre} - Facturado: $${totalCompras.toFixed(2)}`);
+                    break;
+                case 'inactivos':
+                    console.log(`😴 Inactivo: ${cliente.nombre}`);
+                    break;
+                case 'bajos':
+                    console.log(`📉 Bajo: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+                    break;
+                case 'altos':
+                    console.log(`💰 Alto Valor: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+                    break;
+                case 'medios':
+                    console.log(`💳 Medio: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+                    break;
             }
         }
     });
+    
+    // Actualizar marcadores visibles solo con los filtrados
+    visibleMarkers = filteredMarkers;
+    
+    // Mostrar mensaje específico por tipo
+    const filterNames = {
+        'deudores': 'Deudores',
+        'vip': 'VIP',
+        'inactivos': 'Inactivos', 
+        'bajos': 'Compras Bajas',
+        'altos': 'Alto Valor',
+        'medios': 'Valor Medio'
+    };
+    
+    updateStatus(`Filtro ${filterNames[filterType]} aplicado - Mostrando ${visibleCount} de ${markers.length} marcadores`);
+    
+    console.log(`✅ Filtro ${filterType} completado: ${visibleCount} marcadores visibles`);
+}
+
+function updateAllMarkerIcons() {
+    console.log('🔄 Actualizando todos los iconos de marcadores...');
+    
+    // Limpiar cache VIP para recalcular
+    vipClientsCache = null;
+    
+    // Recalcular VIP clients
+    calculateVIPClients();
+    
+    let vipCount = 0;
+    let altoValorCount = 0;
+    let deudorCount = 0;
+    let inactivoCount = 0;
+    let bajoCount = 0;
+    let medioCount = 0;
+    
+    markers.forEach(marker => {
+        const cliente = marker.clienteData;
+        const stats = marker.stats;
+        const totalCompras = stats.total_facturado || 0;
+        const totalPorCobrar = stats.total_por_cobrar || 0;
+        const totalFacturas = stats.total_facturas || 0;
+        
+        // Regenerar el icono con la lógica VIP correcta
+        const newIcon = getMarkerIcon(cliente, stats);
+        marker.setIcon(newIcon);
+        
+        // Contar categorías
+        if (isVIPClient(cliente.id)) {
+            vipCount++;
+            console.log(`👑 VIP: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+        } else if (totalPorCobrar > 0) {
+            deudorCount++;
+            console.log(`⚠️ Deudor: ${cliente.nombre} - Debe: $${totalPorCobrar.toFixed(2)}`);
+        } else if (totalFacturas === 0 || totalCompras === 0) {
+            inactivoCount++;
+            console.log(`😴 Inactivo: ${cliente.nombre}`);
+        } else if (totalCompras < 100) {
+            bajoCount++;
+            console.log(`📉 Bajo: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+        } else if (totalCompras >= 500) {
+            altoValorCount++;
+            console.log(`💰 Alto Valor: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+        } else if (totalCompras >= 100) {
+            medioCount++;
+            console.log(`💳 Medio: ${cliente.nombre} - $${totalCompras.toFixed(2)}`);
+        }
+    });
+    
+    console.log('📊 Resumen de categorías:');
+    console.log(`👑 VIP: ${vipCount}`);
+    console.log(`💰 Alto Valor: ${altoValorCount}`);
+    console.log(`⚠️ Deudores: ${deudorCount}`);
+    console.log(`💳 Medio: ${medioCount}`);
+    console.log(`📉 Bajo: ${bajoCount}`);
+    console.log(`😴 Inactivos: ${inactivoCount}`);
+    console.log('✅ Todos los iconos actualizados');
+}
+
+function debugIconStatus() {
+    console.log('🔍 DEBUG: Estado actual de los iconos');
+    console.log('📊 Total marcadores:', markers.length);
+    console.log('📊 Total clientes en estadísticas:', Object.keys(clientesEstadisticas).length);
+    
+    // Verificar VIP cache
+    if (vipClientsCache) {
+        console.log('👑 VIP Cache:', Array.from(vipClientsCache));
+    } else {
+        console.log('👑 VIP Cache: No calculado aún');
+    }
+    
+    // Verificar algunos marcadores específicos
+    markers.slice(0, 5).forEach((marker, index) => {
+        const cliente = marker.clienteData;
+        const stats = marker.stats;
+        const totalCompras = stats.total_facturado || 0;
+        const totalPorCobrar = stats.total_por_cobrar || 0;
+        
+        console.log(`📍 Marcador ${index + 1}:`);
+        console.log(`  - Cliente: ${cliente.nombre}`);
+        console.log(`  - ID: ${cliente.id}`);
+        console.log(`  - Facturado: $${totalCompras.toFixed(2)}`);
+        console.log(`  - Por cobrar: $${totalPorCobrar.toFixed(2)}`);
+        console.log(`  - Es VIP: ${isVIPClient(cliente.id)}`);
+        console.log(`  - Icono actual: ${marker.getIcon() ? 'Presente' : 'Ausente'}`);
+    });
+    
+    updateStatus('Debug completado - Revisa la consola');
+}
+
+function showVIPStats() {
+    const vipClientes = Object.keys(clientesEstadisticas).filter(id => isVIPClient(id));
+    const totalClientes = Object.keys(clientesEstadisticas).length;
+    const porcentajeVIP = ((vipClientes.length / totalClientes) * 100).toFixed(1);
+    
+    console.log(`👑 VIP Stats: ${vipClientes.length} de ${totalClientes} clientes (${porcentajeVIP}%)`);
+    
+    // Mostrar en el status
+    updateStatus(`👑 VIP: ${vipClientes.length} clientes (${porcentajeVIP}% del total)`);
 }
 
 function setupMarkerClustering() {
+    if (!window.MarkerClusterer) {
+        console.log('MarkerClusterer no está disponible, saltando clustering');
+        return;
+    }
+    
     if (markerClusterer) {
         markerClusterer.clearMarkers();
     }
     
+    try {
+        // Usar todos los marcadores, no solo los visibles
     markerClusterer = new MarkerClusterer(map, markers, {
-        imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'
-    });
+            imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+            gridSize: 50,
+            maxZoom: 15
+        });
+        
+        console.log('Clustering configurado con', markers.length, 'marcadores');
+    } catch (error) {
+        console.error('Error configurando clustering:', error);
+        console.log('Mostrando marcadores sin clustering');
+    }
 }
 
-function showClientInfo(cliente, location) {
+function updateVisibleMarkers() {
+    if (!map) return;
+    
+    const bounds = map.getBounds();
+    const zoom = map.getZoom();
+    
+    // Limpiar marcadores visibles actuales
+    visibleMarkers.forEach(marker => marker.setMap(null));
+    visibleMarkers = [];
+    
+    // Solo mostrar marcadores en el viewport actual
+    markers.forEach(marker => {
+        if (bounds && bounds.contains(marker.getPosition())) {
+            marker.setMap(map);
+            visibleMarkers.push(marker);
+        }
+    });
+    
+    // Actualizar clustering solo con marcadores visibles
+    if (markerClusterer) {
+        markerClusterer.clearMarkers();
+        markerClusterer.addMarkers(visibleMarkers);
+    }
+    
+    updateStatus(`Mostrando ${visibleMarkers.length} de ${markers.length} marcadores`);
+}
+
+function showLoadingOverlay(message) {
+    if (loadingOverlay) return;
+    
+    loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'loading-overlay';
+    loadingOverlay.innerHTML = `
+        <div class="loading-content">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3">${message}</p>
+        </div>
+    `;
+    
+    document.querySelector('.mapa-principal').appendChild(loadingOverlay);
+}
+
+function hideLoadingOverlay() {
+    if (loadingOverlay) {
+        loadingOverlay.remove();
+        loadingOverlay = null;
+    }
+}
+
+function showClientInfo(cliente, location, stats) {
     const infoPanel = document.getElementById('infoPanel');
     const infoContent = document.getElementById('infoContent');
     
-    // Calcular estadísticas del cliente
-    const stats = calculateClientStats(cliente);
+    // Usar estadísticas reales si están disponibles
+    const clienteStats = stats || clientesEstadisticas[cliente.id] || {};
+    const totalFacturas = clienteStats.total_facturas || 0;
+    const totalFacturado = clienteStats.total_facturado || 0;
+    const totalAbonado = clienteStats.total_abonado || 0;
+    const totalPorCobrar = clienteStats.total_por_cobrar || 0;
+    const promedioCompras = totalFacturas > 0 ? totalFacturado / totalFacturas : 0;
+    
+    // Determinar estado del cliente
+    let estadoCliente = 'Inactivo';
+    let estadoColor = 'danger';
+    if (totalFacturas > 0) {
+        if (totalFacturas >= 5) {
+            estadoCliente = 'VIP';
+            estadoColor = 'success';
+        } else if (totalFacturas >= 2) {
+            estadoCliente = 'Activo';
+            estadoColor = 'primary';
+        } else {
+            estadoCliente = 'Nuevo';
+            estadoColor = 'warning';
+        }
+    }
     
     infoContent.innerHTML = `
         <div class="cliente-info">
+            <div class="d-flex justify-content-between align-items-start mb-3">
             <h6><i class="fas fa-user"></i> ${cliente.nombre}</h6>
+                <span class="badge bg-${estadoColor}">${estadoCliente}</span>
+            </div>
             <p><i class="fas fa-id-card"></i> <strong>RIF:</strong> ${cliente.id}</p>
             <p><i class="fas fa-envelope"></i> <strong>Email:</strong> ${cliente.email || 'No disponible'}</p>
             <p><i class="fas fa-phone"></i> <strong>Teléfono:</strong> ${cliente.telefono || 'No disponible'}</p>
@@ -680,20 +1870,28 @@ function showClientInfo(cliente, location) {
         
         <div class="cliente-stats">
             <div class="stat-item">
-                <div class="stat-value">${stats.totalFacturas}</div>
+                <div class="stat-value">${totalFacturas}</div>
                 <div class="stat-label">Facturas</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">$${stats.totalCompras.toFixed(2)}</div>
-                <div class="stat-label">Total Compras</div>
+                <div class="stat-value">$${totalFacturado.toFixed(2)}</div>
+                <div class="stat-label">Total Facturado</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">$${stats.promedioCompras.toFixed(2)}</div>
+                <div class="stat-value">$${totalAbonado.toFixed(2)}</div>
+                <div class="stat-label">Total Abonado</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$${totalPorCobrar.toFixed(2)}</div>
+                <div class="stat-label">Por Cobrar</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">$${promedioCompras.toFixed(2)}</div>
                 <div class="stat-label">Promedio</div>
             </div>
             <div class="stat-item">
-                <div class="stat-value">${stats.ultimaCompra}</div>
-                <div class="stat-label">Última Compra</div>
+                <div class="stat-value">${(totalAbonado / totalFacturado * 100).toFixed(1)}%</div>
+                <div class="stat-label">% Pagado</div>
             </div>
         </div>
         
@@ -710,6 +1908,9 @@ function showClientInfo(cliente, location) {
             ${cliente.telefono ? `<a href="https://wa.me/${cliente.telefono}" target="_blank" class="btn btn-success btn-sm">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </a>` : ''}
+            <button class="btn btn-info btn-sm" onclick="calculateRouteToClient('${cliente.id}')">
+                <i class="fas fa-route"></i> Ruta
+            </button>
         </div>
     `;
     
@@ -759,16 +1960,40 @@ function applyFilters() {
     const estadoFilter = document.getElementById('estadoFilter').value;
     const comprasFilter = document.getElementById('comprasFilter').value;
     
+    let visibleCount = 0;
+    
     markers.forEach(marker => {
         const cliente = marker.clienteData;
+        const stats = marker.stats || {};
         let show = true;
         
-        // Aplicar filtros aquí según la lógica de tu aplicación
-        // Por ahora solo mostramos todos
-        marker.setMap(show ? map : null);
+        // Filtro por estado del cliente
+        if (estadoFilter) {
+            const totalFacturas = stats.total_facturas || 0;
+            if (estadoFilter === 'activo' && totalFacturas === 0) show = false;
+            if (estadoFilter === 'inactivo' && totalFacturas > 0) show = false;
+        }
+        
+        // Filtro por rango de compras
+        if (comprasFilter) {
+            const totalFacturado = stats.total_facturado || 0;
+            if (comprasFilter === 'alto' && totalFacturado <= 1000) show = false;
+            if (comprasFilter === 'medio' && (totalFacturado <= 100 || totalFacturado > 1000)) show = false;
+            if (comprasFilter === 'bajo' && totalFacturado > 100) show = false;
+        }
+        
+        // Mostrar/ocultar marcador
+        if (show) {
+            marker.setMap(map);
+            visibleCount++;
+        } else {
+            marker.setMap(null);
+        }
     });
     
-    updateStatus('Filtros aplicados');
+    // Actualizar marcadores visibles
+    updateVisibleMarkers();
+    updateStatus(`Filtros aplicados - Mostrando ${visibleCount} de ${markers.length} marcadores`);
 }
 
 function toggleMarkers() {
@@ -807,6 +2032,7 @@ function toggleHeatmap() {
 }
 
 function getCurrentLocation() {
+    return new Promise((resolve, reject) => {
     updateStatus('Obteniendo ubicación actual...');
     
     if (navigator.geolocation) {
@@ -820,28 +2046,51 @@ function getCurrentLocation() {
                 currentPosition = pos;
                 
                 // Crear marcador de ubicación actual
-                new google.maps.Marker({
+                    const currentLocationMarker = new google.maps.Marker({
                     position: pos,
                     map: map,
                     title: 'Tu ubicación',
                     icon: {
                         url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                         scaledSize: new google.maps.Size(32, 32)
-                    }
+                        },
+                        animation: google.maps.Animation.BOUNCE
                 });
                 
+                    // Centrar mapa en ubicación actual
                 map.setCenter(pos);
                 map.setZoom(15);
                 
                 updateStatus('Ubicación actual obtenida');
-            },
-            function() {
-                updateStatus('No se pudo obtener la ubicación actual');
+                    resolve(pos);
+                },
+                function(error) {
+                    let errorMessage = 'No se pudo obtener la ubicación actual';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Permiso de ubicación denegado';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Ubicación no disponible';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Tiempo de espera agotado';
+                            break;
+                    }
+                    updateStatus(errorMessage);
+                    reject(error);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
             }
         );
     } else {
         updateStatus('Geolocalización no soportada');
+            reject(new Error('Geolocalización no soportada'));
     }
+    });
 }
 
 function calculateRoute() {
@@ -850,20 +2099,90 @@ function calculateRoute() {
         return;
     }
     
+    showLoadingOverlay('Calculando ruta...');
+    
     const request = {
         origin: currentPosition,
         destination: selectedMarker.getPosition(),
-        travelMode: google.maps.TravelMode.DRIVING
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+        avoidHighways: false,
+        avoidTolls: false
     };
 
     directionsService.route(request, function(result, status) {
+        hideLoadingOverlay();
+        
         if (status === 'OK') {
             directionsRenderer.setDirections(result);
-            updateStatus('Ruta calculada');
+            
+            // Mostrar información de la ruta
+            const route = result.routes[0];
+            const leg = route.legs[0];
+            const distance = leg.distance.text;
+            const duration = leg.duration.text;
+            
+            updateStatus(`Ruta calculada - Distancia: ${distance}, Tiempo: ${duration}`);
+            
+            // Mostrar panel de información de ruta
+            showRouteInfo(route);
         } else {
-            updateStatus('No se pudo calcular la ruta');
+            updateStatus('No se pudo calcular la ruta: ' + status);
+            alert('No se pudo calcular la ruta. Verifica que las ubicaciones sean válidas.');
         }
     });
+}
+
+function calculateRouteToClient(clienteId) {
+    const cliente = clientesData[clienteId];
+    if (!cliente) return;
+    
+    // Buscar el marcador del cliente
+    const marker = markers.find(m => m.clienteData.id === clienteId);
+    if (!marker) return;
+    
+    selectedMarker = marker;
+    
+    if (!currentPosition) {
+        getCurrentLocation().then(() => {
+            calculateRoute();
+        });
+    } else {
+        calculateRoute();
+    }
+}
+
+function showRouteInfo(route) {
+    const infoPanel = document.getElementById('infoPanel');
+    const infoContent = document.getElementById('infoContent');
+    
+    const leg = route.legs[0];
+    const distance = leg.distance.text;
+    const duration = leg.duration.text;
+    const startAddress = leg.start_address;
+    const endAddress = leg.end_address;
+    
+    infoContent.innerHTML = `
+        <div class="route-info">
+            <h6><i class="fas fa-route"></i> Información de Ruta</h6>
+            <div class="route-details">
+                <p><strong>Desde:</strong> ${startAddress}</p>
+                <p><strong>Hasta:</strong> ${endAddress}</p>
+                <p><strong>Distancia:</strong> ${distance}</p>
+                <p><strong>Tiempo estimado:</strong> ${duration}</p>
+            </div>
+            <div class="route-actions mt-3">
+                <button class="btn btn-primary btn-sm" onclick="printRoute()">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn btn-success btn-sm" onclick="shareRoute()">
+                    <i class="fas fa-share"></i> Compartir
+                </button>
+            </div>
+        </div>
+    `;
+    
+    infoPanel.classList.add('active');
 }
 
 function clearRoute() {
@@ -896,6 +2215,245 @@ function toggleFullscreen() {
     }
 }
 
+// Funciones de exportación
+function exportMapData() {
+    const data = {
+        timestamp: new Date().toISOString(),
+        totalClientes: markers.length,
+        clientes: markers.map(marker => ({
+            id: marker.clienteData.id,
+            nombre: marker.clienteData.nombre,
+            direccion: marker.clienteData.direccion,
+            lat: marker.getPosition().lat(),
+            lng: marker.getPosition().lng(),
+            stats: marker.stats
+        })),
+        filtros: {
+            estado: document.getElementById('estadoFilter').value,
+            compras: document.getElementById('comprasFilter').value
+        }
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mapa_clientes_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    updateStatus('Datos exportados exitosamente');
+}
+
+function exportMapImage() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const mapDiv = document.getElementById('map');
+    
+    canvas.width = mapDiv.offsetWidth;
+    canvas.height = mapDiv.offsetHeight;
+    
+    // Usar html2canvas para capturar el mapa
+    html2canvas(mapDiv).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `mapa_clientes_${new Date().toISOString().split('T')[0]}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+        updateStatus('Imagen del mapa exportada');
+    });
+}
+
+function printRoute() {
+    window.print();
+}
+
+function shareRoute() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Ruta a Cliente',
+            text: 'Compartir ruta calculada',
+            url: window.location.href
+        });
+    } else {
+        // Fallback para navegadores que no soportan Web Share API
+        const url = window.location.href;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('URL copiada al portapapeles');
+        });
+    }
+}
+
+// Funciones de analytics
+function showAnalytics() {
+    const totalClientes = markers.length;
+    const clientesActivos = markers.filter(m => (m.stats?.total_facturas || 0) > 0).length;
+    const clientesInactivos = totalClientes - clientesActivos;
+    
+    // Calcular estadísticas detalladas
+    const totalFacturado = markers.reduce((sum, m) => sum + (m.stats?.total_facturado || 0), 0);
+    const totalAbonado = markers.reduce((sum, m) => sum + (m.stats?.total_abonado || 0), 0);
+    const totalPorCobrar = markers.reduce((sum, m) => sum + (m.stats?.total_por_cobrar || 0), 0);
+    const totalFacturas = markers.reduce((sum, m) => sum + (m.stats?.total_facturas || 0), 0);
+    
+    const promedioCompras = clientesActivos > 0 ? totalFacturado / clientesActivos : 0;
+    const promedioFacturas = clientesActivos > 0 ? totalFacturas / clientesActivos : 0;
+    const porcentajeCobrado = totalFacturado > 0 ? (totalAbonado / totalFacturado) * 100 : 0;
+    
+    // Calcular distribución por categorías
+    let vipCount = 0, altoValorCount = 0, medioCount = 0, bajoCount = 0, deudorCount = 0, inactivoCount = 0;
+    
+    markers.forEach(marker => {
+        const stats = marker.stats;
+        const totalCompras = stats?.total_facturado || 0;
+        const totalPorCobrar = stats?.total_por_cobrar || 0;
+        const totalFacturas = stats?.total_facturas || 0;
+        
+        if (isVIPClient(marker.clienteData.id)) {
+            vipCount++;
+        } else if (totalPorCobrar > 0) {
+            deudorCount++;
+        } else if (totalFacturas === 0 || totalCompras === 0) {
+            inactivoCount++;
+        } else if (totalCompras < 100) {
+            bajoCount++;
+        } else if (totalCompras >= 500) {
+            altoValorCount++;
+        } else if (totalCompras >= 100) {
+            medioCount++;
+        }
+    });
+    
+    // Calcular top clientes
+    const topClientes = markers
+        .map(marker => ({
+            nombre: marker.clienteData.nombre,
+            total_facturado: marker.stats?.total_facturado || 0
+        }))
+        .sort((a, b) => b.total_facturado - a.total_facturado)
+        .slice(0, 5);
+    
+    const infoPanel = document.getElementById('infoPanel');
+    const infoContent = document.getElementById('infoContent');
+    
+    infoContent.innerHTML = `
+        <div class="analytics-info">
+            <h6><i class="fas fa-chart-bar"></i> Análisis Detallado del Mapa</h6>
+            
+            <div class="analytics-section">
+                <h6><i class="fas fa-users"></i> Resumen General</h6>
+                <div class="analytics-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">${totalClientes}</div>
+                        <div class="stat-label">Total Clientes</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-success">${clientesActivos}</div>
+                        <div class="stat-label">Activos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-muted">${clientesInactivos}</div>
+                        <div class="stat-label">Inactivos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${totalFacturas}</div>
+                        <div class="stat-label">Total Facturas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analytics-section">
+                <h6><i class="fas fa-dollar-sign"></i> Financiero</h6>
+                <div class="analytics-stats">
+                    <div class="stat-item">
+                        <div class="stat-value text-success">$${totalFacturado.toFixed(2)}</div>
+                        <div class="stat-label">Total Facturado</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-info">$${totalAbonado.toFixed(2)}</div>
+                        <div class="stat-label">Total Abonado</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-warning">$${totalPorCobrar.toFixed(2)}</div>
+                        <div class="stat-label">Por Cobrar</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${porcentajeCobrado.toFixed(1)}%</div>
+                        <div class="stat-label">% Cobrado</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analytics-section">
+                <h6><i class="fas fa-chart-pie"></i> Distribución por Categorías</h6>
+                <div class="analytics-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">${vipCount}</div>
+                        <div class="stat-label">👑 VIP (Top 20%)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${altoValorCount}</div>
+                        <div class="stat-label">💰 Alto Valor ($500+)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${medioCount}</div>
+                        <div class="stat-label">💳 Valor Medio ($100-$499)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${bajoCount}</div>
+                        <div class="stat-label">📉 Compras Bajas (<$100)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-danger">${deudorCount}</div>
+                        <div class="stat-label">⚠️ Deudores</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value text-muted">${inactivoCount}</div>
+                        <div class="stat-label">😴 Inactivos</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analytics-section">
+                <h6><i class="fas fa-trophy"></i> Top 5 Clientes</h6>
+                <div class="top-clients">
+                    ${topClientes.map((cliente, index) => `
+                        <div class="top-client-item">
+                            <span class="rank">${index + 1}.</span>
+                            <span class="client-name">${cliente.nombre}</span>
+                            <span class="client-amount">$${cliente.total_facturado.toFixed(2)}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="analytics-section">
+                <h6><i class="fas fa-calculator"></i> Promedios</h6>
+                <div class="analytics-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">$${promedioCompras.toFixed(2)}</div>
+                        <div class="stat-label">Promedio por Cliente Activo</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${promedioFacturas.toFixed(1)}</div>
+                        <div class="stat-label">Promedio Facturas por Cliente</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analytics-actions mt-3">
+                <button class="btn btn-primary btn-sm" onclick="exportMapData()">
+                    <i class="fas fa-download"></i> Exportar Datos
+                </button>
+                <button class="btn btn-success btn-sm" onclick="exportMapImage()">
+                    <i class="fas fa-image"></i> Exportar Imagen
+                </button>
+            </div>
+        </div>
+    `;
+    
+    infoPanel.classList.add('active');
+}
+
 function loadGoogleMapsScript() {
     const script = document.createElement('script');
     const apiKey = '{{ maps_config.api_key }}';
@@ -904,11 +2462,39 @@ function loadGoogleMapsScript() {
     script.async = true;
     script.defer = true;
     document.head.appendChild(script);
+    
+    // Cargar MarkerClusterer después de Google Maps
+    setTimeout(() => {
+        loadMarkerClusterer();
+    }, 2000);
+}
+
+function loadMarkerClusterer() {
+    if (window.MarkerClusterer) return; // Ya está cargado
+    
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js';
+    script.async = true;
+    script.onload = function() {
+        console.log('MarkerClusterer cargado correctamente');
+    };
+    document.head.appendChild(script);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     loadGoogleMapsScript();
+    loadAdditionalLibraries();
 });
+
+function loadAdditionalLibraries() {
+    // Cargar html2canvas para exportación de imágenes
+    if (!window.html2canvas) {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.async = true;
+        document.head.appendChild(script);
+    }
+}
 </script>
 {% endblock %}
 {% endblock %}
