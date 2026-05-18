@@ -56,10 +56,11 @@
         <div class="content-section">
         <div class="info-grid">
             <div class="info-card">
-                <div><strong>Cliente:</strong> {{ cotizacion.cliente.nombre if cotizacion.cliente.nombre else '' }}</div>
-                <div><strong>RIF:</strong> {{ cotizacion.cliente.rif if cotizacion.cliente.rif else cotizacion.cliente.id if cotizacion.cliente.id else '' }}</div>
-                <div><strong>Dirección:</strong> {{ cotizacion.cliente.direccion if cotizacion.cliente.direccion else '' }}</div>
-                <div><strong>Teléfono:</strong> {{ cotizacion.cliente.telefono if cotizacion.cliente.telefono else '' }}</div>
+                {% set cliente = cotizacion.get('cliente', {}) %}
+                <div><strong>Cliente:</strong> {{ cliente.get('nombre', '') }}</div>
+                <div><strong>RIF:</strong> {{ cliente.get('rif') or cliente.get('id', '') }}</div>
+                <div><strong>Dirección:</strong> {{ cliente.get('direccion', '') }}</div>
+                <div><strong>Teléfono:</strong> {{ cliente.get('telefono', '') }}</div>
                 <div><strong>Validez:</strong> {{ cotizacion.validez_dias }} días</div>
             </div>
             <div class="info-card">
@@ -81,7 +82,7 @@
             </thead>
             <tbody>
                 {% for prod_id, cantidad in zip(cotizacion.productos, cotizacion.cantidades) %}
-                {% set precio = cotizacion.precios[loop.index0]|default(0)|float %}
+                {% set precio = (cotizacion.precios[loop.index0] if loop.index0 < cotizacion.precios|length else 0)|default(0)|float %}
                 {% set cant = cantidad|default(0)|int %}
                 {% set tasa = cotizacion.tasa_bcv|default(0)|float %}
                 {% set subtotal_usd = precio * cant %}

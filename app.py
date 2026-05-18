@@ -3136,6 +3136,70 @@ def eliminar_factura(id):
         flash('Factura no encontrada', 'danger')
     return redirect(url_for('mostrar_facturas'))
 
+
+def normalizar_cotizacion(cotizacion, clientes=None, inventario=None):
+    """Unifica cotizaciones antiguas (solo cliente_id) y nuevas para vistas e impresión."""
+    if not cotizacion or not isinstance(cotizacion, dict):
+        return {}
+    cot = dict(cotizacion)
+    clientes = clientes or {}
+    inventario = inventario or {}
+
+    cliente = cot.get('cliente')
+    if not isinstance(cliente, dict):
+        cliente_id = cot.get('cliente_id') or (cliente if isinstance(cliente, str) else '')
+        cliente = dict(clientes.get(str(cliente_id), {}))
+        if cliente_id and not cliente.get('id'):
+            cliente['id'] = cliente_id
+        if not cliente.get('nombre'):
+            cliente['nombre'] = str(cliente_id) if cliente_id else 'Cliente no especificado'
+        cot['cliente'] = cliente
+
+    if not cot.get('numero_cotizacion'):
+        cot['numero_cotizacion'] = str(cot.get('numero') or cot.get('id') or '')
+
+    productos = list(cot.get('productos') or [])
+    cantidades = list(cot.get('cantidades') or [])
+    precios_raw = cot.get('precios') or []
+    precios = []
+    for i, prod_id in enumerate(productos):
+        if i < len(precios_raw):
+            try:
+                precios.append(float(precios_raw[i]))
+                continue
+            except (TypeError, ValueError):
+                pass
+        prod = inventario.get(str(prod_id), {})
+        precios.append(float(prod.get('precio', 0) or 0))
+    cot['productos'] = productos
+    cot['cantidades'] = cantidades
+    cot['precios'] = precios
+
+    try:
+        cot['validez_dias'] = int(cot.get('validez_dias') or cot.get('validez') or 3)
+    except (TypeError, ValueError):
+        cot['validez_dias'] = 3
+
+    for key, default in (
+        ('tasa_bcv', 0), ('iva', 16), ('iva_total', 0),
+        ('descuento_total', 0), ('descuento', 0), ('hora', ''),
+    ):
+        if cot.get(key) is None:
+            cot[key] = default
+
+    for field in ('subtotal_usd', 'subtotal_bs', 'total_usd', 'total_bs'):
+        val = cot.get(field)
+        if isinstance(val, str):
+            try:
+                cot[field] = float(val.replace('$', '').replace('Bs', '').replace(',', '').strip())
+            except ValueError:
+                cot[field] = 0.0
+        elif val is None:
+            cot[field] = 0.0
+
+    return cot
+
+
 @app.route('/cotizaciones')
 @login_required
 def mostrar_cotizaciones():
@@ -3967,6 +4031,7 @@ def editar_cotizacion(id):
         return redirect(url_for('mostrar_cotizaciones'))
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    cotizacion = normalizar_cotizacion(cotizacion, clientes, inventario)
     # --- Fix para edición: cliente_id y validez ---
     if 'cliente' in cotizacion and 'id' in cotizacion['cliente']:
         cotizacion['cliente_id'] = cotizacion['cliente']['id']
@@ -6265,6 +6330,7 @@ def convertir_cotizacion_a_factura(id):
         return redirect(url_for('mostrar_cotizaciones'))
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
+    cotizacion = normalizar_cotizacion(cotizacion, clientes, inventario)
     empresa = cargar_empresa()
     # Preparar datos para el formulario de factura
     factura = {
@@ -6274,7 +6340,7 @@ def convertir_cotizacion_a_factura(id):
         'condicion_pago': 'contado',
         'fecha_vencimiento': '',
         'tasa_bcv': cotizacion.get('tasa_bcv', ''),
-        'cliente_id': cotizacion['cliente'].get('id', ''),
+        'cliente_id': cotizacion.get('cliente', {}).get('id', ''),
         'productos': cotizacion.get('productos', []),
         'cantidades': cotizacion.get('cantidades', []),
         'precios': [float(p) for p in cotizacion.get('precios', [])],
@@ -6296,32 +6362,50 @@ def convertir_cotizacion_a_factura(id):
     return render_template('factura_form.html', factura=factura, clientes=clientes, inventario=inventario_disponible, editar=False, empresa=empresa)
 
 @app.route('/cotizaciones/<id>/imprimir')
+@login_required
 def imprimir_cotizacion(id):
     """Vista amigable para imprimir la cotización."""
-    cotizaciones_dir = 'cotizaciones_json'
-    filename = os.path.join(cotizaciones_dir, f"cotizacion_{id}.json")
-    cotizacion = cargar_datos(filename, crear_vacio=False)
-    if not cotizacion:
-        flash('Cotización no encontrada', 'danger')
+    try:
+        filename = os.path.join('cotizaciones_json', f"cotizacion_{id}.json")
+        cotizacion = cargar_datos(filename, crear_vacio=False)
+        if not cotizacion:
+            flash('Cotización no encontrada', 'danger')
+            return redirect(url_for('mostrar_cotizaciones'))
+        clientes = cargar_datos(ARCHIVO_CLIENTES)
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        cotizacion = normalizar_cotizacion(cotizacion, clientes, inventario)
+        empresa = cargar_empresa()
+        if not empresa.get('logo'):
+            empresa['logo'] = 'logo.png'
+
+        total_usd = 0.0
+        total_bs = 0.0
+        tasa = float(cotizacion.get('tasa_bcv', 0) or 0)
+        for precio, cantidad in zip(cotizacion.get('precios', []), cotizacion.get('cantidades', [])):
+            try:
+                subtotal_usd = float(precio) * int(cantidad)
+                total_usd += subtotal_usd
+                total_bs += subtotal_usd * tasa
+            except (TypeError, ValueError):
+                continue
+        if total_usd <= 0:
+            total_usd = float(cotizacion.get('total_usd', 0) or 0)
+            total_bs = float(cotizacion.get('total_bs', 0) or 0) or total_usd * tasa
+
+        return render_template(
+            'cotizacion_imprimir.html',
+            cotizacion=cotizacion,
+            clientes=clientes,
+            inventario=inventario,
+            empresa=empresa,
+            zip=zip,
+            total_usd=total_usd,
+            total_bs=total_bs,
+        )
+    except Exception as e:
+        print(f"Error imprimiendo cotización {id}: {e}")
+        flash(f'Error al imprimir la cotización: {e}', 'danger')
         return redirect(url_for('mostrar_cotizaciones'))
-    clientes = cargar_datos(ARCHIVO_CLIENTES)
-    inventario = cargar_datos(ARCHIVO_INVENTARIO)
-    empresa = cargar_empresa()
-    # Calcular totales en el backend
-    total_usd = 0
-    total_bs = 0
-    tasa = float(cotizacion.get('tasa_bcv', 0) or 0)
-    for precio, cantidad in zip(cotizacion.get('precios', []), cotizacion.get('cantidades', [])):
-        try:
-            p = float(precio)
-            c = int(cantidad)
-            subtotal_usd = p * c
-            subtotal_bs = subtotal_usd * tasa
-            total_usd += subtotal_usd
-            total_bs += subtotal_bs
-        except Exception:
-            continue
-    return render_template('cotizacion_imprimir.html', cotizacion=cotizacion, clientes=clientes, inventario=inventario, empresa=empresa, zip=zip, total_usd=total_usd, total_bs=total_bs)
 
 @app.route('/cotizaciones/<id>/pdf')
 def descargar_cotizacion_pdf(id):
