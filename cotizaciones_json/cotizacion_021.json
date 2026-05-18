@@ -1,0 +1,42 @@
+{
+    "numero_cotizacion": "021",
+    "fecha": "2025-05-18",
+    "hora": "00:00",
+    "cliente": {
+        "id": "V-6479143",
+        "rif": "V-6479143",
+        "tipo_identificacion": "V",
+        "numero_identificacion": "6479143",
+        "digito_verificador": "",
+        "nombre": "ZULEIMA SANCHEZ",
+        "email": "zuleima.sanchez@dominioinventado.com",
+        "telefono": "+5804148943822",
+        "direccion": "Unare Ii Sector Ii Mercado Municipal Unare Edo Bolivar (Pasillo Principal)",
+        "fecha_creacion": "2025-07-29T23:34:40.348986",
+        "usuario_creacion": "MIGRACION_SENIAT",
+        "fecha_migracion": "2025-07-29T23:34:40.348986",
+        "activo": true,
+        "validado_seniat": true
+    },
+    "productos": [
+        "1"
+    ],
+    "cantidades": [
+        "20"
+    ],
+    "precios": [
+        3.0
+    ],
+    "subtotal_usd": 60.0,
+    "subtotal_bs": 0,
+    "descuento": 0.0,
+    "tipo_descuento": "bs",
+    "descuento_total": 0.0,
+    "iva": 16.0,
+    "iva_total": 0.0,
+    "total_usd": 60.0,
+    "total_bs": 0.0,
+    "tasa_bcv": 0.0,
+    "validez_dias": 3,
+    "_migrado_desde": "legado:2"
+}

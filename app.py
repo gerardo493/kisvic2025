@@ -37,6 +37,7 @@ from flask_sqlalchemy import SQLAlchemy
 import base64
 import copy
 import re
+from almacenamiento import cargar_datos, guardar_datos
 
 # --- Inicializar la Aplicación Flask ---
 app = Flask(__name__)
@@ -104,81 +105,6 @@ def validar_url_factura(f):
         return f(id, *args, **kwargs)
     return decorated_function
 
-def cargar_datos(nombre_archivo):
-    """Carga datos desde un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            os.makedirs(directorio, exist_ok=True)
-            
-        if not os.path.exists(nombre_archivo):
-            print(f"Archivo {nombre_archivo} no existe. Creando nuevo archivo.")
-            with open(nombre_archivo, 'w', encoding='utf-8') as f:
-                json.dump({}, f, ensure_ascii=False, indent=4)
-            return {}
-            
-        with open(nombre_archivo, 'r', encoding='utf-8') as f:
-            contenido = f.read()
-            if not contenido.strip():
-                print(f"Archivo {nombre_archivo} está vacío.")
-                return {}
-            try:
-                return json.loads(contenido)
-            except json.JSONDecodeError as e:
-                print(f"Error decodificando JSON en {nombre_archivo}: {e}")
-                return {}
-    except Exception as e:
-        print(f"Error leyendo {nombre_archivo}: {e}")
-        return {}
-
-def guardar_datos(nombre_archivo, datos):
-    """Guarda datos en un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            try:
-                os.makedirs(directorio, exist_ok=True)
-                print(f"Directorio {directorio} creado/verificado exitosamente")
-            except Exception as e:
-                print(f"Error creando directorio {directorio}: {e}")
-                return False
-        
-        # Verificar que los datos son serializables
-        try:
-            json.dumps(datos)
-        except Exception as e:
-            print(f"Error serializando datos: {e}")
-            return False
-        
-        # Intentar guardar con manejo de errores específico
-        try:
-            # Primero intentamos escribir en un archivo temporal
-            temp_file = nombre_archivo + '.tmp'
-            with open(temp_file, 'w', encoding='utf-8') as f:
-                json.dump(datos, f, ensure_ascii=False, indent=4)
-            
-            # Si la escritura temporal fue exitosa, reemplazamos el archivo original
-            if os.path.exists(nombre_archivo):
-                os.remove(nombre_archivo)
-            os.rename(temp_file, nombre_archivo)
-            
-            print(f"Datos guardados exitosamente en {nombre_archivo}")
-            return True
-        except Exception as e:
-            print(f"Error escribiendo en archivo {nombre_archivo}: {e}")
-            # Limpiar archivo temporal si existe
-            if os.path.exists(temp_file):
-                try:
-                    os.remove(temp_file)
-                except:
-                    pass
-            return False
-    except Exception as e:
-        print(f"Error general guardando {nombre_archivo}: {e}")
-        return False
-
 def guardar_ultima_tasa_bcv(tasa):
     try:
         # Guardar tasa con fecha de actualización
@@ -189,9 +115,7 @@ def guardar_ultima_tasa_bcv(tasa):
         }
         
         try:
-            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
-                json.dump(data, f)
-            
+            guardar_datos(ULTIMA_TASA_BCV_FILE, data)
             print(f"Tasa BCV guardada exitosamente: {tasa}")
             
             # Registrar en bitácora si hay sesión activa
@@ -212,25 +136,15 @@ def guardar_ultima_tasa_bcv(tasa):
 
 def cargar_ultima_tasa_bcv():
     try:
-        # Verificar si el archivo existe
-        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE)
+        if not data:
             print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
             return None
-        
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            tasa = float(data.get('tasa', 0))
-            if tasa > 10:
-                print(f"Tasa BCV cargada desde archivo: {tasa}")
-                return tasa
-            else:
-                print(f"Tasa BCV en archivo no válida: {tasa}")
-                return None
-    except FileNotFoundError:
-        print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decodificando archivo de tasa BCV: {e}")
+        tasa = float(data.get('tasa', 0))
+        if tasa > 10:
+            print(f"Tasa BCV cargada: {tasa}")
+            return tasa
+        print(f"Tasa BCV no válida: {tasa}")
         return None
     except Exception as e:
         print(f"Error inesperado cargando tasa BCV: {e}")
@@ -308,8 +222,10 @@ def inicializar_archivos_por_defecto():
                 tasa_default = 135.0  # Tasa más reciente conocida
                 print(f"Usando tasa por defecto del sistema: {tasa_default}")
             
-            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
-                json.dump({'tasa': tasa_default, 'fecha': datetime.now().isoformat()}, f)
+            guardar_datos(ULTIMA_TASA_BCV_FILE, {
+                'tasa': tasa_default,
+                'fecha': datetime.now().isoformat()
+            })
             print(f"Archivo de tasa BCV creado con tasa: {tasa_default}")
     except Exception as e:
         print(f"Error inicializando archivos por defecto: {e}")
@@ -322,9 +238,8 @@ def actualizar_tasa_bcv_automaticamente():
             inicializar_archivos_por_defecto()
             return
         
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            ultima_actualizacion = data.get('fecha', '')
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE, crear_vacio=False) or {}
+        ultima_actualizacion = data.get('fecha', '')
         
         if ultima_actualizacion:
             try:
@@ -555,20 +470,19 @@ def obtener_tasa_bcv():
                 print("No se encontró tasa válida en el sistema")
                 return None
         
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            tasa = float(data.get('tasa', 0))
-            if tasa > 10:
-                print(f"Tasa BCV obtenida del archivo: {tasa}")
-                return tasa
-            else:
-                print(f"Tasa BCV en archivo no válida: {tasa}")
-                # Buscar en el sistema como fallback
-                tasa_sistema = obtener_ultima_tasa_del_sistema()
-                if tasa_sistema and tasa_sistema > 10:
-                    print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
-                    return tasa_sistema
-                return None
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE, crear_vacio=False) or {}
+        tasa = float(data.get('tasa', 0))
+        if tasa > 10:
+            print(f"Tasa BCV obtenida del archivo: {tasa}")
+            return tasa
+        else:
+            print(f"Tasa BCV en archivo no válida: {tasa}")
+            # Buscar en el sistema como fallback
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            if tasa_sistema and tasa_sistema > 10:
+                print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
+                return tasa_sistema
+            return None
     except FileNotFoundError:
         print(f"Archivo de tasa BCV no encontrado")
         # Buscar en el sistema
@@ -880,16 +794,15 @@ def limpiar_valor_monetario(valor):
         return 0.0
 
 def cargar_empresa():
-    try:
-        with open('empresa.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception:
-        return {
-            "nombre": "Nombre de la Empresa",
-            "rif": "J-000000000",
-            "telefono": "0000-0000000",
-            "direccion": "Dirección de la empresa"
-        }
+    data = cargar_datos('empresa.json', crear_vacio=False)
+    if data:
+        return data
+    return {
+        "nombre": "Nombre de la Empresa",
+        "rif": "J-000000000",
+        "telefono": "0000-0000000",
+        "direccion": "Dirección de la empresa"
+    }
 
 def es_fecha_valida(fecha_str):
     """Valida si una fecha es válida y puede ser comparada."""
@@ -1196,30 +1109,444 @@ def mostrar_clientes():
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     facturas = cargar_datos(ARCHIVO_FACTURAS)
     cuentas = cargar_datos(ARCHIVO_CUENTAS)
-    # Filtros
+    
+    # Filtros avanzados
     q = request.args.get('q', '').strip().lower()
     filtro_orden = request.args.get('orden', 'nombre')
+    segmento = request.args.get('segmento', 'todos')
+    estado_pago = request.args.get('estado_pago', 'todos')
+    fecha_desde = request.args.get('fecha_desde', '')
+    fecha_hasta = request.args.get('fecha_hasta', '')
+    
+    # Aplicar filtros
     if q:
         clientes = {k: v for k, v in clientes.items() if q in v.get('nombre', '').lower() or q in k.lower()}
-    if filtro_orden == 'nombre':
-        clientes = dict(sorted(clientes.items(), key=lambda item: item[1].get('nombre', '').lower()))
-    elif filtro_orden == 'rif':
-        clientes = dict(sorted(clientes.items(), key=lambda item: item[0].lower()))
-    # Calcular totales por cliente
-    clientes_totales = {}
+    
+    # Calcular métricas y segmentación
+    clientes_analizados = {}
     for id_cliente, cliente in clientes.items():
-        # Total facturado
         facturas_cliente = [f for f in facturas.values() if f.get('cliente_id') == id_cliente]
+        
+        # Métricas básicas
         total_facturado = sum(float(f.get('total_usd', 0)) for f in facturas_cliente)
         total_abonado = sum(float(f.get('total_abonado', 0)) for f in facturas_cliente)
-        # Total por cobrar (diferencia entre total facturado y total abonado)
         total_por_cobrar = max(0, total_facturado - total_abonado)
-        clientes_totales[id_cliente] = {
+        
+        # Métricas avanzadas
+        cantidad_facturas = len(facturas_cliente)
+        factura_promedio = total_facturado / cantidad_facturas if cantidad_facturas > 0 else 0
+        
+        # Fecha de última compra
+        ultima_compra = None
+        if facturas_cliente:
+            fechas_compra = [f.get('fecha', '') for f in facturas_cliente if f.get('fecha')]
+            if fechas_compra:
+                ultima_compra = max(fechas_compra)
+        
+        # Días desde última compra
+        dias_inactivo = 0
+        if ultima_compra:
+            try:
+                from datetime import datetime
+                fecha_ultima = datetime.strptime(ultima_compra, '%Y-%m-%d')
+                dias_inactivo = (datetime.now() - fecha_ultima).days
+            except:
+                dias_inactivo = 999
+        
+        # Segmentación inteligente
+        segmento_cliente = 'inactivo'
+        if total_facturado > 10000:  # Clientes VIP
+            segmento_cliente = 'vip'
+        elif total_facturado > 1000 and dias_inactivo < 90:  # Clientes frecuentes
+            segmento_cliente = 'frecuente'
+        elif total_facturado > 0 and dias_inactivo < 30:  # Clientes activos
+            segmento_cliente = 'activo'
+        elif total_facturado > 0:  # Clientes regulares
+            segmento_cliente = 'regular'
+        elif cantidad_facturas == 0:  # Clientes potenciales
+            segmento_cliente = 'potencial'
+        
+        # Estado de pago
+        estado_pago_cliente = 'al_dia'
+        if total_por_cobrar > 0:
+            if total_por_cobrar > total_facturado * 0.5:  # Más del 50% pendiente
+                estado_pago_cliente = 'moroso'
+            else:
+                estado_pago_cliente = 'pendiente'
+        
+        clientes_analizados[id_cliente] = {
+            'cliente': cliente,
             'total_facturado': total_facturado,
             'total_abonado': total_abonado,
-            'total_por_cobrar': total_por_cobrar
+            'total_por_cobrar': total_por_cobrar,
+            'cantidad_facturas': cantidad_facturas,
+            'factura_promedio': factura_promedio,
+            'ultima_compra': ultima_compra,
+            'dias_inactivo': dias_inactivo,
+            'segmento': segmento_cliente,
+            'estado_pago': estado_pago_cliente
         }
-    return render_template('clientes.html', clientes=clientes, q=q, filtro_orden=filtro_orden, clientes_totales=clientes_totales)
+    
+    # Aplicar filtros de segmentación
+    if segmento != 'todos':
+        clientes_analizados = {k: v for k, v in clientes_analizados.items() if v['segmento'] == segmento}
+    
+    # Aplicar filtros de estado de pago
+    if estado_pago != 'todos':
+        clientes_analizados = {k: v for k, v in clientes_analizados.items() if v['estado_pago'] == estado_pago}
+    
+    # Aplicar filtros de fecha
+    if fecha_desde or fecha_hasta:
+        from datetime import datetime
+        clientes_filtrados = {}
+        for id_cliente, datos in clientes_analizados.items():
+            if datos['ultima_compra']:
+                try:
+                    fecha_compra = datetime.strptime(datos['ultima_compra'], '%Y-%m-%d')
+                    cumple_fecha = True
+                    
+                    if fecha_desde:
+                        fecha_desde_obj = datetime.strptime(fecha_desde, '%Y-%m-%d')
+                        if fecha_compra < fecha_desde_obj:
+                            cumple_fecha = False
+                    
+                    if fecha_hasta and cumple_fecha:
+                        fecha_hasta_obj = datetime.strptime(fecha_hasta, '%Y-%m-%d')
+                        if fecha_compra > fecha_hasta_obj:
+                            cumple_fecha = False
+                    
+                    if cumple_fecha:
+                        clientes_filtrados[id_cliente] = datos
+                except:
+                    pass
+        clientes_analizados = clientes_filtrados
+    
+    # Ordenamiento
+    if filtro_orden == 'nombre':
+        clientes_analizados = dict(sorted(clientes_analizados.items(), key=lambda item: item[1]['cliente'].get('nombre', '').lower()))
+    elif filtro_orden == 'rif':
+        clientes_analizados = dict(sorted(clientes_analizados.items(), key=lambda item: item[0].lower()))
+    elif filtro_orden == 'total_facturado':
+        clientes_analizados = dict(sorted(clientes_analizados.items(), key=lambda item: item[1]['total_facturado'], reverse=True))
+    elif filtro_orden == 'ultima_compra':
+        clientes_analizados = dict(sorted(clientes_analizados.items(), key=lambda item: item[1]['ultima_compra'] or '', reverse=True))
+    
+    # Preparar datos para la vista
+    clientes_final = {}
+    clientes_totales = {}
+    for id_cliente, datos in clientes_analizados.items():
+        clientes_final[id_cliente] = datos['cliente']
+        clientes_totales[id_cliente] = {
+            'total_facturado': datos['total_facturado'],
+            'total_abonado': datos['total_abonado'],
+            'total_por_cobrar': datos['total_por_cobrar'],
+            'cantidad_facturas': datos['cantidad_facturas'],
+            'factura_promedio': datos['factura_promedio'],
+            'ultima_compra': datos['ultima_compra'],
+            'dias_inactivo': datos['dias_inactivo'],
+            'segmento': datos['segmento'],
+            'estado_pago': datos['estado_pago']
+        }
+    
+    return render_template('clientes.html', 
+                         clientes=clientes_final, 
+                         q=q, 
+                         filtro_orden=filtro_orden, 
+                         clientes_totales=clientes_totales,
+                         segmento=segmento,
+                         estado_pago=estado_pago,
+                         fecha_desde=fecha_desde,
+                         fecha_hasta=fecha_hasta)
+
+@app.route('/clientes/dashboard')
+@login_required
+def dashboard_clientes():
+    """Dashboard avanzado de análisis de clientes con métricas y segmentación."""
+    try:
+        from datetime import datetime, timedelta
+        
+        # Obtener filtros de la URL
+        periodo = request.args.get('periodo', '6')
+        segmento_filtro = request.args.get('segmento', 'todos')
+        estado_filtro = request.args.get('estado', 'todos')
+        vista_tipo = request.args.get('vista', 'resumen')
+        
+        print(f"Filtros recibidos: periodo={periodo}, segmento={segmento_filtro}, estado={estado_filtro}")
+        
+        # Cargar datos con manejo de errores
+        try:
+            clientes = cargar_datos(ARCHIVO_CLIENTES)
+            if clientes is None:
+                clientes = {}
+                print("Clientes cargados como diccionario vacío")
+        except Exception as e:
+            print(f"Error cargando clientes: {e}")
+            clientes = {}
+            
+        try:
+            facturas = cargar_datos(ARCHIVO_FACTURAS)
+            if facturas is None:
+                facturas = {}
+                print("Facturas cargadas como diccionario vacío")
+        except Exception as e:
+            print(f"Error cargando facturas: {e}")
+            facturas = {}
+            
+        try:
+            cuentas = cargar_datos(ARCHIVO_CUENTAS)
+            if cuentas is None:
+                cuentas = {}
+                print("Cuentas cargadas como diccionario vacío")
+        except Exception as e:
+            print(f"Error cargando cuentas: {e}")
+            cuentas = {}
+        
+        # Aplicar filtro de período a las facturas
+        if periodo != 'custom':
+            try:
+                meses_atras = int(periodo)
+                fecha_limite = datetime.now() - timedelta(days=30 * meses_atras)
+                facturas_filtradas = {}
+                for id_factura, factura in facturas.items():
+                    if factura.get('fecha'):
+                        try:
+                            fecha_factura = datetime.strptime(factura['fecha'], '%Y-%m-%d')
+                            if fecha_factura >= fecha_limite:
+                                facturas_filtradas[id_factura] = factura
+                        except Exception as e:
+                            print(f"Error procesando fecha de factura {id_factura}: {e}")
+                            pass
+                facturas = facturas_filtradas
+                print(f"Facturas filtradas: {len(facturas)} facturas del período de {meses_atras} meses")
+            except Exception as e:
+                print(f"Error aplicando filtro de período: {e}")
+                # Continuar con todas las facturas si hay error
+        
+        # Métricas generales (se actualizarán después del filtrado)
+        try:
+            total_facturado = sum(float(f.get('total_usd', 0)) for f in facturas.values())
+            total_abonado = sum(float(f.get('total_abonado', 0)) for f in facturas.values())
+            total_por_cobrar = total_facturado - total_abonado
+            print(f"Métricas calculadas: facturado={total_facturado}, abonado={total_abonado}, por_cobrar={total_por_cobrar}")
+        except Exception as e:
+            print(f"Error calculando métricas: {e}")
+            total_facturado = 0
+            total_abonado = 0
+            total_por_cobrar = 0
+        
+        # Análisis por segmentos
+        segmentos = {
+            'vip': {'clientes': 0, 'facturado': 0, 'color': '#FFD700'},
+            'frecuente': {'clientes': 0, 'facturado': 0, 'color': '#32CD32'},
+            'activo': {'clientes': 0, 'facturado': 0, 'color': '#1E90FF'},
+            'regular': {'clientes': 0, 'facturado': 0, 'color': '#FFA500'},
+            'inactivo': {'clientes': 0, 'facturado': 0, 'color': '#DC143C'},
+            'potencial': {'clientes': 0, 'facturado': 0, 'color': '#9370DB'}
+        }
+        
+        # Análisis por estado de pago
+        estados_pago = {
+            'al_dia': {'clientes': 0, 'monto': 0},
+            'pendiente': {'clientes': 0, 'monto': 0},
+            'moroso': {'clientes': 0, 'monto': 0}
+        }
+        
+        # Clientes top por facturación
+        clientes_top = []
+        clientes_filtrados = {}
+        
+        for id_cliente, cliente in clientes.items():
+            facturas_cliente = [f for f in facturas.values() if f.get('cliente_id') == id_cliente]
+            total_facturado_cliente = sum(float(f.get('total_usd', 0)) for f in facturas_cliente)
+            total_abonado_cliente = sum(float(f.get('total_abonado', 0)) for f in facturas_cliente)
+            total_por_cobrar_cliente = max(0, total_facturado_cliente - total_abonado_cliente)
+            
+            # Calcular segmento
+            cantidad_facturas = len(facturas_cliente)
+            dias_inactivo = 0
+            if facturas_cliente:
+                fechas_compra = [f.get('fecha', '') for f in facturas_cliente if f.get('fecha')]
+                if fechas_compra:
+                    try:
+                        from datetime import datetime
+                        ultima_compra = max(fechas_compra)
+                        fecha_ultima = datetime.strptime(ultima_compra, '%Y-%m-%d')
+                        dias_inactivo = (datetime.now() - fecha_ultima).days
+                    except:
+                        dias_inactivo = 999
+            
+            # Asignar segmento
+            segmento = 'inactivo'
+            if total_facturado_cliente > 10000:
+                segmento = 'vip'
+            elif total_facturado_cliente > 1000 and dias_inactivo < 90:
+                segmento = 'frecuente'
+            elif total_facturado_cliente > 0 and dias_inactivo < 30:
+                segmento = 'activo'
+            elif total_facturado_cliente > 0:
+                segmento = 'regular'
+            elif cantidad_facturas == 0:
+                segmento = 'potencial'
+            
+            # Asignar estado de pago
+            estado_pago = 'al_dia'
+            if total_por_cobrar_cliente > 0:
+                if total_por_cobrar_cliente > total_facturado_cliente * 0.5:
+                    estado_pago = 'moroso'
+                else:
+                    estado_pago = 'pendiente'
+            
+            # Aplicar filtros
+            cumple_filtros = True
+            
+            # Filtro por segmento
+            if segmento_filtro != 'todos' and segmento != segmento_filtro:
+                cumple_filtros = False
+            
+            # Filtro por estado de pago
+            if estado_filtro != 'todos' and estado_pago != estado_filtro:
+                cumple_filtros = False
+            
+            # Si cumple los filtros, incluir en el análisis
+            if cumple_filtros:
+                clientes_filtrados[id_cliente] = cliente
+                
+                # Actualizar contadores
+                segmentos[segmento]['clientes'] += 1
+                segmentos[segmento]['facturado'] += total_facturado_cliente
+                
+                estados_pago[estado_pago]['clientes'] += 1
+                estados_pago[estado_pago]['monto'] += total_por_cobrar_cliente
+                
+                # Agregar a clientes top
+                if total_facturado_cliente > 0:
+                    clientes_top.append({
+                        'id': id_cliente,
+                        'nombre': cliente.get('nombre', ''),
+                        'total_facturado': total_facturado_cliente,
+                        'total_por_cobrar': total_por_cobrar_cliente,
+                        'segmento': segmento,
+                        'estado_pago': estado_pago,
+                        'cantidad_facturas': cantidad_facturas
+                    })
+        
+        # Ordenar clientes top
+        clientes_top.sort(key=lambda x: x['total_facturado'], reverse=True)
+        clientes_top = clientes_top[:10]  # Top 10
+        
+        # Actualizar total de clientes después del filtrado
+        total_clientes = len(clientes_filtrados)
+        
+        # Calcular porcentajes
+        for segmento in segmentos:
+            if total_clientes > 0:
+                segmentos[segmento]['porcentaje'] = (segmentos[segmento]['clientes'] / total_clientes) * 100
+            else:
+                segmentos[segmento]['porcentaje'] = 0
+        
+        # Tendencias (últimos 6 meses)
+        tendencias = []
+        for i in range(6):
+            fecha_inicio = datetime.now() - timedelta(days=30*(i+1))
+            fecha_fin = datetime.now() - timedelta(days=30*i)
+            
+            facturas_mes = []
+            for f in facturas.values():
+                if f.get('fecha'):
+                    try:
+                        fecha_factura = datetime.strptime(f.get('fecha', ''), '%Y-%m-%d')
+                        if fecha_inicio <= fecha_factura <= fecha_fin:
+                            facturas_mes.append(f)
+                    except:
+                        pass
+            
+            total_mes = sum(float(f.get('total_usd', 0)) for f in facturas_mes)
+            clientes_mes = len(set(f.get('cliente_id') for f in facturas_mes if f.get('cliente_id')))
+            
+            tendencias.append({
+                'mes': fecha_inicio.strftime('%Y-%m'),
+                'facturado': total_mes,
+                'clientes': clientes_mes
+            })
+        
+        tendencias.reverse()  # Ordenar cronológicamente
+        
+        print("Preparando datos para el template...")
+        
+        # Datos básicos para el template
+        datos_template = {
+            'total_clientes': total_clientes,
+            'total_facturado': total_facturado,
+            'total_abonado': total_abonado,
+            'total_por_cobrar': total_por_cobrar,
+            'segmentos': segmentos,
+            'estados_pago': estados_pago,
+            'clientes_top': clientes_top,
+            'tendencias': tendencias,
+            'periodo': periodo,
+            'segmento_filtro': segmento_filtro,
+            'estado_filtro': estado_filtro,
+            'vista_tipo': vista_tipo
+        }
+        
+        print(f"Datos del template preparados: {len(datos_template)} elementos")
+        
+        return render_template('dashboard_clientes.html', **datos_template)
+    
+    except Exception as e:
+        print(f"Error en dashboard_clientes: {e}")
+        import traceback
+        traceback.print_exc()
+        flash(f'Error al cargar el dashboard de clientes: {str(e)}', 'danger')
+        return redirect(url_for('mostrar_clientes'))
+
+@app.route('/clientes/dashboard-test')
+@login_required
+def dashboard_clientes_test():
+    """Versión de prueba del dashboard para debugging."""
+    try:
+        from datetime import datetime, timedelta
+        
+        # Datos básicos de prueba
+        datos_test = {
+            'total_clientes': 10,
+            'total_facturado': 1000.0,
+            'total_abonado': 800.0,
+            'total_por_cobrar': 200.0,
+            'segmentos': {
+                'vip': {'clientes': 2, 'facturado': 500.0, 'color': '#FFD700', 'porcentaje': 20.0},
+                'frecuente': {'clientes': 3, 'facturado': 300.0, 'color': '#32CD32', 'porcentaje': 30.0},
+                'activo': {'clientes': 2, 'facturado': 150.0, 'color': '#1E90FF', 'porcentaje': 20.0},
+                'regular': {'clientes': 2, 'facturado': 50.0, 'color': '#FFA500', 'porcentaje': 20.0},
+                'inactivo': {'clientes': 1, 'facturado': 0.0, 'color': '#DC143C', 'porcentaje': 10.0},
+                'potencial': {'clientes': 0, 'facturado': 0.0, 'color': '#9370DB', 'porcentaje': 0.0}
+            },
+            'estados_pago': {
+                'al_dia': {'clientes': 7, 'monto': 0.0},
+                'pendiente': {'clientes': 2, 'monto': 100.0},
+                'moroso': {'clientes': 1, 'monto': 100.0}
+            },
+            'clientes_top': [
+                {'id': 'V-12345678', 'nombre': 'Cliente Test 1', 'total_facturado': 500.0, 'total_por_cobrar': 0.0, 'segmento': 'vip', 'estado_pago': 'al_dia', 'cantidad_facturas': 5}
+            ],
+            'tendencias': [
+                {'mes': '2024-08', 'facturado': 800.0, 'clientes': 8},
+                {'mes': '2024-09', 'facturado': 900.0, 'clientes': 9},
+                {'mes': '2024-10', 'facturado': 1000.0, 'clientes': 10}
+            ],
+            'periodo': '6',
+            'segmento_filtro': 'todos',
+            'estado_filtro': 'todos',
+            'vista_tipo': 'resumen'
+        }
+        
+        return render_template('dashboard_clientes.html', **datos_test)
+        
+    except Exception as e:
+        print(f"Error en dashboard_clientes_test: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"Error en dashboard de prueba: {str(e)}"
 
 @app.route('/clientes/nuevo', methods=['GET', 'POST'])
 @login_required
@@ -1362,6 +1689,8 @@ def mostrar_inventario():
     q = request.args.get('q', '')
     filtro_categoria = request.args.get('categoria', '')
     filtro_orden = request.args.get('orden', 'nombre')
+    filtro_stock = request.args.get('stock', 'todos')
+    vista_tipo = request.args.get('vista', 'tabla')
     
     # Obtener categorías únicas
     categorias = []
@@ -1369,27 +1698,312 @@ def mostrar_inventario():
         if producto.get('categoria') and producto['categoria'] not in categorias:
             categorias.append(producto['categoria'])
     
-    # Filtrar productos
+    # Filtrar productos y detectar alertas
     productos_filtrados = {}
+    alertas_stock = []
+    
     for id, producto in inventario.items():
-        if q and q.lower() not in producto['nombre'].lower():
+        # Filtro de búsqueda
+        if q and q.lower() not in producto['nombre'].lower() and q.lower() not in producto.get('codigo', '').lower():
             continue
+        
+        # Filtro de categoría
         if filtro_categoria and producto.get('categoria') != filtro_categoria:
             continue
+        
+        # Detectar alertas de stock
+        cantidad = int(producto.get('cantidad', 0))
+        stock_minimo = int(producto.get('stock_minimo', 5))
+        
+        if cantidad <= 0:
+            alertas_stock.append({
+                'id': id,
+                'nombre': producto.get('nombre', ''),
+                'cantidad': cantidad,
+                'tipo': 'agotado',
+                'prioridad': 'alta'
+            })
+        elif cantidad <= stock_minimo:
+            alertas_stock.append({
+                'id': id,
+                'nombre': producto.get('nombre', ''),
+                'cantidad': cantidad,
+                'stock_minimo': stock_minimo,
+                'tipo': 'bajo',
+                'prioridad': 'media'
+            })
+        
+        # Filtro de stock
+        if filtro_stock == 'bajo' and cantidad > stock_minimo:
+            continue
+        elif filtro_stock == 'agotado' and cantidad > 0:
+            continue
+        elif filtro_stock == 'disponible' and cantidad <= 0:
+            continue
+        elif filtro_stock == 'alertas' and cantidad > stock_minimo:
+            continue
+        
         productos_filtrados[id] = producto
     
     # Ordenar productos
     if filtro_orden == 'nombre':
         productos_filtrados = dict(sorted(productos_filtrados.items(), key=lambda x: x[1]['nombre']))
     elif filtro_orden == 'stock':
-        productos_filtrados = dict(sorted(productos_filtrados.items(), key=lambda x: x[1]['cantidad']))
+        productos_filtrados = dict(sorted(productos_filtrados.items(), key=lambda x: int(x[1].get('cantidad', 0)), reverse=True))
+    elif filtro_orden == 'precio':
+        productos_filtrados = dict(sorted(productos_filtrados.items(), key=lambda x: float(x[1].get('precio', 0)), reverse=True))
+    elif filtro_orden == 'categoria':
+        productos_filtrados = dict(sorted(productos_filtrados.items(), key=lambda x: x[1].get('categoria', '')))
+    
+    # Calcular métricas del inventario
+    total_productos = len(inventario)
+    productos_disponibles = len([p for p in inventario.values() if int(p.get('cantidad', 0)) > 0])
+    productos_agotados = len([p for p in inventario.values() if int(p.get('cantidad', 0)) <= 0])
+    productos_bajo_stock = len(alertas_stock)
+    valor_total_inventario = sum(float(p.get('precio', 0)) * int(p.get('cantidad', 0)) for p in inventario.values())
     
     return render_template('inventario.html', 
                          inventario=productos_filtrados,
                          categorias=categorias,
                          q=q,
                          filtro_categoria=filtro_categoria,
-                         filtro_orden=filtro_orden)
+                         filtro_orden=filtro_orden,
+                         filtro_stock=filtro_stock,
+                         vista_tipo=vista_tipo,
+                         alertas_stock=alertas_stock,
+                         total_productos=total_productos,
+                         productos_disponibles=productos_disponibles,
+                         productos_agotados=productos_agotados,
+                         productos_bajo_stock=productos_bajo_stock,
+                         valor_total_inventario=valor_total_inventario)
+
+@app.route('/inventario/dashboard')
+@login_required
+def dashboard_inventario():
+    """Dashboard avanzado de inventario con métricas y alertas."""
+    try:
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        # Métricas generales
+        total_productos = len(inventario)
+        productos_disponibles = len([p for p in inventario.values() if int(p.get('cantidad', 0)) > 0])
+        productos_agotados = len([p for p in inventario.values() if int(p.get('cantidad', 0)) <= 0])
+        valor_total_inventario = sum(float(p.get('precio', 0)) * int(p.get('cantidad', 0)) for p in inventario.values())
+        
+        # Análisis por categorías
+        categorias_analisis = {}
+        for producto in inventario.values():
+            categoria = producto.get('categoria', 'Sin categoría')
+            if categoria not in categorias_analisis:
+                categorias_analisis[categoria] = {
+                    'productos': 0,
+                    'stock_total': 0,
+                    'valor_total': 0,
+                    'productos_agotados': 0
+                }
+            
+            cantidad = int(producto.get('cantidad', 0))
+            precio = float(producto.get('precio', 0))
+            
+            categorias_analisis[categoria]['productos'] += 1
+            categorias_analisis[categoria]['stock_total'] += cantidad
+            categorias_analisis[categoria]['valor_total'] += cantidad * precio
+            if cantidad <= 0:
+                categorias_analisis[categoria]['productos_agotados'] += 1
+        
+        # Productos más vendidos (últimos 30 días)
+        from datetime import datetime, timedelta
+        fecha_limite = datetime.now() - timedelta(days=30)
+        productos_vendidos = {}
+        
+        for factura in facturas.values():
+            if factura.get('fecha'):
+                try:
+                    fecha_factura = datetime.strptime(factura['fecha'], '%Y-%m-%d')
+                    if fecha_factura >= fecha_limite:
+                        productos = factura.get('productos', [])
+                        cantidades = factura.get('cantidades', [])
+                        
+                        for i, producto_id in enumerate(productos):
+                            cantidad = int(cantidades[i]) if i < len(cantidades) else 0
+                            if producto_id not in productos_vendidos:
+                                productos_vendidos[producto_id] = 0
+                            productos_vendidos[producto_id] += cantidad
+                except:
+                    pass
+        
+        # Top productos vendidos
+        top_vendidos = []
+        for producto_id, cantidad_vendida in sorted(productos_vendidos.items(), key=lambda x: x[1], reverse=True)[:10]:
+            if producto_id in inventario:
+                producto = inventario[producto_id]
+                top_vendidos.append({
+                    'id': producto_id,
+                    'nombre': producto.get('nombre', ''),
+                    'cantidad_vendida': cantidad_vendida,
+                    'stock_actual': int(producto.get('cantidad', 0)),
+                    'categoria': producto.get('categoria', '')
+                })
+        
+        # Alertas de stock
+        alertas_stock = []
+        for id, producto in inventario.items():
+            cantidad = int(producto.get('cantidad', 0))
+            stock_minimo = int(producto.get('stock_minimo', 5))
+            
+            if cantidad <= 0:
+                alertas_stock.append({
+                    'id': id,
+                    'nombre': producto.get('nombre', ''),
+                    'cantidad': cantidad,
+                    'tipo': 'agotado',
+                    'prioridad': 'alta',
+                    'categoria': producto.get('categoria', '')
+                })
+            elif cantidad <= stock_minimo:
+                alertas_stock.append({
+                    'id': id,
+                    'nombre': producto.get('nombre', ''),
+                    'cantidad': cantidad,
+                    'stock_minimo': stock_minimo,
+                    'tipo': 'bajo',
+                    'prioridad': 'media',
+                    'categoria': producto.get('categoria', '')
+                })
+        
+        # Ordenar alertas por prioridad
+        alertas_stock.sort(key=lambda x: (x['prioridad'] == 'alta', x['cantidad']))
+        
+        return render_template('dashboard_inventario.html',
+                             total_productos=total_productos,
+                             productos_disponibles=productos_disponibles,
+                             productos_agotados=productos_agotados,
+                             valor_total_inventario=valor_total_inventario,
+                             categorias_analisis=categorias_analisis,
+                             top_vendidos=top_vendidos,
+                             alertas_stock=alertas_stock)
+    
+    except Exception as e:
+        print(f"Error en dashboard_inventario: {e}")
+        flash('Error al cargar el dashboard de inventario', 'danger')
+        return redirect(url_for('mostrar_inventario'))
+
+@app.route('/inventario/generar-codigo-barras/<id>')
+@login_required
+def generar_codigo_barras(id):
+    """Generar código de barras para un producto."""
+    try:
+        import qrcode
+        from io import BytesIO
+        import base64
+        
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        if id not in inventario:
+            flash('Producto no encontrado', 'danger')
+            return redirect(url_for('mostrar_inventario'))
+        
+        producto = inventario[id]
+        
+        # Crear código QR con información del producto
+        qr_data = f"Producto: {producto.get('nombre', '')}\n"
+        qr_data += f"Código: {id}\n"
+        qr_data += f"Precio: ${producto.get('precio', 0)}\n"
+        qr_data += f"Stock: {producto.get('cantidad', 0)}"
+        
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(qr_data)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        
+        # Convertir a base64
+        buffer = BytesIO()
+        img.save(buffer, format='PNG')
+        img_str = base64.b64encode(buffer.getvalue()).decode()
+        
+        return render_template('codigo_barras.html', 
+                             producto=producto, 
+                             codigo_barras=img_str,
+                             qr_data=qr_data)
+    
+    except Exception as e:
+        print(f"Error generando código de barras: {e}")
+        flash('Error al generar código de barras', 'danger')
+        return redirect(url_for('mostrar_inventario'))
+
+@app.route('/inventario/prediccion-demandas')
+@login_required
+def prediccion_demandas():
+    """Predicción de demandas basada en historial de ventas."""
+    try:
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        facturas = cargar_datos(ARCHIVO_FACTURAS)
+        
+        from datetime import datetime, timedelta
+        import statistics
+        
+        # Analizar ventas de los últimos 90 días
+        fecha_limite = datetime.now() - timedelta(days=90)
+        ventas_por_producto = {}
+        
+        for factura in facturas.values():
+            if factura.get('fecha'):
+                try:
+                    fecha_factura = datetime.strptime(factura['fecha'], '%Y-%m-%d')
+                    if fecha_factura >= fecha_limite:
+                        productos = factura.get('productos', [])
+                        cantidades = factura.get('cantidades', [])
+                        
+                        for i, producto_id in enumerate(productos):
+                            cantidad = int(cantidades[i]) if i < len(cantidades) else 0
+                            if producto_id not in ventas_por_producto:
+                                ventas_por_producto[producto_id] = []
+                            ventas_por_producto[producto_id].append({
+                                'fecha': fecha_factura,
+                                'cantidad': cantidad
+                            })
+                except:
+                    pass
+        
+        # Calcular predicciones
+        predicciones = []
+        for producto_id, ventas in ventas_por_producto.items():
+            if producto_id in inventario and len(ventas) >= 3:  # Mínimo 3 ventas
+                producto = inventario[producto_id]
+                
+                # Calcular promedio de ventas por semana
+                ventas_semanales = {}
+                for venta in ventas:
+                    semana = venta['fecha'].isocalendar()[1]
+                    if semana not in ventas_semanales:
+                        ventas_semanales[semana] = 0
+                    ventas_semanales[semana] += venta['cantidad']
+                
+                if ventas_semanales:
+                    promedio_semanal = statistics.mean(ventas_semanales.values())
+                    stock_actual = int(producto.get('cantidad', 0))
+                    semanas_restantes = max(1, stock_actual / promedio_semanal) if promedio_semanal > 0 else 999
+                    
+                    predicciones.append({
+                        'id': producto_id,
+                        'nombre': producto.get('nombre', ''),
+                        'categoria': producto.get('categoria', ''),
+                        'stock_actual': stock_actual,
+                        'promedio_semanal': round(promedio_semanal, 2),
+                        'semanas_restantes': round(semanas_restantes, 1),
+                        'recomendacion': 'Reponer' if semanas_restantes < 2 else 'Monitorear' if semanas_restantes < 4 else 'Normal'
+                    })
+        
+        # Ordenar por semanas restantes (menor primero)
+        predicciones.sort(key=lambda x: x['semanas_restantes'])
+        
+        return render_template('prediccion_demandas.html', predicciones=predicciones)
+    
+    except Exception as e:
+        print(f"Error en prediccion_demandas: {e}")
+        flash('Error al calcular predicciones de demanda', 'danger')
+        return redirect(url_for('mostrar_inventario'))
 
 @app.route('/inventario/nuevo', methods=['GET', 'POST'])
 @login_required
@@ -1403,10 +2017,24 @@ def nuevo_producto():
         precio_detal = float(request.form.get('precio_detal', 0))
         precio_distribuidor = float(request.form.get('precio_distribuidor', 0))
         cantidad = int(request.form.get('cantidad', 0))
+        stock_minimo = int(request.form.get('stock_minimo', 5))
+        codigo = request.form.get('codigo', '').strip()
+        descripcion = request.form.get('descripcion', '').strip()
+        proveedor = request.form.get('proveedor', '').strip()
+        ubicacion = request.form.get('ubicacion', '').strip()
+        peso = float(request.form.get('peso', 0))
+        dimensiones = request.form.get('dimensiones', '').strip()
         
         if not nombre or not categoria:
             flash('El nombre y la categoría son requeridos', 'danger')
             return redirect(url_for('nuevo_producto'))
+        
+        # Verificar si el código ya existe
+        if codigo:
+            for id_existente, producto in inventario.items():
+                if producto.get('codigo') == codigo:
+                    flash(f'El código "{codigo}" ya existe para el producto "{producto.get("nombre")}"', 'danger')
+                    return redirect(url_for('nuevo_producto'))
         
         # Generar nuevo ID
         nuevo_id = str(max([int(k) for k in inventario.keys()]) + 1) if inventario else '1'
@@ -1424,8 +2052,17 @@ def nuevo_producto():
             'precio_detal': precio_detal,
             'precio_distribuidor': precio_distribuidor,
             'cantidad': cantidad,
+            'stock_minimo': stock_minimo,
+            'codigo': codigo,
+            'descripcion': descripcion,
+            'proveedor': proveedor,
+            'ubicacion': ubicacion,
+            'peso': peso,
+            'dimensiones': dimensiones,
             'ultima_entrada': datetime.now().isoformat(),
-            'ruta_imagen': ruta_imagen
+            'ruta_imagen': ruta_imagen,
+            'fecha_creacion': datetime.now().isoformat(),
+            'activo': True
         }
         
         if guardar_datos(ARCHIVO_INVENTARIO, inventario):
@@ -2512,48 +3149,54 @@ def mostrar_cotizaciones():
             os.makedirs(cotizaciones_dir)
             return render_template('cotizaciones.html', cotizaciones={}, clientes={}, now=datetime.now().strftime('%Y-%m-%d'))
         
-        # Leer todos los archivos JSON de cotizaciones
+        # Leer archivos individuales cotizacion_<id>.json (ignorar cotizaciones.json legado)
         for filename in os.listdir(cotizaciones_dir):
-            if filename.endswith('.json'):
-                try:
-                    with open(os.path.join(cotizaciones_dir, filename), 'r', encoding='utf-8') as f:
-                        cot_data = json.load(f)
-                        
-                        # Extraer el ID del nombre del archivo
-                        cot_id = filename.split('_')[1].split('.')[0]
-                        
-                        # Procesar la fecha y hora
-                        fecha = cot_data.get('fecha', '')
-                        hora = cot_data.get('hora', '--:--')  # Usar '--:--' si no existe
-                        
-                        # Calcular validez
-                        validez_dias = int(cot_data.get('validez_dias', 30))
-                        try:
-                            fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
-                            validez = (fecha_dt + timedelta(days=validez_dias)).strftime('%Y-%m-%d')
-                        except:
-                            fecha_dt = datetime.now()
-                            validez = (fecha_dt + timedelta(days=validez_dias)).strftime('%Y-%m-%d')
-                        
-                        # Procesar el cliente
-                        cliente = cot_data.get('cliente', {})
-                        cliente_nombre = cliente.get('nombre', 'Cliente no especificado')
-                        
-                        # Procesar el total
-                        total = f"${float(cot_data.get('total_usd', 0)):.2f}" if isinstance(cot_data.get('total_usd', 0), (int, float)) else cot_data.get('total_usd', '$0.00')
-                        
-                        # Crear el diccionario de la cotización
-                        cotizaciones[cot_id] = {
-                            'numero': cot_data.get('numero_cotizacion', cot_id),
-                            'fecha': fecha,
-                            'hora': hora,
-                            'cliente_id': cliente_nombre,
-                            'total': total,
-                            'validez': validez
-                        }
-                except Exception as e:
-                    print(f"Error procesando archivo {filename}: {str(e)}")
+            if not filename.startswith('cotizacion_') or not filename.endswith('.json'):
+                continue
+            try:
+                cot_data = cargar_datos(
+                    os.path.join(cotizaciones_dir, filename), crear_vacio=False
+                )
+                if not cot_data:
                     continue
+
+                cot_id = filename[len('cotizacion_'):-len('.json')]
+
+                fecha = cot_data.get('fecha', '')
+                hora = cot_data.get('hora', '--:--')
+
+                validez_dias = int(cot_data.get('validez_dias', cot_data.get('validez', 30)))
+                try:
+                    fecha_dt = datetime.strptime(fecha, '%Y-%m-%d')
+                    validez = (fecha_dt + timedelta(days=validez_dias)).strftime('%Y-%m-%d')
+                except Exception:
+                    validez = (datetime.now() + timedelta(days=validez_dias)).strftime('%Y-%m-%d')
+
+                cliente = cot_data.get('cliente', {})
+                cliente_id = cliente.get('id') or cot_data.get('cliente_id', '')
+
+                total_usd_raw = cot_data.get('total_usd', 0)
+                if isinstance(total_usd_raw, (int, float)):
+                    total = f"${float(total_usd_raw):.2f}"
+                elif isinstance(total_usd_raw, str):
+                    try:
+                        total = f"${float(total_usd_raw.replace('$', '').replace(',', '').strip()):.2f}"
+                    except ValueError:
+                        total = total_usd_raw
+                else:
+                    total = '$0.00'
+
+                cotizaciones[cot_id] = {
+                    'numero': cot_data.get('numero_cotizacion', cot_id),
+                    'fecha': fecha,
+                    'hora': hora,
+                    'cliente_id': cliente_id,
+                    'total': total,
+                    'validez': validez
+                }
+            except Exception as e:
+                print(f"Error procesando archivo {filename}: {str(e)}")
+                continue
         
         # Cargar clientes para el template
         clientes = cargar_datos(ARCHIVO_CLIENTES)
@@ -2572,54 +3215,84 @@ def mostrar_cotizaciones():
 @app.route('/cotizaciones/nueva', methods=['GET', 'POST'])
 @login_required
 def nueva_cotizacion():
-    """Crea una nueva cotización."""
+    """Formulario para nueva cotización."""
     if request.method == 'POST':
         try:
-            # Obtener datos del formulario
-            cliente_id = request.form['cliente_id']
-            fecha = request.form['fecha']
-            validez_dias = int(request.form.get('validez_dias', 30))
-            
-            # Obtener productos, cantidades y precios
+            cotizaciones_dir = 'cotizaciones_json'
+            os.makedirs(cotizaciones_dir, exist_ok=True)
+
+            numero_cotizacion = request.form.get('numero_cotizacion', '').strip()
+            if not numero_cotizacion:
+                flash('Debe ingresar el número de cotización.', 'danger')
+                return redirect(url_for('nueva_cotizacion'))
+
             productos = request.form.getlist('productos[]')
             cantidades = request.form.getlist('cantidades[]')
             precios = request.form.getlist('precios[]')
-            
-            # Calcular total
-            total_usd = sum(float(precios[i]) * int(cantidades[i]) for i in range(len(precios)))
-            
-            # Crear cotización
+            descuento = request.form.get('descuento', '0')
+            tipo_descuento = request.form.get('tipo_descuento', 'bs')
+            iva = request.form.get('iva', '0')
+            tasa_bcv = request.form.get('tasa_bcv', '0')
+            validez = request.form.get('validez', '3')
+            cliente_id = request.form.get('cliente_id')
+            clientes = cargar_datos(ARCHIVO_CLIENTES)
+            cliente = clientes.get(cliente_id, {})
+            if cliente_id and not cliente.get('id'):
+                cliente = {**cliente, 'id': cliente_id}
+
+            fecha = request.form['fecha']
+            hora = request.form.get('hora') or datetime.now().strftime('%H:%M')
+
+            subtotal_usd = 0.0
+            for precio, cantidad in zip(precios, cantidades):
+                try:
+                    subtotal_usd += float(precio) * int(cantidad)
+                except (TypeError, ValueError):
+                    continue
+
+            tasa_bcv_f = float(tasa_bcv) if tasa_bcv else 1.0
+            descuento_f = float(descuento) if descuento else 0.0
+            if tipo_descuento == 'porc':
+                descuento_total = subtotal_usd * (descuento_f / 100)
+            else:
+                descuento_total = descuento_f / tasa_bcv_f if tasa_bcv_f else 0.0
+
+            iva_f = float(iva) if iva else 0.0
+            iva_total = (subtotal_usd - descuento_total) * (iva_f / 100)
+            total_usd = subtotal_usd - descuento_total + iva_total
+
             cotizacion = {
-                'cliente_id': cliente_id,
+                'numero_cotizacion': numero_cotizacion,
                 'fecha': fecha,
-                'validez_dias': validez_dias,
+                'hora': hora,
+                'cliente': cliente,
                 'productos': productos,
                 'cantidades': cantidades,
                 'precios': precios,
-                'total_usd': total_usd
+                'subtotal_usd': subtotal_usd,
+                'subtotal_bs': subtotal_usd * tasa_bcv_f,
+                'descuento': descuento_f,
+                'tipo_descuento': tipo_descuento,
+                'descuento_total': descuento_total,
+                'iva': iva_f,
+                'iva_total': iva_total,
+                'total_usd': total_usd,
+                'total_bs': total_usd * tasa_bcv_f,
+                'tasa_bcv': tasa_bcv_f,
+                'validez_dias': int(validez)
             }
-            
-            # Guardar cotización
-            cotizaciones_dir = 'cotizaciones_json'
-            os.makedirs(cotizaciones_dir, exist_ok=True)
-            
-            # Generar ID único
-            import time
-            cot_id = str(int(time.time()))
-            filename = f"cotizacion_{cot_id}.json"
-            filepath = os.path.join(cotizaciones_dir, filename)
-            
-            with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(cotizacion, f, ensure_ascii=False, indent=4)
-            
+
+            filepath = os.path.join(cotizaciones_dir, f"cotizacion_{numero_cotizacion}.json")
+            guardar_datos(filepath, cotizacion)
+
             flash('Cotización creada exitosamente', 'success')
+            registrar_bitacora(session['usuario'], 'Nueva cotización', f"Número: {numero_cotizacion}")
             return redirect(url_for('mostrar_cotizaciones'))
-            
+
         except Exception as e:
             flash(f'Error creando cotización: {str(e)}', 'danger')
             return redirect(url_for('nueva_cotizacion'))
-    
-    # GET: mostrar formulario
+
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
     return render_template('cotizacion_form.html', clientes=clientes, inventario=inventario)
@@ -2642,81 +3315,6 @@ def validar_url_factura(f):
         return f(id, *args, **kwargs)
     return decorated_function
 
-def cargar_datos(nombre_archivo):
-    """Carga datos desde un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            os.makedirs(directorio, exist_ok=True)
-            
-        if not os.path.exists(nombre_archivo):
-            print(f"Archivo {nombre_archivo} no existe. Creando nuevo archivo.")
-            with open(nombre_archivo, 'w', encoding='utf-8') as f:
-                json.dump({}, f, ensure_ascii=False, indent=4)
-            return {}
-            
-        with open(nombre_archivo, 'r', encoding='utf-8') as f:
-            contenido = f.read()
-            if not contenido.strip():
-                print(f"Archivo {nombre_archivo} está vacío.")
-                return {}
-            try:
-                return json.loads(contenido)
-            except json.JSONDecodeError as e:
-                print(f"Error decodificando JSON en {nombre_archivo}: {e}")
-                return {}
-    except Exception as e:
-        print(f"Error leyendo {nombre_archivo}: {e}")
-        return {}
-
-def guardar_datos(nombre_archivo, datos):
-    """Guarda datos en un archivo JSON."""
-    try:
-        # Asegurar que el directorio existe
-        directorio = os.path.dirname(nombre_archivo)
-        if directorio:  # Si hay un directorio en la ruta
-            try:
-                os.makedirs(directorio, exist_ok=True)
-                print(f"Directorio {directorio} creado/verificado exitosamente")
-            except Exception as e:
-                print(f"Error creando directorio {directorio}: {e}")
-                return False
-        
-        # Verificar que los datos son serializables
-        try:
-            json.dumps(datos)
-        except Exception as e:
-            print(f"Error serializando datos: {e}")
-            return False
-        
-        # Intentar guardar con manejo de errores específico
-        try:
-            # Primero intentamos escribir en un archivo temporal
-            temp_file = nombre_archivo + '.tmp'
-            with open(temp_file, 'w', encoding='utf-8') as f:
-                json.dump(datos, f, ensure_ascii=False, indent=4)
-            
-            # Si la escritura temporal fue exitosa, reemplazamos el archivo original
-            if os.path.exists(nombre_archivo):
-                os.remove(nombre_archivo)
-            os.rename(temp_file, nombre_archivo)
-            
-            print(f"Datos guardados exitosamente en {nombre_archivo}")
-            return True
-        except Exception as e:
-            print(f"Error escribiendo en archivo {nombre_archivo}: {e}")
-            # Limpiar archivo temporal si existe
-            if os.path.exists(temp_file):
-                try:
-                    os.remove(temp_file)
-                except:
-                    pass
-            return False
-    except Exception as e:
-        print(f"Error general guardando {nombre_archivo}: {e}")
-        return False
-
 def guardar_ultima_tasa_bcv(tasa):
     try:
         # Guardar tasa con fecha de actualización
@@ -2727,9 +3325,7 @@ def guardar_ultima_tasa_bcv(tasa):
         }
         
         try:
-            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
-                json.dump(data, f)
-            
+            guardar_datos(ULTIMA_TASA_BCV_FILE, data)
             print(f"Tasa BCV guardada exitosamente: {tasa}")
             
             # Registrar en bitácora si hay sesión activa
@@ -2750,25 +3346,15 @@ def guardar_ultima_tasa_bcv(tasa):
 
 def cargar_ultima_tasa_bcv():
     try:
-        # Verificar si el archivo existe
-        if not os.path.exists(ULTIMA_TASA_BCV_FILE):
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE)
+        if not data:
             print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
             return None
-        
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            tasa = float(data.get('tasa', 0))
-            if tasa > 10:
-                print(f"Tasa BCV cargada desde archivo: {tasa}")
-                return tasa
-            else:
-                print(f"Tasa BCV en archivo no válida: {tasa}")
-                return None
-    except FileNotFoundError:
-        print(f"Archivo de tasa BCV no encontrado: {ULTIMA_TASA_BCV_FILE}")
-        return None
-    except json.JSONDecodeError as e:
-        print(f"Error decodificando archivo de tasa BCV: {e}")
+        tasa = float(data.get('tasa', 0))
+        if tasa > 10:
+            print(f"Tasa BCV cargada: {tasa}")
+            return tasa
+        print(f"Tasa BCV no válida: {tasa}")
         return None
     except Exception as e:
         print(f"Error inesperado cargando tasa BCV: {e}")
@@ -2846,8 +3432,10 @@ def inicializar_archivos_por_defecto():
                 tasa_default = 135.0  # Tasa más reciente conocida
                 print(f"Usando tasa por defecto del sistema: {tasa_default}")
             
-            with open(ULTIMA_TASA_BCV_FILE, 'w', encoding='utf-8') as f:
-                json.dump({'tasa': tasa_default, 'fecha': datetime.now().isoformat()}, f)
+            guardar_datos(ULTIMA_TASA_BCV_FILE, {
+                'tasa': tasa_default,
+                'fecha': datetime.now().isoformat()
+            })
             print(f"Archivo de tasa BCV creado con tasa: {tasa_default}")
     except Exception as e:
         print(f"Error inicializando archivos por defecto: {e}")
@@ -2860,9 +3448,8 @@ def actualizar_tasa_bcv_automaticamente():
             inicializar_archivos_por_defecto()
             return
         
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            ultima_actualizacion = data.get('fecha', '')
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE, crear_vacio=False) or {}
+        ultima_actualizacion = data.get('fecha', '')
         
         if ultima_actualizacion:
             try:
@@ -3029,20 +3616,19 @@ def obtener_tasa_bcv():
                 print("No se encontró tasa válida en el sistema")
                 return None
         
-        with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            tasa = float(data.get('tasa', 0))
-            if tasa > 10:
-                print(f"Tasa BCV obtenida del archivo: {tasa}")
-                return tasa
-            else:
-                print(f"Tasa BCV en archivo no válida: {tasa}")
-                # Buscar en el sistema como fallback
-                tasa_sistema = obtener_ultima_tasa_del_sistema()
-                if tasa_sistema and tasa_sistema > 10:
-                    print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
-                    return tasa_sistema
-                return None
+        data = cargar_datos(ULTIMA_TASA_BCV_FILE, crear_vacio=False) or {}
+        tasa = float(data.get('tasa', 0))
+        if tasa > 10:
+            print(f"Tasa BCV obtenida del archivo: {tasa}")
+            return tasa
+        else:
+            print(f"Tasa BCV en archivo no válida: {tasa}")
+            # Buscar en el sistema como fallback
+            tasa_sistema = obtener_ultima_tasa_del_sistema()
+            if tasa_sistema and tasa_sistema > 10:
+                print(f"Usando tasa del sistema como fallback: {tasa_sistema}")
+                return tasa_sistema
+            return None
     except FileNotFoundError:
         print(f"Archivo de tasa BCV no encontrado")
         # Buscar en el sistema
@@ -3251,16 +3837,15 @@ def limpiar_valor_monetario(valor):
         return 0.0
 
 def cargar_empresa():
-    try:
-        with open('empresa.json', 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception:
-        return {
-            "nombre": "Nombre de la Empresa",
-            "rif": "J-000000000",
-            "telefono": "0000-0000000",
-            "direccion": "Dirección de la empresa"
-        }
+    data = cargar_datos('empresa.json', crear_vacio=False)
+    if data:
+        return data
+    return {
+        "nombre": "Nombre de la Empresa",
+        "rif": "J-000000000",
+        "telefono": "0000-0000000",
+        "direccion": "Dirección de la empresa"
+    }
 
 def es_fecha_valida(fecha_str):
     """Valida si una fecha es válida y puede ser comparada."""
@@ -3324,46 +3909,62 @@ def editar_cotizacion(id):
         productos = request.form.getlist('productos[]')
         cantidades = request.form.getlist('cantidades[]')
         precios = request.form.getlist('precios[]')
-        subtotal_usd = request.form.get('subtotal_usd', '0')
-        subtotal_bs = request.form.get('subtotal_bs', '0')
         descuento = request.form.get('descuento', '0')
         tipo_descuento = request.form.get('tipo_descuento', 'bs')
-        descuento_total = request.form.get('descuento_total', '0')
         iva = request.form.get('iva', '0')
-        iva_total = request.form.get('iva_total', '0')
-        total_usd = request.form.get('total_usd', '0')
-        total_bs = request.form.get('total_bs', '0')
         tasa_bcv = request.form.get('tasa_bcv', '0')
         validez = request.form.get('validez', '3')
         cliente_id = request.form.get('cliente_id')
         clientes = cargar_datos(ARCHIVO_CLIENTES)
         cliente = clientes.get(cliente_id, {})
+        if cliente_id and not cliente.get('id'):
+            cliente = {**cliente, 'id': cliente_id}
+        hora = request.form.get('hora') or datetime.now().strftime('%H:%M')
+
+        subtotal_usd = 0.0
+        for precio, cantidad in zip(precios, cantidades):
+            try:
+                subtotal_usd += float(precio) * int(cantidad)
+            except (TypeError, ValueError):
+                continue
+        tasa_bcv_f = float(tasa_bcv) if tasa_bcv else 1.0
+        descuento_f = float(descuento) if descuento else 0.0
+        if tipo_descuento == 'porc':
+            descuento_total = subtotal_usd * (descuento_f / 100)
+        else:
+            descuento_total = descuento_f / tasa_bcv_f if tasa_bcv_f else 0.0
+        iva_f = float(iva) if iva else 0.0
+        iva_total = (subtotal_usd - descuento_total) * (iva_f / 100)
+        total_usd = subtotal_usd - descuento_total + iva_total
+
         cotizacion = {
             'numero_cotizacion': id,
             'fecha': request.form['fecha'],
+            'hora': hora,
             'cliente': cliente,
             'productos': productos,
             'cantidades': cantidades,
             'precios': precios,
             'subtotal_usd': subtotal_usd,
-            'subtotal_bs': subtotal_bs,
-            'descuento': descuento,
+            'subtotal_bs': subtotal_usd * tasa_bcv_f,
+            'descuento': descuento_f,
             'tipo_descuento': tipo_descuento,
             'descuento_total': descuento_total,
-            'iva': iva,
+            'iva': iva_f,
             'iva_total': iva_total,
             'total_usd': total_usd,
-            'total_bs': total_bs,
-            'tasa_bcv': tasa_bcv,
+            'total_bs': total_usd * tasa_bcv_f,
+            'tasa_bcv': tasa_bcv_f,
             'validez_dias': int(validez)
         }
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(cotizacion, f, ensure_ascii=False, indent=4)
+        guardar_datos(filename, cotizacion)
         flash('Cotización actualizada exitosamente', 'success')
         registrar_bitacora(session['usuario'], 'Editar cotización', f"ID: {id}")
         return redirect(url_for('mostrar_cotizaciones'))
-    with open(filename, 'r', encoding='utf-8') as f:
-        cotizacion = json.load(f)
+    cotizacion = cargar_datos(filename, crear_vacio=False)
+    if not cotizacion:
+        flash('Cotización no encontrada', 'danger')
+        return redirect(url_for('mostrar_cotizaciones'))
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
     # --- Fix para edición: cliente_id y validez ---
@@ -5639,8 +6240,11 @@ def reporte_cotizaciones():
         for filename in os.listdir(cotizaciones_dir):
             if filename.endswith('.json'):
                 try:
-                    with open(os.path.join(cotizaciones_dir, filename), 'r', encoding='utf-8') as f:
-                        cot_data = json.load(f)
+                    cot_data = cargar_datos(
+                        os.path.join(cotizaciones_dir, filename), crear_vacio=False
+                    )
+                    if not cot_data:
+                        continue
                         if not cot_data.get('numero_cotizacion') or not cot_data.get('fecha') or not cot_data.get('cliente', {}).get('nombre'):
                             continue
                         cotizaciones.append(cot_data)
@@ -5655,11 +6259,10 @@ def convertir_cotizacion_a_factura(id):
     """Convierte una cotización en factura y abre el formulario de factura para editar antes de guardar."""
     cotizaciones_dir = 'cotizaciones_json'
     filename = os.path.join(cotizaciones_dir, f"cotizacion_{id}.json")
-    if not os.path.exists(filename):
+    cotizacion = cargar_datos(filename, crear_vacio=False)
+    if not cotizacion:
         flash('Cotización no encontrada', 'danger')
         return redirect(url_for('mostrar_cotizaciones'))
-    with open(filename, 'r', encoding='utf-8') as f:
-        cotizacion = json.load(f)
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
     empresa = cargar_empresa()
@@ -5697,11 +6300,10 @@ def imprimir_cotizacion(id):
     """Vista amigable para imprimir la cotización."""
     cotizaciones_dir = 'cotizaciones_json'
     filename = os.path.join(cotizaciones_dir, f"cotizacion_{id}.json")
-    if not os.path.exists(filename):
+    cotizacion = cargar_datos(filename, crear_vacio=False)
+    if not cotizacion:
         flash('Cotización no encontrada', 'danger')
         return redirect(url_for('mostrar_cotizaciones'))
-    with open(filename, 'r', encoding='utf-8') as f:
-        cotizacion = json.load(f)
     clientes = cargar_datos(ARCHIVO_CLIENTES)
     inventario = cargar_datos(ARCHIVO_INVENTARIO)
     empresa = cargar_empresa()
@@ -5802,18 +6404,13 @@ def ver_cotizacion(numero):
     try:
         # Cargar la cotización
         cotizacion_path = os.path.join('cotizaciones_json', f'cotizacion_{numero}.json')
-        if not os.path.exists(cotizacion_path):
+        cotizacion = cargar_datos(cotizacion_path, crear_vacio=False)
+        if not cotizacion:
             flash('Cotización no encontrada', 'error')
             return redirect(url_for('cotizaciones'))
-        
-        with open(cotizacion_path, 'r', encoding='utf-8') as f:
-            cotizacion = json.load(f)
-        
-        # Cargar datos adicionales necesarios
-        with open('inventario.json', 'r', encoding='utf-8') as f:
-            inventario = json.load(f)
-        with open('empresa.json', 'r', encoding='utf-8') as f:
-            empresa = json.load(f)
+
+        inventario = cargar_datos(ARCHIVO_INVENTARIO)
+        empresa = cargar_empresa()
         
         return render_template('cotizacion_imprimir.html', cotizacion=cotizacion, inventario=inventario, empresa=empresa, zip=zip)
     except Exception as e:
@@ -8942,10 +9539,9 @@ def imprimir_nota_entrega(id):
     # Cargar tasa BCV si no está disponible
     if not nota.get('tasa_bcv') or nota.get('tasa_bcv') == 0:
         try:
-            with open(ULTIMA_TASA_BCV_FILE, 'r', encoding='utf-8') as f:
-                tasa_data = json.load(f)
-                nota['tasa_bcv'] = tasa_data.get('tasa', 0)
-                nota['fecha_tasa_bcv'] = tasa_data.get('fecha', 'N/A')
+            tasa_data = cargar_datos(ULTIMA_TASA_BCV_FILE, crear_vacio=False) or {}
+            nota['tasa_bcv'] = tasa_data.get('tasa', 0)
+            nota['fecha_tasa_bcv'] = tasa_data.get('fecha', 'N/A')
         except:
             nota['tasa_bcv'] = 0
             nota['fecha_tasa_bcv'] = 'N/A'
@@ -9366,7 +9962,34 @@ def procesar_pago_nota_entrega_route(id):
 def test():
     return "Test de funcionamiento OK ✅"
 
-# Debug: Imprimir rutas disponibles
+# --- INTEGRACIÓN DEL CHATBOT DE WHATSAPP ---
+try:
+    from whatsapp_chatbot import inicializar_chatbot
+    print("🤖 Inicializando chatbot de WhatsApp...")
+    chatbot = inicializar_chatbot(app)
+    print("✅ Chatbot de WhatsApp inicializado correctamente")
+    print("📱 Webhook disponible en: /webhook/whatsapp")
+    print("⚙️  Configuración en: /whatsapp/chatbot/config")
+except ImportError as e:
+    print(f"⚠️  No se pudo importar el chatbot de WhatsApp: {e}")
+    chatbot = None
+except Exception as e:
+    print(f"❌ Error inicializando chatbot: {e}")
+    chatbot = None
+
+# --- Ruta adicional para el chatbot ---
+@app.route('/chatbot-whatsapp')
+@login_required
+def chatbot_whatsapp():
+    """Página principal del chatbot de WhatsApp"""
+    return render_template('whatsapp_chatbot_config.html')
+
+# Firebase: configuración y migración inicial (solo la primera vez)
+try:
+    configurar_al_inicio()
+except Exception as _fb_err:
+    print(f'[almacenamiento] Inicio Firebase: {_fb_err}')
+
 if __name__ == '__main__':
     print("🔍 Rutas disponibles en la aplicación:")
     for rule in app.url_map.iter_rules():
@@ -9374,6 +9997,7 @@ if __name__ == '__main__':
     print("🚀 Aplicación iniciada correctamente")
     print("🌐 Iniciando servidor web en http://127.0.0.1:5000")
     print("📱 Para acceder a las notas de entrega: http://127.0.0.1:5000/notas-entrega")
+    print("🤖 Para configurar el chatbot: http://127.0.0.1:5000/chatbot-whatsapp")
     print("⏹️  Presiona CTRL+C para detener el servidor")
     
     # Iniciar el servidor Flask

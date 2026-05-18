@@ -1,0 +1,46 @@
+{
+    "numero_cotizacion": "001",
+    "fecha": "2025-05-18",
+    "hora": "00:00",
+    "cliente": {
+        "id": "J-502357718",
+        "rif": "J-502357718",
+        "tipo_identificacion": "J",
+        "numero_identificacion": "502357718",
+        "digito_verificador": "",
+        "nombre": "T/N VIVE VERDE",
+        "email": "variedades.vive.verde@dominioinventado.com",
+        "telefono": "+5804144512744",
+        "direccion": "Calle Miranda, Con Dr Manzo Frente Al Edif Kilzi Center, Villa De Cura.",
+        "fecha_creacion": "2025-07-29T23:34:40.348986",
+        "usuario_creacion": "MIGRACION_SENIAT",
+        "fecha_ultima_actualizacion": "2025-08-19T21:28:23.441949",
+        "usuario_ultima_actualizacion": "admin",
+        "activo": true,
+        "validado_seniat": true
+    },
+    "productos": [
+        "18",
+        "19"
+    ],
+    "cantidades": [
+        "3",
+        "6"
+    ],
+    "precios": [
+        3.0,
+        3.0
+    ],
+    "subtotal_usd": 27.0,
+    "subtotal_bs": 0,
+    "descuento": 0.0,
+    "tipo_descuento": "bs",
+    "descuento_total": 0.0,
+    "iva": 16.0,
+    "iva_total": 0.0,
+    "total_usd": 27.0,
+    "total_bs": 0.0,
+    "tasa_bcv": 0.0,
+    "validez_dias": 7,
+    "_migrado_desde": "legado:1"
+}
