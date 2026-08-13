@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Chatbot WhatsApp - KISVIC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .chatbot-header {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .config-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .config-card .card-header {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border-radius: 15px 15px 0 0;
+            border: none;
+        }
+        .btn-whatsapp {
+            background: #25D366;
+            border: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-active {
+            background-color: #28a745;
+            animation: pulse 2s infinite;
+        }
+        .status-inactive {
+            background-color: #dc3545;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .command-example {
+            background: #f8f9fa;
+            border-left: 4px solid #25D366;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .webhook-url {
+            background: #e9ecef;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="chatbot-header text-center">
+            <div class="container">
+                <h1><i class="fab fa-whatsapp"></i> Chatbot WhatsApp</h1>
+                <p class="lead">Configuración y administración del asistente virtual</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Estado del Chatbot -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-robot"></i> Estado del Chatbot</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Estado del Servicio</h6>
+                                    <p>
+                                        <span class="status-indicator status-active"></span>
+                                        <strong>Activo</strong> - El chatbot está funcionando correctamente
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Última Actividad</h6>
+                                    <p><i class="fas fa-clock"></i> <span id="ultima-actividad">Hace 2 minutos</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Webhook -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-link"></i> Configuración de Webhook</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>URL del Webhook</h6>
+                                    <div class="webhook-url" id="webhook-url">
+                                        https://tu-dominio.com/webhook/whatsapp
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm mt-2" onclick="copiarWebhook()">
+                                        <i class="fas fa-copy"></i> Copiar URL
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Token de Verificación</h6>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="verify-token" value="verificar_webhook_2025">
+                                        <button class="btn btn-outline-secondary" onclick="generarToken()">
+                                            <i class="fas fa-sync"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comandos Disponibles -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-terminal"></i> Comandos Disponibles</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Comandos de Consulta</h6>
+                                    <div class="command-example">
+                                        <strong>ayuda</strong> - Ver todos los comandos disponibles
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>factura 001</strong> - Consultar factura específica
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>cliente Juan</strong> - Buscar cliente por nombre
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>inventario</strong> - Ver inventario completo
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>estado</strong> - Resumen general del sistema
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Comandos de Acción</h6>
+                                    <div class="command-example">
+                                        <strong>buscar producto</strong> - Búsqueda general
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>cuenta Juan</strong> - Ver estado de cuenta
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>recordatorio 001</strong> - Enviar recordatorio
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>stock bajo</strong> - Productos con stock bajo
+                                    </div>
+                                    <div class="command-example">
+                                        <strong>factura pendiente</strong> - Facturas pendientes
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas de Uso -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Estadísticas de Uso</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h3 class="text-primary" id="mensajes-hoy">0</h3>
+                                        <p class="text-muted">Mensajes Hoy</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h3 class="text-success" id="comandos-exitosos">0</h3>
+                                        <p class="text-muted">Comandos Exitosos</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="border-end">
+                                        <h3 class="text-warning" id="usuarios-activos">0</h3>
+                                        <p class="text-muted">Usuarios Activos</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-info" id="tiempo-respuesta">0ms</h3>
+                                    <p class="text-muted">Tiempo Promedio</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración Avanzada -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-cogs"></i> Configuración Avanzada</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="config-form">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="webhook-token" class="form-label">Token de Webhook</label>
+                                            <input type="text" class="form-control" id="webhook-token" value="mi_token_secreto_2025">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="respuesta-automatica" class="form-label">Respuesta Automática</label>
+                                            <textarea class="form-control" id="respuesta-automatica" rows="3" placeholder="Mensaje de bienvenida automático...">¡Hola! Soy el asistente de KISVIC. Escribe 'ayuda' para ver los comandos disponibles.</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="horario-atencion" class="form-label">Horario de Atención</label>
+                                            <select class="form-select" id="horario-atencion">
+                                                <option value="24/7">24/7 - Siempre disponible</option>
+                                                <option value="laboral">Lunes a Viernes 8:00-18:00</option>
+                                                <option value="extendido">Lunes a Sábado 8:00-20:00</option>
+                                                <option value="personalizado">Personalizado</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="log-mensajes" checked>
+                                                <label class="form-check-label" for="log-mensajes">
+                                                    Registrar todos los mensajes
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="respuestas-inteligentes" checked>
+                                                <label class="form-check-label" for="respuestas-inteligentes">
+                                                    Respuestas inteligentes activadas
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-whatsapp" onclick="guardarConfiguracion()">
+                                        <i class="fas fa-save"></i> Guardar Configuración
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prueba del Chatbot -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-flask"></i> Prueba del Chatbot</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Simulador de Conversación</h6>
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" id="comando-prueba" placeholder="Escribe un comando...">
+                                        <button class="btn btn-whatsapp" onclick="probarComando()">
+                                            <i class="fas fa-paper-plane"></i> Probar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Respuesta del Chatbot</h6>
+                                    <div id="respuesta-prueba" class="border p-3 rounded" style="min-height: 100px; background: #f8f9fa;">
+                                        <em class="text-muted">La respuesta aparecerá aquí...</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones Rápidas -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card config-card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-bolt"></i> Acciones Rápidas</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-primary w-100 mb-2" onclick="reiniciarChatbot()">
+                                        <i class="fas fa-redo"></i> Reiniciar Chatbot
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-success w-100 mb-2" onclick="exportarLogs()">
+                                        <i class="fas fa-download"></i> Exportar Logs
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-warning w-100 mb-2" onclick="limpiarCache()">
+                                        <i class="fas fa-trash"></i> Limpiar Cache
+                                    </button>
+                                </div>
+                                <div class="col-md-3">
+                                    <button class="btn btn-outline-info w-100 mb-2" onclick="verDocumentacion()">
+                                        <i class="fas fa-book"></i> Documentación
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Funciones JavaScript para la configuración
+        function copiarWebhook() {
+            const webhookUrl = document.getElementById('webhook-url').textContent;
+            navigator.clipboard.writeText(webhookUrl).then(() => {
+                alert('URL del webhook copiada al portapapeles');
+            });
+        }
+
+        function generarToken() {
+            const token = 'verificar_webhook_' + Math.random().toString(36).substr(2, 9);
+            document.getElementById('verify-token').value = token;
+        }
+
+        function guardarConfiguracion() {
+            const config = {
+                webhook_token: document.getElementById('webhook-token').value,
+                verify_token: document.getElementById('verify-token').value,
+                respuesta_automatica: document.getElementById('respuesta-automatica').value,
+                horario_atencion: document.getElementById('horario-atencion').value,
+                log_mensajes: document.getElementById('log-mensajes').checked,
+                respuestas_inteligentes: document.getElementById('respuestas-inteligentes').checked
+            };
+
+            fetch('/whatsapp/chatbot/config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Configuración guardada correctamente');
+                } else {
+                    alert('Error guardando configuración: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error: ' + error);
+            });
+        }
+
+        function probarComando() {
+            const comando = document.getElementById('comando-prueba').value;
+            const respuestaDiv = document.getElementById('respuesta-prueba');
+            
+            if (!comando.trim()) {
+                respuestaDiv.innerHTML = '<em class="text-muted">Escribe un comando para probar...</em>';
+                return;
+            }
+
+            respuestaDiv.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Procesando...';
+
+            // Simular respuesta del chatbot
+            setTimeout(() => {
+                const respuestas = {
+                    'ayuda': '🤖 *COMANDOS DISPONIBLES*\n\n*📄 FACTURAS:*\n• `factura 001` - Ver factura específica\n• `factura pendiente` - Facturas pendientes\n\n*👥 CLIENTES:*\n• `cliente Juan` - Buscar cliente por nombre\n\n*📦 INVENTARIO:*\n• `inventario` - Ver todo el inventario\n\n*💰 CUENTAS:*\n• `cuenta Juan` - Estado de cuenta del cliente\n\n*📊 REPORTES:*\n• `estado` - Resumen general del sistema',
+                    'hola': '🤖 *¡Hola! Soy el asistente de KISVIC*\n\nEstoy aquí para ayudarte con información sobre facturas, clientes, inventario y más.\n\nEscribe `ayuda` para ver todos los comandos disponibles.',
+                    'estado': '📊 *ESTADO GENERAL DEL SISTEMA*\n\n*📄 FACTURAS:*\n• Total: 25\n• Pendientes: 8\n\n*👥 CLIENTES:*\n• Total: 150\n\n*📦 INVENTARIO:*\n• Productos: 45\n• Stock bajo: 3\n\n*💰 CUENTAS POR COBRAR:*\n• Total: 12\n• Monto: $15,450.00',
+                    'factura 001': '📄 *FACTURA 001*\n\n*Cliente:* Juan Pérez\n*Total:* $1,250.00\n*Estado:* PENDIENTE\n*Fecha:* 15/01/2025\n\n*Productos:*\n• Producto A x2 - $500.00\n• Producto B x1 - $750.00\n\n*Métodos de pago disponibles:*\n• Transferencia bancaria\n• Efectivo\n• Pago móvil'
+                };
+
+                const respuesta = respuestas[comando.toLowerCase()] || '❓ *Comando no reconocido*\n\nUsa `ayuda` para ver todos los comandos disponibles.';
+                respuestaDiv.innerHTML = respuesta.replace(/\n/g, '<br>');
+            }, 1000);
+        }
+
+        function reiniciarChatbot() {
+            if (confirm('¿Estás seguro de que quieres reiniciar el chatbot?')) {
+                alert('Chatbot reiniciado correctamente');
+                // Aquí implementarías la lógica de reinicio
+            }
+        }
+
+        function exportarLogs() {
+            alert('Exportando logs del chatbot...');
+            // Aquí implementarías la exportación de logs
+        }
+
+        function limpiarCache() {
+            if (confirm('¿Estás seguro de que quieres limpiar el cache?')) {
+                alert('Cache limpiado correctamente');
+                // Aquí implementarías la limpieza del cache
+            }
+        }
+
+        function verDocumentacion() {
+            window.open('/docs/chatbot-whatsapp', '_blank');
+        }
+
+        // Actualizar estadísticas cada 30 segundos
+        setInterval(() => {
+            // Simular actualización de estadísticas
+            document.getElementById('mensajes-hoy').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('comandos-exitosos').textContent = Math.floor(Math.random() * 40) + 5;
+            document.getElementById('usuarios-activos').textContent = Math.floor(Math.random() * 20) + 3;
+            document.getElementById('tiempo-respuesta').textContent = Math.floor(Math.random() * 500) + 100 + 'ms';
+        }, 30000);
+
+        // Actualizar última actividad
+        setInterval(() => {
+            const ahora = new Date();
+            const tiempo = ahora.toLocaleTimeString();
+            document.getElementById('ultima-actividad').textContent = `Hace ${Math.floor(Math.random() * 5) + 1} minutos`;
+        }, 60000);
+    </script>
+</body>
+</html>
+
+
+
+

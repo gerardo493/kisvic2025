@@ -90,23 +90,46 @@
                                 </a>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="precio_detal" class="form-label"><span class="icon"><i class="fas fa-dollar-sign"></i></span>Precio al detal</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="precio_detal" name="precio_detal" step="0.01" min="0" value="{{ producto.precio_detal if producto else producto.precio if producto else '' }}" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="costo_compra" class="form-label"><span class="icon"><i class="fas fa-tag"></i></span>Costo de Compra (USD)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="costo_compra" name="costo_compra" step="0.01" min="0" value="{{ producto.costo_compra_usd if (producto and producto.costo_compra_usd is defined) else '0.00' }}" oninput="calcularMargenEnvivo()">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="precio_detal" class="form-label"><span class="icon"><i class="fas fa-dollar-sign"></i></span>Precio Venta (Detal USD)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="precio_detal" name="precio_detal" step="0.01" min="0" value="{{ producto.precio_detal if (producto and producto.precio_detal is defined) else (producto.precio if producto else '') }}" required oninput="calcularMargenEnvivo()">
+                                </div>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="precio_distribuidor" class="form-label"><span class="icon"><i class="fas fa-handshake"></i></span>Precio a distribuidor</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="precio_distribuidor" name="precio_distribuidor" step="0.01" min="0" value="{{ producto.precio_distribuidor if producto else producto.precio if producto else '' }}" required>
+
+                        <!-- Indicador Dinámico de Margen % -->
+                        <div class="alert alert-info py-2 d-flex justify-content-between align-items-center mb-3">
+                            <div><i class="fas fa-calculator me-2"></i>Margen de Ganancia Estimado:</div>
+                            <div class="fw-bold fs-5 text-success" id="lblMargenCalculado">0.00% ($0.00 USD)</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="precio_mayor" class="form-label"><span class="icon"><i class="fas fa-boxes"></i></span>Precio al Mayor (USD)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="precio_mayor" name="precio_mayor" step="0.01" min="0" value="{{ producto.precio_mayor_usd if (producto and producto.precio_mayor_usd is defined) else '' }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="stock_minimo" class="form-label"><span class="icon"><i class="fas fa-bell"></i></span>Stock Mínimo (Alerta)</label>
+                                <input type="number" class="form-control" id="stock_minimo" name="stock_minimo" min="1" value="{{ producto.stock_minimo if (producto and producto.stock_minimo is defined) else 5 }}" required>
                             </div>
                         </div>
+
                         <div class="mb-3">
-                            <label for="cantidad" class="form-label"><span class="icon"><i class="fas fa-warehouse"></i></span>Stock Inicial</label>
-                            <input type="number" class="form-control" id="cantidad" name="cantidad" min="0" value="{{ producto.cantidad if producto else '' }}" required {% if producto %}readonly{% endif %}>
+                            <label for="cantidad" class="form-label"><span class="icon"><i class="fas fa-warehouse"></i></span>Stock Disponible</label>
+                            <input type="number" class="form-control" id="cantidad" name="cantidad" min="0" value="{{ producto.cantidad if (producto and producto.cantidad is defined) else (producto.stock if producto else '') }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="imagen" class="form-label"><span class="icon"><i class="fas fa-image"></i></span>Imagen del Producto</label>
@@ -132,6 +155,36 @@
         </div>
     </div>
 </div>
+
+<script>
+function calcularMargenEnvivo() {
+    const costo = floatval(document.getElementById('costo_compra').value);
+    const venta = floatval(document.getElementById('precio_detal').value);
+    const lbl = document.getElementById('lblMargenCalculado');
+    if (venta > 0 && costo >= 0) {
+        const ganancia = venta - costo;
+        const pct = ((ganancia / venta) * 100).toFixed(2);
+        lbl.textContent = `${pct}% ($${ganancia.toFixed(2)} USD)`;
+        if (pct < 0) {
+            lbl.className = 'fw-bold fs-5 text-danger';
+        } else if (pct < 15) {
+            lbl.className = 'fw-bold fs-5 text-warning';
+        } else {
+            lbl.className = 'fw-bold fs-5 text-success';
+        }
+    } else {
+        lbl.textContent = '0.00% ($0.00 USD)';
+        lbl.className = 'fw-bold fs-5 text-muted';
+    }
+}
+
+function floatval(v) {
+    const val = parseFloat(v);
+    return isNaN(val) ? 0.0 : val;
+}
+
+document.addEventListener('DOMContentLoaded', calcularMargenEnvivo);
+</script>
 {% endblock %}
 
 

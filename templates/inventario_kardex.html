@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Kardex - Movimientos de Inventario{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="fas fa-history text-primary me-2"></i>Kardex de Movimientos</h2>
+            <p class="text-muted mb-0">Producto: <strong>{{ producto.get('nombre', 'Producto #' + id) }}</strong> (Código: {{ producto.get('codigo', id) }})</p>
+        </div>
+        <a href="{{ url_for('inventario.mostrar_inventario') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver al Inventario
+        </a>
+    </div>
+
+    <!-- Resumen de Stock Actual -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Stock Actual</h6>
+                    <h3 class="fw-bold mb-0 text-primary">{{ producto.get('cantidad', producto.get('stock', 0)) }} <small class="fs-6 text-muted">{{ producto.get('unidad_medida', 'UNID') }}</small></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Precio Venta (USD)</h6>
+                    <h3 class="fw-bold mb-0 text-success">${{ "%.2f"|format(producto.get('precio_usd', producto.get('precio', 0))) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light border-0 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Costo Compra / Margen</h6>
+                    <h3 class="fw-bold mb-0 text-dark">
+                        ${{ "%.2f"|format(producto.get('costo_compra_usd', 0)) }}
+                        <span class="badge bg-info text-dark fs-6 ms-2">{{ producto.get('margen_ganancia_porcentaje', 0) }}% Margen</span>
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Kardex -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+            <h5 class="mb-0"><i class="fas fa-list me-2"></i>Historial Auditado de Entradas y Salidas</h5>
+            <span class="badge bg-secondary">{{ movimientos|length }} Registros</span>
+        </div>
+        <div class="card-body p-0">
+            {% if movimientos %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Tipo Movimiento</th>
+                            <th class="text-center">Variación</th>
+                            <th class="text-center">Stock Anterior</th>
+                            <th class="text-center">Stock Resultante</th>
+                            <th>Motivo / Detalle</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mov in movimientos %}
+                        <tr>
+                            <td>{{ mov.fecha[:19].replace('T', ' ') }}</td>
+                            <td>
+                                {% if 'CREACION' in mov.tipo or 'ENTRADA' in mov.tipo %}
+                                    <span class="badge bg-success"><i class="fas fa-arrow-down me-1"></i>ENTRADA</span>
+                                {% elif 'SALIDA' in mov.tipo %}
+                                    <span class="badge bg-danger"><i class="fas fa-arrow-up me-1"></i>SALIDA</span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark"><i class="fas fa-sync me-1"></i>AJUSTE</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center fw-bold {% if 'SALIDA' in mov.tipo %}-text-danger{% else %}text-success{% endif %}">
+                                {% if 'SALIDA' in mov.tipo %}-{{ mov.cantidad }}{% else %}+{{ mov.cantidad }}{% endif %}
+                            </td>
+                            <td class="text-center text-muted">{{ mov.stock_anterior }}</td>
+                            <td class="text-center fw-bold fs-6">{{ mov.stock_nuevo }}</td>
+                            <td>{{ mov.motivo or 'Ajuste regular' }}</td>
+                            <td><span class="badge bg-light text-dark border">{{ mov.usuario or 'SISTEMA' }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-history fa-3x mb-3 text-secondary"></i>
+                <p class="mb-0">No se han registrado movimientos auditados en el Kardex para este producto aún.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{
+    "total_bs": 30832.802,
+    "fecha": "2025-09-05",
+    "numero": "FAC-00000769",
+    "descuento": 0.0,
+    "tasa_bcv": 154.01,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:15:49",
+    "productos": [
+        "21",
+        "27",
+        "34",
+        "11",
+        "50",
+        "30",
+        "16"
+    ],
+    "total_usd": 200.20000000000002,
+    "cantidades": [
+        15,
+        6,
+        6,
+        12,
+        12,
+        13,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 200.20000000000002,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-05T23:15:49.223384",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "908d0239-74b1-4a0c-b816-290027513947",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-05 23:15:49.223",
+        "firma_digital": "28dea983679866d8f85828802f6e48377dc9e00c4453fff22d1baf6102a2f85a",
+        "hash_inmutable": "8eccedef73beba8bb5eca66d4735620d70194e2fc71ed00e8531cb57b8f138de",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Urb Las Beatrices Manzana 11 # 09 C/ Bolivar - Edo- Bolivar",
+        "email": "alicia.luna@dominioinventado.com",
+        "rif": "V-13.058.545",
+        "telefono": "+5804121123420",
+        "nombre": "ALICIA LUNA"
+    },
+    "subtotal_bs": 30832.802,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-25",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        4.0,
+        2.6
+    ],
+    "numero_secuencial": 769,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-13.058.545",
+    "items": [
+        {
+            "nombre": "GINKGO LOCHITA X 60 CAP",
+            "cantidad": 15,
+            "subtotal_usd": 39.0,
+            "id": "21",
+            "precio_unitario_bs": 400.426,
+            "categoria": "Oxigenante Cerebral",
+            "subtotal_bs": 6006.389999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "27",
+            "precio_unitario_bs": 400.426,
+            "categoria": "Repontesiador Sexsual",
+            "subtotal_bs": 2402.556,
+            "codigo_barras": "",
+            "nombre": "MACA X 60 CAP"
+        },
+        {
+            "nombre": "SAW PALMETO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "34",
+            "precio_unitario_bs": 400.426,
+            "categoria": "hiperplasia prostatica",
+            "subtotal_bs": 2402.556,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP",
+            "cantidad": 12,
+            "codigo_barras": "",
+            "id": "11",
+            "precio_unitario_bs": 400.426,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 4805.112,
+            "subtotal_usd": 31.200000000000003,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "MULTIVIC",
+            "cantidad": 12,
+            "codigo_barras": "",
+            "id": "50",
+            "precio_unitario_bs": 400.426,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 4805.112,
+            "subtotal_usd": 31.200000000000003,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 4.0,
+            "cantidad": 13,
+            "subtotal_usd": 52.0,
+            "id": "30",
+            "precio_unitario_bs": 616.04,
+            "categoria": "Cardiovascular",
+            "subtotal_bs": 8008.5199999999995,
+            "codigo_barras": "",
+            "nombre": "OMEGA 3 X 30 UND"
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "16",
+            "precio_unitario_bs": 400.426,
+            "categoria": "Limpieza De colon",
+            "subtotal_bs": 2402.556,
+            "codigo_barras": "",
+            "nombre": "COLON CLEANSER X 60 CAP"
+        }
+    ],
+    "subtotal_usd": 200.20000000000002,
+    "firma_fiscal": "d9d3b4fd8ca0a9e647cf85e10bdb720be647bd57dca05d03263034e4053a5913",
+    "id": "908d0239-74b1-4a0c-b816-290027513947"
+}

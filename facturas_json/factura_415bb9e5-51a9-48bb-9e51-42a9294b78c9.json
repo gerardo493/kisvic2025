@@ -1,0 +1,111 @@
+{
+    "total_bs": 13753.8,
+    "fecha": "2025-09-01",
+    "numero": "FAC-00000762",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:39:06",
+    "productos": [
+        "13",
+        "29",
+        "22",
+        "19"
+    ],
+    "total_usd": 90.0,
+    "cantidades": [
+        20,
+        4,
+        4,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 90.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:39:06.873330",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "415bb9e5-51a9-48bb-9e51-42a9294b78c9",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:39:06.873",
+        "firma_digital": "f2bee112285549f42afcfa10de0a93ada239305ffddd5314396e44ebb099156a",
+        "hash_inmutable": "7010c342362faf33ef263c837275519a6d8908aafa66fae49e38d81c30c6341a",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle El Comercio Cc Paseo Colonial Don Pedro Nivel, Pb, Higuerote Edo Miranda",
+        "email": "salud.dietetica.v&d.2006.c.a.@dominioinventado.com",
+        "rif": "J-503178574",
+        "telefono": "",
+        "nombre": "SALUD DIETETICA V&D 2006 C.A."
+    },
+    "subtotal_bs": 13753.8,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-21",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 762,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178574",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 20,
+            "subtotal_usd": 60.0,
+            "id": "13",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Calculo Renal",
+            "subtotal_bs": 9169.199999999999,
+            "codigo_barras": "",
+            "nombre": "CHANCA PIEDRA X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "29",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Menopausia",
+            "subtotal_bs": 1833.84,
+            "codigo_barras": "",
+            "nombre": "ÑAME SALVAJE X 60 CAP"
+        },
+        {
+            "nombre": "GINKGOBILOBA X 60 CAP",
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "22",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Oxigenate Cerebral",
+            "subtotal_bs": 1833.84,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "19",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 916.92,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 90.0,
+    "firma_fiscal": "dcf4e35606508acea3a750af106364d03d71c0cb9f008aa659e53426ee40e420",
+    "id": "415bb9e5-51a9-48bb-9e51-42a9294b78c9"
+}

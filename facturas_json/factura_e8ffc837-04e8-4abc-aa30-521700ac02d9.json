@@ -1,0 +1,92 @@
+{
+    "total_bs": 17710.956000000002,
+    "fecha": "2025-06-03",
+    "numero": "FAC-00000648",
+    "descuento": 0.0,
+    "id": "e8ffc837-04e8-4abc-aa30-521700ac02d9",
+    "tasa_bcv": 97.42,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:20:00",
+    "productos": [
+        "48",
+        "49",
+        "50"
+    ],
+    "total_usd": 181.8,
+    "cantidades": [
+        24,
+        15,
+        12
+    ],
+    "total_abonado": 181.8,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 21:13:08",
+            "metodo": "pago_movil",
+            "id": "6bbc0c01-7013-4773-8bf7-5c7da93decb6",
+            "banco": "0157",
+            "captura_path": null,
+            "referencia": "5548",
+            "monto": 181.8
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 17710.956000000002,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-23",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 24,
+            "id_producto": "48",
+            "precio_unitario_bs": 409.16400000000004,
+            "categoria": "",
+            "subtotal_bs": 9819.936000000002,
+            "subtotal_usd": 100.80000000000001,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "49",
+            "cantidad": 15,
+            "precio_unitario_bs": 292.26,
+            "categoria": "",
+            "subtotal_bs": 4383.9,
+            "subtotal_usd": 45.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "50",
+            "precio_unitario_bs": 292.26,
+            "categoria": "",
+            "subtotal_bs": 3507.12,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 181.8,
+    "firma_fiscal": "f54bc876e67b0d98032914e24fd3e21c68a5a8c575ac1b625975368db57d1b80"
+}

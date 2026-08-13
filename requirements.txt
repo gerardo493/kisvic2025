@@ -15,4 +15,5 @@ psutil==5.9.6
 cryptography==41.0.7
 lxml>=4.9.0,<5.0.0
 html5lib==1.1
-WTForms==3.0.1 
+WTForms==3.0.1
+firebase-admin>=6.5.0

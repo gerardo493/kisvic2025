@@ -1,0 +1,111 @@
+{
+    "total_bs": 37701.648,
+    "fecha": "2025-09-05",
+    "numero": "FAC-00000773",
+    "descuento": 0.0,
+    "tasa_bcv": 154.01,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:35:00",
+    "productos": [
+        "48",
+        "28",
+        "41",
+        "32"
+    ],
+    "total_usd": 244.8,
+    "cantidades": [
+        24,
+        12,
+        12,
+        24
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 244.8,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-05T23:35:00.990383",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "31d330a6-3c9e-482f-80d8-4d3c8026459f",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-05 23:35:00.990",
+        "firma_digital": "b518d93fc9606e2b4438e6c3abcc58faa5aa9f2e64e2cb3b42302c3d144353f6",
+        "hash_inmutable": "93a2f667e0c8146b904ec944a633535a7e8897c166c0344a2d22e8c1643c97ad",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 37701.648,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-25",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 773,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 24,
+            "subtotal_usd": 100.80000000000001,
+            "id": "48",
+            "precio_unitario_bs": 646.842,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 15524.208,
+            "codigo_barras": "",
+            "nombre": "CITRATO DE MAGNESIO"
+        },
+        {
+            "nombre": "MAPURITE X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 36.0,
+            "id": "28",
+            "precio_unitario_bs": 462.03,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 5544.36,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "SABILA X 60 CAP",
+            "cantidad": 12,
+            "codigo_barras": "",
+            "id": "41",
+            "precio_unitario_bs": 462.03,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 5544.36,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "SABILA + LINAZA X 60 CAP",
+            "cantidad": 24,
+            "subtotal_usd": 72.0,
+            "id": "32",
+            "precio_unitario_bs": 462.03,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 11088.72,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 244.8,
+    "firma_fiscal": "425fbf3d294c3e1782f62f29ece31cd4bcec9d62757a1a6964edf580425d4925",
+    "id": "31d330a6-3c9e-482f-80d8-4d3c8026459f"
+}

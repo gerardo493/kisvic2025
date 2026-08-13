@@ -1,0 +1,157 @@
+{
+    "total_bs": 18306.54,
+    "fecha": "2025-05-15",
+    "numero": "FAC-00000620",
+    "descuento": 0.0,
+    "id": "f2d7bf5b-dd74-4831-b417-1a45e30bfae3",
+    "tasa_bcv": 96.86,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "15:30:00",
+    "productos": [
+        "19",
+        "42",
+        "34",
+        "17",
+        "16",
+        "13",
+        "38",
+        "5"
+    ],
+    "total_usd": 189.0,
+    "cantidades": [
+        12,
+        3,
+        6,
+        12,
+        3,
+        12,
+        12,
+        3
+    ],
+    "total_abonado": 189.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:45:47",
+            "metodo": "efectivo_usd",
+            "id": "f8e4768c-6d30-493a-aeee-d9e711913a2a",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 189.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 18306.54,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-04",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 12,
+            "id_producto": "19",
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 3486.96,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "42",
+            "cantidad": 3,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "34",
+            "cantidad": 6,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 1743.48,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "17",
+            "cantidad": 12,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 3486.96,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "16",
+            "cantidad": 3,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "13",
+            "cantidad": 12,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 3486.96,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "38",
+            "cantidad": 12,
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 3486.96,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "5",
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 189.0,
+    "firma_fiscal": "9bdde12eb88557ae381abb122f3c2e3aac6433d697b88ac3570d38a8c15e64c0"
+}

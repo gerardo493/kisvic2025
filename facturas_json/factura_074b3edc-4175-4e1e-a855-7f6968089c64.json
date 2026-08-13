@@ -1,0 +1,111 @@
+{
+    "total_bs": 11461.5,
+    "fecha": "2025-08-29",
+    "numero": "FAC-00000760",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:29:56",
+    "productos": [
+        "10",
+        "12",
+        "11",
+        "40"
+    ],
+    "total_usd": 75.0,
+    "cantidades": [
+        6,
+        10,
+        3,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 75.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:29:56.690043",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "074b3edc-4175-4e1e-a855-7f6968089c64",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:29:56.690",
+        "firma_digital": "dfc5c2e33c8996d90f397da0084d396dec12d255519be8dcbe9919933a53736d",
+        "hash_inmutable": "693a57863aaad86b9daaceffcd311f71d426033f73ede24422dbb85158820750",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 11461.5,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-10-19",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 760,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "10",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2750.7599999999998,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 10,
+            "subtotal_usd": 30.0,
+            "id": "12",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 4584.599999999999,
+            "codigo_barras": "",
+            "nombre": "CENTELLA ASIATICA X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "11",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP"
+        },
+        {
+            "nombre": "SANGRE DE DRAGO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "40",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Ulcera Gastrica",
+            "subtotal_bs": 2750.7599999999998,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 75.0,
+    "firma_fiscal": "e2e9e043b0510703b890982954508b45d95c097ca6fde043d526380344ea762a",
+    "id": "074b3edc-4175-4e1e-a855-7f6968089c64"
+}

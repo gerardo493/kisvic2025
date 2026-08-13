@@ -1,0 +1,107 @@
+{
+    "total_bs": 11095.602,
+    "fecha": "2025-07-08",
+    "numero": "FAC-00000696",
+    "descuento": 0.0,
+    "id": "77ff10ee-9641-4ab7-87d4-96ab2e8b18fa",
+    "tasa_bcv": 118.29,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "20:24:00",
+    "productos": [
+        "41",
+        "16",
+        "36",
+        "4",
+        "46"
+    ],
+    "total_usd": 93.8,
+    "cantidades": [
+        10,
+        3,
+        2,
+        6,
+        5
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 93.8,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Caña De Azucar Maracay",
+        "email": "nellyda@dominioinventado.com",
+        "rif": "V-12189390",
+        "telefono": "",
+        "nombre": "NELLYDA"
+    },
+    "subtotal_bs": 11095.602,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-28",
+    "descuento_total": 0.0,
+    "precios": [
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        7.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-12189390",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "41",
+            "cantidad": 10,
+            "precio_unitario_bs": 331.212,
+            "categoria": "",
+            "subtotal_bs": 3312.1200000000003,
+            "subtotal_usd": 28.0,
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 3,
+            "id_producto": "16",
+            "precio_unitario_bs": 331.212,
+            "categoria": "",
+            "subtotal_bs": 993.6359999999999,
+            "subtotal_usd": 8.399999999999999,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 2,
+            "id_producto": "36",
+            "precio_unitario_bs": 331.212,
+            "categoria": "",
+            "subtotal_bs": 662.424,
+            "subtotal_usd": 5.6,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "id_producto": "4",
+            "cantidad": 6,
+            "precio_unitario_bs": 331.212,
+            "categoria": "",
+            "subtotal_bs": 1987.2719999999997,
+            "subtotal_usd": 16.799999999999997,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 7.0,
+            "cantidad": 5,
+            "id_producto": "46",
+            "precio_unitario_bs": 828.0300000000001,
+            "categoria": "",
+            "subtotal_bs": 4140.150000000001,
+            "subtotal_usd": 35.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 93.8,
+    "firma_fiscal": "9360de0fb5f238d2ec9c6de0a5f7bce69a02db7b4193672877607ff75366130b"
+}

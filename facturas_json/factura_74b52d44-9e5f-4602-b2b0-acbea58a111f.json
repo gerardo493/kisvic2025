@@ -1,0 +1,55 @@
+{
+    "total_bs": 21868.703999999998,
+    "fecha": "2025-07-02",
+    "numero": "FAC-00000683",
+    "descuento": 0.0,
+    "id": "74b52d44-9e5f-4602-b2b0-acbea58a111f",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:11:00",
+    "productos": [
+        "48"
+    ],
+    "total_usd": 187.2,
+    "cantidades": [
+        48
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 187.2,
+    "dias_credito": "15",
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 21868.703999999998,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-16",
+    "descuento_total": 0.0,
+    "precios": [
+        3.9
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "precio_unitario_usd": 3.9,
+            "id_producto": "48",
+            "cantidad": 48,
+            "precio_unitario_bs": 455.59799999999996,
+            "categoria": "",
+            "subtotal_bs": 21868.703999999998,
+            "subtotal_usd": 187.2,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 187.2,
+    "firma_fiscal": "bf28b639daf19c7c95a024eaa4bfee85b56332be4026b93932a977f250006564"
+}

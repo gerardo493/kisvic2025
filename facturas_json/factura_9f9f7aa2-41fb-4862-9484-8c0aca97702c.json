@@ -1,0 +1,178 @@
+{
+    "total_bs": 16055.64,
+    "fecha": "2025-09-29",
+    "numero": "FAC-00000759",
+    "descuento": 0.0,
+    "tasa_bcv": 185.4,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:27:17",
+    "productos": [
+        "9",
+        "1",
+        "29",
+        "48",
+        "34",
+        "10",
+        "33",
+        "46"
+    ],
+    "total_usd": 86.6,
+    "cantidades": [
+        3,
+        3,
+        3,
+        3,
+        4,
+        6,
+        1,
+        1
+    ],
+    "total_abonado": 86.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-10-04 10:26:53",
+            "metodo": "pago_movil",
+            "id": "afca40db-66d5-4a8e-803a-1ae87edfe6cc",
+            "banco": "0102",
+            "captura_path": "uploads/capturas/cedula.jpg",
+            "referencia": "1455",
+            "monto": 86.0
+        }
+    ],
+    "saldo_pendiente": 0.5999999999999943,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:27:18.003518",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "9f9f7aa2-41fb-4862-9484-8c0aca97702c",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:27:18.003",
+        "firma_digital": "654a063bd70a5f829e7a3a5e9d8e528e5e2cbe3135d567bb8aa0f8b7908bc36c",
+        "hash_inmutable": "5fd1d3eab48cb2cb80f7b9d517338272e2c095f1e8a27cc9d7a3a0649d6d4565",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Sanchez Carrero, Maracay -  Edo Arargua",
+        "email": "la.boutique.de.la.miel@dominioinventado.com",
+        "rif": "J-501899062",
+        "telefono": "",
+        "nombre": "LA BOUTIQUE DE LA MIEL"
+    },
+    "subtotal_bs": 16055.64,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-10-19",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        4.2,
+        3.0,
+        3.0,
+        9.0,
+        8.0
+    ],
+    "numero_secuencial": 759,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899062",
+    "items": [
+        {
+            "nombre": "CARDO MARIANO X 60 CAP",
+            "cantidad": 3,
+            "codigo_barras": "",
+            "id": "9",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 1375.3799999999999,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "1",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "nombre": "ADELGALAX  X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "29",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Menopausia",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "nombre": "ÑAME SALVAJE X 60 CAP"
+        },
+        {
+            "nombre": "CITRATO DE MAGNESIO",
+            "cantidad": 3,
+            "subtotal_usd": 12.600000000000001,
+            "id": "48",
+            "precio_unitario_bs": 641.844,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 1925.5320000000002,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "34",
+            "precio_unitario_bs": 458.46,
+            "categoria": "hiperplasia prostatica",
+            "subtotal_bs": 1833.84,
+            "codigo_barras": "",
+            "nombre": "SAW PALMETO X 60 CAP"
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "10",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2750.7599999999998,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "SABILAX-6 X 12 SOBRES X 12 UNDS",
+            "cantidad": 1,
+            "subtotal_usd": 9.0,
+            "id": "33",
+            "precio_unitario_bs": 1375.3799999999999,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 9.0
+        },
+        {
+            "nombre": "DOC QUENOPODIO X 12 UND",
+            "cantidad": 1,
+            "subtotal_usd": 8.0,
+            "id": "46",
+            "precio_unitario_bs": 1222.56,
+            "categoria": "Laxante",
+            "subtotal_bs": 1222.56,
+            "codigo_barras": "",
+            "precio_unitario_usd": 8.0
+        }
+    ],
+    "subtotal_usd": 86.6,
+    "firma_fiscal": "5b052a77a42461cbbe6605cbacb0ae7de865474190036c296bea6541b1079826",
+    "id": "9f9f7aa2-41fb-4862-9484-8c0aca97702c"
+}

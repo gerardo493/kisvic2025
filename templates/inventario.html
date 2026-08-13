@@ -428,22 +428,51 @@
         <div class="page-header">
             <h2>
                 <i class="fas fa-boxes me-2"></i>Inventario
+                <span class="badge">{{ inventario|length }} productos</span>
             </h2>
-            <div class="d-flex flex-wrap gap-2">
-                <a href="{{ url_for('gestionar_categorias') }}" class="btn btn-blue flex-grow-1" data-bs-toggle="tooltip" title="Gestionar Categorías">
-                    <i class="fas fa-tags"></i> Gestionar Categorías
+            <div class="row mt-3">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 mb-0">{{ total_productos }}</div>
+                        <small>Total Productos</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 mb-0 text-success">{{ productos_disponibles }}</div>
+                        <small>Disponibles</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 mb-0 text-warning">{{ productos_agotados }}</div>
+                        <small>Agotados</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 mb-0 text-info">${{ "%.0f"|format(valor_total_inventario) }}</div>
+                        <small>Valor Total</small>
+                    </div>
+                </div>
+            </div>            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('dashboard_inventario') }}" class="btn btn-blue flex-grow-1" data-bs-toggle="tooltip" title="Dashboard de Inventario">
+                    <i class="fas fa-chart-line"></i> Dashboard
                 </a>
-                <a href="{{ url_for('reporte_inventario') }}" class="btn btn-purple flex-grow-1" data-bs-toggle="tooltip" title="Ver Reporte">
-                    <i class="fas fa-chart-bar"></i> Ver Reporte
+                <button type="button" class="btn btn-purple flex-grow-1" onclick="abrirEscanerCamara()" data-bs-toggle="tooltip" title="Escanear Código con la Cámara">
+                    <i class="fas fa-camera"></i> Escáner Cámara
+                </button>
+                <a href="{{ url_for('inventario.imprimir_etiquetas') }}" class="btn btn-orange flex-grow-1" target="_blank" data-bs-toggle="tooltip" title="Imprimir Etiquetas de Anaquel">
+                    <i class="fas fa-print"></i> Etiquetas PDF
                 </a>
-                <a href="{{ url_for('ajustes_masivos') }}" class="btn btn-green flex-grow-1" data-bs-toggle="tooltip" title="Historial de Ajustes Masivos de Stock">
-                    <i class="fas fa-sliders-h"></i> Historial de Ajustes
+                <a href="{{ url_for('ajustar_stock') }}" class="btn btn-green flex-grow-1" data-bs-toggle="tooltip" title="Ajustar Stock">
+                    <i class="fas fa-edit"></i> Ajustar Stock
                 </a>
-                <a href="{{ url_for('nuevo_producto') }}" class="btn btn-orange flex-grow-1" data-bs-toggle="tooltip" title="Nuevo Producto">
+                <a href="{{ url_for('reporte_inventario') }}" class="btn btn-orange flex-grow-1" data-bs-toggle="tooltip" title="Ver Reporte">
+                    <i class="fas fa-chart-bar"></i> Reportes
+                </a>
+                <a href="{{ url_for('nuevo_producto') }}" class="btn btn-red flex-grow-1" data-bs-toggle="tooltip" title="Nuevo Producto">
                     <i class="fas fa-plus"></i> Nuevo Producto
-                </a>
-                <a href="{{ url_for('ajustar_stock') }}" class="btn btn-red flex-grow-1" data-bs-toggle="tooltip" title="Ajustar Stock">
-                    <i class="fas fa-boxes"></i> Ajustar Stock
                 </a>
                 <!-- Menú desplegable de Listas de Precio -->
                 <div class="dropdown flex-grow-1">
@@ -474,7 +503,7 @@
                                    placeholder="Buscar por nombre de producto" value="{{ q or '' }}" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <select name="categoria" class="form-select">
                             <option value="">Todas las categorías</option>
                             {% for cat in categorias %}
@@ -482,10 +511,13 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="col-md-3">
-                        <select name="orden" class="form-select">
-                            <option value="nombre" {% if filtro_orden == 'nombre' %}selected{% endif %}>Ordenar alfabéticamente</option>
-                            <option value="stock" {% if filtro_orden == 'stock' %}selected{% endif %}>Ordenar por stock</option>
+                    <div class="col-md-2">
+                        <select name="stock" class="form-select">
+                            <option value="todos" {% if filtro_stock == 'todos' %}selected{% endif %}>Todos los Stock</option>
+                            <option value="disponible" {% if filtro_stock == 'disponible' %}selected{% endif %}>Disponibles</option>
+                            <option value="bajo" {% if filtro_stock == 'bajo' %}selected{% endif %}>Stock Bajo</option>
+                            <option value="agotado" {% if filtro_stock == 'agotado' %}selected{% endif %}>Agotados</option>
+                            <option value="alertas" {% if filtro_stock == 'alertas' %}selected{% endif %}>Con Alertas</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -493,14 +525,20 @@
                             <i class="fas fa-filter me-2"></i>Filtrar
                         </button>
                     </div>
+                    <div class="col-md-2">
+                        <a href="{{ url_for('inventario.mostrar_inventario') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-undo me-2"></i>Limpiar
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div class="table-card">
-            <div class="card-body">
+        <!-- Tabla de Inventario -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
                                 <th>
@@ -511,9 +549,12 @@
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Categoría</th>
-                                <th>Precio Detal</th>
-                                <th>Precio Distribuidor</th>
+                                <th>Costo (USD)</th>
+                                <th>Precio Venta</th>
+                                <th>Margen %</th>
                                 <th>Stock</th>
+                                <th>Stock Mín.</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -528,23 +569,50 @@
                                 <td>{{ id }}</td>
                                 <td>{{ producto.nombre }}</td>
                                 <td>{{ producto.categoria }}</td>
-                                <td>${{ "%.2f"|format(producto.precio_detal if producto.precio_detal is defined else producto.precio) }}</td>
-                                <td>${{ "%.2f"|format(producto.precio_distribuidor if producto.precio_distribuidor is defined else producto.precio) }}</td>
+                                <td>${{ "%.2f"|format(producto.costo_compra_usd if producto.costo_compra_usd is defined else 0) }}</td>
+                                <td>${{ "%.2f"|format(producto.precio_detal if producto.precio_detal is defined else producto.get('precio_usd', 0)) }}</td>
                                 <td>
-                                    <span class="badge {% if producto.cantidad > 0 %}bg-success{% else %}bg-danger{% endif %}">
-                                        {{ producto.cantidad }}
+                                    <span class="badge bg-success">
+                                        {{ producto.margen_ganancia_porcentaje if producto.margen_ganancia_porcentaje is defined else 0 }}%
                                     </span>
                                 </td>
                                 <td>
+                                    <span class="badge {% if producto.cantidad > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ producto.cantidad if producto.cantidad is defined else producto.get('stock', 0) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ producto.get('stock_minimo', 5) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% set cantidad = producto.cantidad if producto.cantidad is defined else producto.get('stock', 0) %}
+                                    {% set stock_minimo = producto.get('stock_minimo', 5) %}
+                                    {% if cantidad <= 0 %}
+                                        <span class="badge bg-danger">Agotado</span>
+                                    {% elif cantidad <= stock_minimo %}
+                                        <span class="badge bg-warning">Bajo Stock</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Normal</span>
+                                    {% endif %}
+                                </td>
+                                <td>
                                     <div class="btn-group">
-                                        <a href="{{ url_for('ver_producto', id=id) }}" class="btn btn-sm btn-info" title="Ver detalles" data-bs-toggle="tooltip" data-bs-placement="top">
+                                        <a href="{{ url_for('ver_producto', id=id) }}" class="btn btn-sm btn-info" title="Ver detalles" data-bs-toggle="tooltip">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a href="{{ url_for('editar_producto', id=id) }}" class="btn btn-sm btn-primary" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top">
+                                        <a href="{{ url_for('editar_producto', id=id) }}" class="btn btn-sm btn-primary" title="Editar" data-bs-toggle="tooltip">
                                             <i class="fas fa-edit"></i>
                                         </a>
+                                        <a href="{{ url_for('inventario.ver_kardex', id=id) }}" class="btn btn-sm btn-dark" title="Ver Kardex Auditado" data-bs-toggle="tooltip">
+                                            <i class="fas fa-history"></i>
+                                        </a>
+                                        <a href="{{ url_for('generar_codigo_barras', id=id) }}" class="btn btn-sm btn-info" title="Código QR" data-bs-toggle="tooltip">
+                                            <i class="fas fa-qrcode"></i>
+                                        </a>
                                         <button type="button" class="btn btn-sm btn-danger" 
-                                                onclick="confirmarEliminacion('{{ id }}', '{{ producto.nombre }}')" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                onclick="confirmarEliminacion('{{ id }}', '{{ producto.nombre }}')" title="Eliminar" data-bs-toggle="tooltip">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </div>
@@ -555,7 +623,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </div>   </div>
     </div>
 </div>
 
@@ -692,7 +760,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Inicializar tooltips de Bootstrap para los botones de acción
+// Inicializar tooltips de Bootstrap para los botones de acción
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
     tooltipTriggerList.forEach(function (tooltipTriggerEl) {
         new bootstrap.Tooltip(tooltipTriggerEl);
@@ -700,16 +768,75 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function confirmarEliminacion(id, nombre) {
-    // Actualizar el nombre del producto en el modal
     document.getElementById('nombreProducto').textContent = nombre;
-    
-    // Actualizar la acción del formulario
     var form = document.getElementById('formEliminar');
     form.action = "{{ url_for('eliminar_producto', id=0) }}".replace('0', id);
-    
-    // Mostrar el modal
     var modal = new bootstrap.Modal(document.getElementById('confirmarEliminacion'));
     modal.show();
+}
+</script>
+
+<!-- Modal de Escáner Cámara -->
+<div class="modal fade" id="modalEscanerCamara" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title"><i class="fas fa-camera me-2 text-warning"></i>Escáner de Código de Barras / QR</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="cerrarEscanerCamara()"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <p class="text-muted mb-3">Apunta la cámara de tu dispositivo hacia el código de barras del producto:</p>
+                <div id="reader" style="width: 100%; max-width: 400px; margin: 0 auto;" class="rounded border"></div>
+                <div id="scannedResult" class="alert alert-success mt-3" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="cerrarEscanerCamara()">Cerrar Escáner</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+let html5QrcodeScanner = null;
+
+function abrirEscanerCamara() {
+    const modalEl = document.getElementById('modalEscanerCamara');
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
+
+    if (!html5QrcodeScanner) {
+        html5QrcodeScanner = new Html5Qrcode("reader");
+    }
+
+    html5QrcodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+            document.getElementById('scannedResult').style.display = 'block';
+            document.getElementById('scannedResult').textContent = `✅ Código Escaneado: ${decodedText}`;
+            document.getElementById('searchInput').value = decodedText;
+            
+            setTimeout(() => {
+                cerrarEscanerCamara();
+                bsModal.hide();
+                document.getElementById('searchInput').closest('form').submit();
+            }, 800);
+        },
+        (errorMessage) => {
+            // Ignorar frames vacíos
+        }
+    ).catch(err => {
+        alert("No se pudo acceder a la cámara. Asegúrate de otorgar permisos de cámara en tu navegador: " + err);
+    });
+}
+
+function cerrarEscanerCamara() {
+    if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+            console.log("Cámara detenida.");
+        }).catch(err => console.log(err));
+    }
 }
 </script>
 {% endblock %}

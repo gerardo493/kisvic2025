@@ -1,0 +1,79 @@
+{
+    "total_bs": 2171.4719999999998,
+    "fecha": "2025-05-13",
+    "numero": "FAC-00000615",
+    "descuento": 0.0,
+    "id": "f6ac418d-af7b-476b-9ae6-a7562e23ebe5",
+    "tasa_bcv": 95.24,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:38:00",
+    "productos": [
+        "30",
+        "14"
+    ],
+    "total_usd": 22.8,
+    "cantidades": [
+        4,
+        6
+    ],
+    "total_abonado": 22.8,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:44:31",
+            "metodo": "efectivo_usd",
+            "id": "b44a65e0-2019-4473-a5dd-3927013770a6",
+            "banco": "0105",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 22.8
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Villa De Cura  Edo Aragua",
+        "email": "t/n.variedades.andrea.adrealuz@dominioinventado.com",
+        "rif": "J-504304604",
+        "telefono": "",
+        "nombre": "T/N VARIEDADES ANDREA ADREALUZ"
+    },
+    "subtotal_bs": 2171.4719999999998,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-02",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        1.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304604",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "30",
+            "cantidad": 4,
+            "precio_unitario_bs": 400.008,
+            "categoria": "",
+            "subtotal_bs": 1600.032,
+            "subtotal_usd": 16.8,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 1.0,
+            "id_producto": "14",
+            "cantidad": 6,
+            "precio_unitario_bs": 95.24,
+            "categoria": "",
+            "subtotal_bs": 571.4399999999999,
+            "subtotal_usd": 6.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 22.8,
+    "firma_fiscal": "969eda39ad5561c28add642fe08426d25c3dc656a8c181c6823ac84e02d50342"
+}

@@ -1,0 +1,94 @@
+{
+    "total_bs": 10227.596000000001,
+    "fecha": "2025-06-20",
+    "numero": "FAC-00000671",
+    "descuento": 1000.0,
+    "id": "946deeed-f630-4a1b-8a96-61c158fc2b4c",
+    "tasa_bcv": 104.54,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "09:56:00",
+    "productos": [
+        "51",
+        "12",
+        "30",
+        "1"
+    ],
+    "total_usd": 97.83428352783625,
+    "cantidades": [
+        12,
+        6,
+        5,
+        10
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 97.83,
+    "dias_credito": "15",
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 11227.596000000001,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-04",
+    "descuento_total": 9.565716472163764,
+    "precios": [
+        3.2,
+        3.0,
+        4.2,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "precio_unitario_usd": 3.2,
+            "id_producto": "51",
+            "cantidad": 12,
+            "precio_unitario_bs": 334.528,
+            "categoria": "",
+            "subtotal_bs": 4014.3360000000007,
+            "subtotal_usd": 38.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "12",
+            "precio_unitario_bs": 313.62,
+            "categoria": "",
+            "subtotal_bs": 1881.72,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "30",
+            "cantidad": 5,
+            "precio_unitario_bs": 439.06800000000004,
+            "categoria": "",
+            "subtotal_bs": 2195.34,
+            "subtotal_usd": 21.0,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 10,
+            "id_producto": "1",
+            "precio_unitario_bs": 313.62,
+            "categoria": "",
+            "subtotal_bs": 3136.2000000000003,
+            "subtotal_usd": 30.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 107.4,
+    "firma_fiscal": "1fe8aa49b13dea0a1db5c6394e676a3d57d7d039a3efe019ff91bfd08fb31fd8"
+}

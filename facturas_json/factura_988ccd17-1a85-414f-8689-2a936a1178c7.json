@@ -1,0 +1,125 @@
+{
+    "total_bs": 20086.56,
+    "fecha": "2025-08-07",
+    "numero": "FAC-00000731",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:04:59",
+    "productos": [
+        "8",
+        "9",
+        "34",
+        "12",
+        "30"
+    ],
+    "total_usd": 133.2,
+    "cantidades": [
+        12,
+        6,
+        12,
+        6,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 133.2,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:04:59.805173",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "988ccd17-1a85-414f-8689-2a936a1178c7",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:04:59.805",
+        "firma_digital": "636e553719bc44b468d17ce0fd1a57b150e0934e76047acdde6bac7f101f4bc7",
+        "hash_inmutable": "073f2303b8bd56069c795272c1f4b65fdf13a702f5f8c12f30552d7c51f147d7",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Santos  Michelena Cc Boulevard  Perez Almarza Nivel Pb Local # 159 Maracay",
+        "email": "empredimiento.jose.vasquez.20@dominioinventado.com",
+        "rif": "J-501899063",
+        "telefono": "",
+        "nombre": "EMPREDIMIENTO JOSE VASQUEZ 20"
+    },
+    "subtotal_bs": 20086.56,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-27",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        4.2
+    ],
+    "numero_secuencial": 732,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899063",
+    "items": [
+        {
+            "nombre": "CARDO LECHOZO X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 36.0,
+            "id": "8",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 5428.8,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "9",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 2714.4,
+            "codigo_barras": "",
+            "nombre": "CARDO MARIANO X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "subtotal_usd": 36.0,
+            "id": "34",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "hiperplasia prostatica",
+            "subtotal_bs": 5428.8,
+            "codigo_barras": "",
+            "nombre": "SAW PALMETO X 60 CAP"
+        },
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "12",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 2714.4,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 6,
+            "subtotal_usd": 25.200000000000003,
+            "id": "30",
+            "precio_unitario_bs": 633.3600000000001,
+            "categoria": "Cardiovascular",
+            "subtotal_bs": 3800.1600000000008,
+            "codigo_barras": "",
+            "nombre": "OMEGA 3 X 30 UND"
+        }
+    ],
+    "subtotal_usd": 133.2,
+    "firma_fiscal": "1b514755877102ca66247640b754f30ede0f6758c04ef68951029e54458af03a",
+    "id": "988ccd17-1a85-414f-8689-2a936a1178c7"
+}

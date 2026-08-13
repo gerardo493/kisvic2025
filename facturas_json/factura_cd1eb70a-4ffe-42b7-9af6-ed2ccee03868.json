@@ -1,0 +1,81 @@
+{
+    "total_bs": 4555.4400000000005,
+    "fecha": "2025-06-15",
+    "numero": "FAC-00000666",
+    "descuento": 0.0,
+    "id": "cd1eb70a-4ffe-42b7-9af6-ed2ccee03868",
+    "tasa_bcv": 105.45,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "14:38:00",
+    "productos": [
+        "59",
+        "57",
+        "28"
+    ],
+    "total_usd": 43.2,
+    "cantidades": [
+        6,
+        3,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 43.2,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Mercado Libre Maracay Estado Aragua",
+        "email": "",
+        "rif": "J-501924334",
+        "telefono": "+5800054",
+        "nombre": "T/N LOS MORROS"
+    },
+    "subtotal_bs": 4555.4400000000005,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-05",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501924334",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 6,
+            "id_producto": "59",
+            "precio_unitario_bs": 442.89000000000004,
+            "categoria": "",
+            "subtotal_bs": 2657.34,
+            "subtotal_usd": 25.200000000000003,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "57",
+            "cantidad": 3,
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 949.0500000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "28",
+            "cantidad": 3,
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 949.0500000000001,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 43.2,
+    "firma_fiscal": "6f1c7187a5bbaf3d85760475e959e12c7a00a99f2dcaf6b83a6ab4e8d2253dd3"
+}

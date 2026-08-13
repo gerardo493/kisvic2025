@@ -1,0 +1,9 @@
+{
+  "use_firebase": true,
+  "project_id": "kisvic-facturacion",
+  "credentials_path": "firebase_credentials.json",
+  "sync_nube_en_segundo_plano": true,
+  "timeout_nube_segundos": 8,
+  "pausa_offline_minutos": 5,
+  "hosting_url": "https://kisvic-facturacion.web.app"
+}

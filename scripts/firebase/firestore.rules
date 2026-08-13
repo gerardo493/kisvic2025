@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  // El backend usa cuenta de servicio (Admin SDK).
+  // En producción restringe acceso web directo; la app Flask usa credenciales de servidor.
+    match /kisvic_datos/{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

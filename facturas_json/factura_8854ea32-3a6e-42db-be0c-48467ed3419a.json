@@ -1,0 +1,188 @@
+{
+    "total_bs": 31363.904000000002,
+    "fecha": "2025-08-01",
+    "numero": "FAC-00000722",
+    "descuento": 0.0,
+    "id": "8854ea32-3a6e-42db-be0c-48467ed3419a",
+    "tasa_bcv": 131.12,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:37:06",
+    "productos": [
+        "9",
+        "49",
+        "19",
+        "8",
+        "16",
+        "41",
+        "35",
+        "36"
+    ],
+    "total_usd": 239.20000000000002,
+    "cantidades": [
+        6,
+        20,
+        12,
+        12,
+        12,
+        12,
+        12,
+        6
+    ],
+    "total_abonado": 239.2,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-08-25 22:12:33",
+            "metodo": "efectivo_usd",
+            "id": "2bb5569a-69b8-4f52-941a-10102678f6b0",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 239.0
+        },
+        {
+            "moneda": "USD",
+            "fecha": "2025-08-25 22:13:29",
+            "metodo": "pago_movil",
+            "id": "06c3f16a-0ab1-46bc-b5bf-818e0aa4645c",
+            "banco": "0115",
+            "captura_path": null,
+            "referencia": "9669",
+            "monto": 0.2
+        }
+    ],
+    "saldo_pendiente": 0.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-10T22:37:06.913519",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "8854ea32-3a6e-42db-be0c-48467ed3419a",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-10 22:37:06.913",
+        "firma_digital": "da616468d00482ee5b90c012a975336193147a9d2d4c5640afc140a6fe149956",
+        "hash_inmutable": "ae8bde492e093338ef20971be1ee9887f780cad43b0f72971cc827f0c896e3d8",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Urb Las Beatrices Manzana 11 # 09 C/ Bolivar - Edo- Bolivar",
+        "email": "alicia.luna@dominioinventado.com",
+        "rif": "V-13.058.545",
+        "telefono": "+5804121123420",
+        "nombre": "ALICIA LUNA"
+    },
+    "subtotal_bs": 31363.904000000002,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-08-21",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6
+    ],
+    "numero_secuencial": 722,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-13.058.545",
+    "items": [
+        {
+            "nombre": "CARDO MARIANO X 60 CAP",
+            "cantidad": 6,
+            "codigo_barras": "",
+            "id": "9",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 2045.4720000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "FIVERPLANT",
+            "cantidad": 20,
+            "codigo_barras": "",
+            "id": "49",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 6818.24,
+            "subtotal_usd": 52.0,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "19",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 4090.9440000000004,
+            "codigo_barras": "",
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP"
+        },
+        {
+            "nombre": "CARDO LECHOZO X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "8",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 4090.9440000000004,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "16",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Limpieza De colon",
+            "subtotal_bs": 4090.9440000000004,
+            "codigo_barras": "",
+            "nombre": "COLON CLEANSER X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "41",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 4090.9440000000004,
+            "codigo_barras": "",
+            "nombre": "SABILA X 60 CAP"
+        },
+        {
+            "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "35",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 4090.9440000000004,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "36",
+            "precio_unitario_bs": 340.91200000000003,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2045.4720000000002,
+            "codigo_barras": "",
+            "nombre": "VENA CLEASNER X 60 CAP"
+        }
+    ],
+    "subtotal_usd": 239.20000000000002,
+    "firma_fiscal": "24174368b2a59d0f2d5a90adac27a065bf71cb562d348f3d919718f4dfd587f0"
+}

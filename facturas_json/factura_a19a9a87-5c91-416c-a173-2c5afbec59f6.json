@@ -1,0 +1,111 @@
+{
+    "total_bs": 29164.720000000005,
+    "fecha": "2025-08-14",
+    "numero": "FAC-00000743",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:58:51",
+    "productos": [
+        "65",
+        "24",
+        "33",
+        "46"
+    ],
+    "total_usd": 193.4,
+    "cantidades": [
+        57,
+        3,
+        1,
+        1
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 193.4,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:58:51.780153",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "a19a9a87-5c91-416c-a173-2c5afbec59f6",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:58:51.782",
+        "firma_digital": "7620c61fc1eed25626690cfdf51a2482b04a3c784ca78399b1451171e99a9901",
+        "hash_inmutable": "9b57afcf05cd6972964688847f0c0e1d607674de34d3ca96706da620af71b950",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Vargas Entre Av Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.renacer.natural@dominioinventado.com",
+        "rif": "J-308435378",
+        "telefono": "+5804120333026",
+        "nombre": "T/N RENACER NATURAL"
+    },
+    "subtotal_bs": 29164.720000000005,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-03",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        1.8,
+        9.0,
+        8.0
+    ],
+    "numero_secuencial": 743,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-308435378",
+    "items": [
+        {
+            "nombre": "PRODUCTOS VARIOS KISVIC ",
+            "cantidad": 57,
+            "subtotal_usd": 171.0,
+            "id": "65",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 25786.800000000003,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "JARABE MIEL  EUCALIPTAL X 240 ML",
+            "cantidad": 3,
+            "subtotal_usd": 5.4,
+            "id": "24",
+            "precio_unitario_bs": 271.44000000000005,
+            "categoria": "Bronco-Dilatadores",
+            "subtotal_bs": 814.3200000000002,
+            "codigo_barras": "",
+            "precio_unitario_usd": 1.8
+        },
+        {
+            "nombre": "SABILAX-6 X 12 SOBRES X 12 UNDS",
+            "cantidad": 1,
+            "subtotal_usd": 9.0,
+            "id": "33",
+            "precio_unitario_bs": 1357.2,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 1357.2,
+            "codigo_barras": "",
+            "precio_unitario_usd": 9.0
+        },
+        {
+            "nombre": "DOC QUENOPODIO X 12 UND",
+            "cantidad": 1,
+            "subtotal_usd": 8.0,
+            "id": "46",
+            "precio_unitario_bs": 1206.4,
+            "categoria": "Laxante",
+            "subtotal_bs": 1206.4,
+            "codigo_barras": "",
+            "precio_unitario_usd": 8.0
+        }
+    ],
+    "subtotal_usd": 193.4,
+    "firma_fiscal": "592f3c901ff0a69b0641c5c4619b46f07a545ec816fec659ab3466e6b2d8ec8a",
+    "id": "a19a9a87-5c91-416c-a173-2c5afbec59f6"
+}

@@ -1,0 +1,139 @@
+{
+    "total_bs": 35021.874,
+    "fecha": "2025-09-05",
+    "numero": "FAC-00000770",
+    "descuento": 0.0,
+    "tasa_bcv": 154.01,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:18:47",
+    "productos": [
+        "1",
+        "12",
+        "4",
+        "17",
+        "16",
+        "46"
+    ],
+    "total_usd": 227.40000000000003,
+    "cantidades": [
+        18,
+        6,
+        6,
+        6,
+        6,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 227.40000000000003,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-05T23:18:47.920956",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "e5cb526f-2414-43e5-8fea-743786c434d7",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-05 23:18:47.920",
+        "firma_digital": "09e7484948f1825d3449fd27150dc4a541115b73ff98e275e25aa7c9cc4c438e",
+        "hash_inmutable": "03c304134ec256a6af5c55b2ee0389f3446648df71cfe8c87ccdae2a9bf36844",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Sucre/ Con Calle Girardot #94 Lateral Iglesia Virgen Del Valle  Sector Casco Viejo El Tigre",
+        "email": "",
+        "rif": "J-300473090",
+        "telefono": "+5804121123420",
+        "nombre": "VARIEDADES DIETETICAS EL MANA C.A"
+    },
+    "subtotal_bs": 35021.874,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-25",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        12.0
+    ],
+    "numero_secuencial": 770,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-300473090",
+    "items": [
+        {
+            "nombre": "ADELGALAX  X 60 CAP",
+            "cantidad": 18,
+            "subtotal_usd": 66.60000000000001,
+            "id": "1",
+            "precio_unitario_bs": 569.837,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 10257.066,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 6,
+            "codigo_barras": "",
+            "id": "12",
+            "precio_unitario_bs": 569.837,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 3419.0220000000004,
+            "subtotal_usd": 22.200000000000003,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 22.200000000000003,
+            "id": "4",
+            "precio_unitario_bs": 569.837,
+            "categoria": "Bactericida",
+            "subtotal_bs": 3419.0220000000004,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 6,
+            "subtotal_usd": 22.200000000000003,
+            "id": "17",
+            "precio_unitario_bs": 569.837,
+            "categoria": "Anti-inflamatorio",
+            "subtotal_bs": 3419.0220000000004,
+            "codigo_barras": "",
+            "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 6,
+            "subtotal_usd": 22.200000000000003,
+            "id": "16",
+            "precio_unitario_bs": 569.837,
+            "categoria": "Limpieza De colon",
+            "subtotal_bs": 3419.0220000000004,
+            "codigo_barras": "",
+            "nombre": "COLON CLEANSER X 60 CAP"
+        },
+        {
+            "nombre": "DOC QUENOPODIO X 12 UND",
+            "cantidad": 6,
+            "subtotal_usd": 72.0,
+            "id": "46",
+            "precio_unitario_bs": 1848.12,
+            "categoria": "Laxante",
+            "subtotal_bs": 11088.72,
+            "codigo_barras": "",
+            "precio_unitario_usd": 12.0
+        }
+    ],
+    "subtotal_usd": 227.40000000000003,
+    "firma_fiscal": "54e05386955327a21b8c6a69b4584a4a732327fb210fcf0520500f4ba9c332b4",
+    "id": "e5cb526f-2414-43e5-8fea-743786c434d7"
+}

@@ -1,0 +1,68 @@
+{
+    "total_bs": 1751.58,
+    "fecha": "2025-05-28",
+    "numero": "FAC-00000637",
+    "descuento": 0.0,
+    "id": "1ed5b80f-d0c9-4e12-8124-7ce67141bfa9",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:46:00",
+    "productos": [
+        "10",
+        "4"
+    ],
+    "total_usd": 18.0,
+    "cantidades": [
+        3,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 18.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Cc De La Economia Informal - Maracay -Edo Aragua",
+        "email": "yagel.briceño@dominioinventado.com",
+        "rif": "V-27286925",
+        "telefono": "",
+        "nombre": "YAGEL BRICEÑO"
+    },
+    "subtotal_bs": 1751.58,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-17",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-27286925",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "10",
+            "cantidad": 3,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "4",
+            "cantidad": 3,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 18.0,
+    "firma_fiscal": "c0db05a8e3b3c88bef94fc5f7da508989a3d0f85d05c75a9e8c14e7fd695c978"
+}

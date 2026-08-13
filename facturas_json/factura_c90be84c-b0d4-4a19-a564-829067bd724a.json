@@ -1,0 +1,69 @@
+{
+    "total_bs": 7702.128000000001,
+    "fecha": "2025-08-25",
+    "numero": "FAC-00000754",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:15:16",
+    "productos": [
+        "59"
+    ],
+    "total_usd": 50.400000000000006,
+    "cantidades": [
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 50.400000000000006,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:15:16.142630",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "c90be84c-b0d4-4a19-a564-829067bd724a",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:15:16.142",
+        "firma_digital": "5adc94569bb57bd7ee31fb87f6ed8574e8783f147811d0f2409554b4c02a09b8",
+        "hash_inmutable": "6449881ec6148bdd84824cf4d5c2f6ed29738b06e4afaea71d92c2392990607b",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Mercado Libre Maracay Estado Aragua",
+        "email": "",
+        "rif": "J-501924334",
+        "telefono": "+5800054",
+        "nombre": "T/N LOS MORROS"
+    },
+    "subtotal_bs": 7702.128000000001,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-14",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2
+    ],
+    "numero_secuencial": 754,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501924334",
+    "items": [
+        {
+            "nombre": "RESVERATROL X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 50.400000000000006,
+            "id": "59",
+            "precio_unitario_bs": 641.844,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 7702.128000000001,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        }
+    ],
+    "subtotal_usd": 50.400000000000006,
+    "firma_fiscal": "b7f5d3da3b0caec00e3805d122534749cd791a78af3f26ae584a39b9356889dd",
+    "id": "c90be84c-b0d4-4a19-a564-829067bd724a"
+}

@@ -1,0 +1,196 @@
+{
+    "total_bs": 34435.248,
+    "fecha": "2025-05-03",
+    "numero": "FAC-00000605",
+    "descuento": 0.0,
+    "id": "6370bf04-12c7-4065-9c10-10d81791a5fc",
+    "tasa_bcv": 95.02,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:56:00",
+    "productos": [
+        "49",
+        "17",
+        "9",
+        "4",
+        "48",
+        "1",
+        "2",
+        "30",
+        "36",
+        "37",
+        "14"
+    ],
+    "total_usd": 362.4,
+    "cantidades": [
+        24,
+        12,
+        12,
+        12,
+        10,
+        6,
+        6,
+        6,
+        6,
+        6,
+        36
+    ],
+    "total_abonado": 362.4,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 20:54:32",
+            "metodo": "pago_movil",
+            "id": "eec8c433-c2f2-4e75-8d5b-a466fd52b9b5",
+            "banco": "0115",
+            "captura_path": null,
+            "referencia": "8875",
+            "monto": 362.4
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Gran Demócrata, 18 sector centro I, Palo Negro 2117, Aragua",
+        "email": "",
+        "rif": "N/A",
+        "telefono": "0243-2673767",
+        "nombre": "T/N CASA VERDE"
+    },
+    "subtotal_bs": 34435.248,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-05-23",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        4.2,
+        3.0,
+        3.0,
+        4.2,
+        3.0,
+        4.2,
+        1.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "N/A",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 24,
+            "id_producto": "49",
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 6841.44,
+            "subtotal_usd": 72.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "17",
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 3420.72,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "9",
+            "cantidad": 12,
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 3420.72,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "4",
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 3420.72,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 10,
+            "id_producto": "48",
+            "precio_unitario_bs": 399.084,
+            "categoria": "",
+            "subtotal_bs": 3990.8399999999997,
+            "subtotal_usd": 42.0,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "1",
+            "cantidad": 6,
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 1710.36,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "2",
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 1710.36,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 6,
+            "id_producto": "30",
+            "precio_unitario_bs": 399.084,
+            "categoria": "",
+            "subtotal_bs": 2394.5040000000004,
+            "subtotal_usd": 25.200000000000003,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "36",
+            "precio_unitario_bs": 285.06,
+            "categoria": "",
+            "subtotal_bs": 1710.36,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 6,
+            "id_producto": "37",
+            "precio_unitario_bs": 399.084,
+            "categoria": "",
+            "subtotal_bs": 2394.5040000000004,
+            "subtotal_usd": 25.200000000000003,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 1.0,
+            "id_producto": "14",
+            "cantidad": 36,
+            "precio_unitario_bs": 95.02,
+            "categoria": "",
+            "subtotal_bs": 3420.72,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 362.4,
+    "firma_fiscal": "13906efb23a1ff02080d29e0034538d552aefd1230a0401a40f6ef1fbd854f14"
+}

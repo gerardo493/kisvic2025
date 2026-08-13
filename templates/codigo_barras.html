@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Código de Barras - {{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<style>
+    .codigo-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .codigo-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .qr-code {
+        max-width: 300px;
+        margin: 0 auto 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        background: white;
+    }
+
+    .producto-info {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #6c757d;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .print-area {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .etiqueta-producto {
+        border: 2px solid #000;
+        padding: 1rem;
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .etiqueta-titulo {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .etiqueta-codigo {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+
+    .etiqueta-precio {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #e74c3c;
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+        
+        .print-area {
+            box-shadow: none;
+            border: none;
+        }
+        
+        .codigo-container {
+            background: white;
+            padding: 0;
+        }
+        
+        .page-header {
+            display: none;
+        }
+    }
+</style>
+
+<div class="codigo-container">
+    <div class="container">
+        <!-- Header -->
+        <div class="page-header no-print">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-0">
+                        <i class="fas fa-qrcode me-3"></i>
+                        Código de Barras
+                    </h2>
+                    <p class="mb-0 mt-2">{{ producto.nombre }}</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button onclick="window.print()" class="btn btn-warning me-2">
+                        <i class="fas fa-print me-1"></i>Imprimir
+                    </button>
+                    <a href="{{ url_for('mostrar_inventario') }}" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-1"></i>Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="codigo-card">
+                    <!-- Información del Producto -->
+                    <div class="producto-info">
+                        <h5 class="mb-3">
+                            <i class="fas fa-box me-2"></i>
+                            Información del Producto
+                        </h5>
+                        <div class="info-item">
+                            <span class="info-label">Nombre:</span>
+                            <span class="info-value">{{ producto.nombre }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Código:</span>
+                            <span class="info-value">{{ producto.get('codigo', 'N/A') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Categoría:</span>
+                            <span class="info-value">{{ producto.get('categoria', 'N/A') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Precio:</span>
+                            <span class="info-value">${{ "%.2f"|format(producto.get('precio', 0)) }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Stock:</span>
+                            <span class="info-value">{{ producto.get('cantidad', 0) }} unidades</span>
+                        </div>
+                        {% if producto.get('proveedor') %}
+                        <div class="info-item">
+                            <span class="info-label">Proveedor:</span>
+                            <span class="info-value">{{ producto.proveedor }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Código QR -->
+                    <div class="mt-4">
+                        <h6 class="mb-3">Código QR del Producto</h6>
+                        <div class="qr-code">
+                            <img src="data:image/png;base64,{{ codigo_barras }}" 
+                                 alt="Código QR" 
+                                 class="img-fluid">
+                        </div>
+                        <p class="text-muted mt-2">
+                            <small>Escanea este código para obtener información del producto</small>
+                        </p>
+                    </div>
+
+                    <!-- Datos del Código QR -->
+                    <div class="mt-4">
+                        <h6 class="mb-3">Datos del Código QR</h6>
+                        <div class="alert alert-info">
+                            <pre class="mb-0">{{ qr_data }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Área de Impresión -->
+        <div class="print-area" style="display: none;">
+            <div class="etiqueta-producto">
+                <div class="etiqueta-titulo">{{ producto.nombre }}</div>
+                <div class="etiqueta-codigo">Código: {{ producto.get('codigo', 'N/A') }}</div>
+                <div class="qr-code">
+                    <img src="data:image/png;base64,{{ codigo_barras }}" 
+                         alt="Código QR" 
+                         style="max-width: 200px;">
+                </div>
+                <div class="etiqueta-precio">${{ "%.2f"|format(producto.get('precio', 0)) }}</div>
+                <div style="font-size: 0.8rem; margin-top: 0.5rem;">
+                    Stock: {{ producto.get('cantidad', 0) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para mostrar/ocultar área de impresión
+function togglePrintArea() {
+    const printArea = document.querySelector('.print-area');
+    printArea.style.display = printArea.style.display === 'none' ? 'block' : 'none';
+}
+
+// Función para imprimir solo el área de impresión
+function printEtiqueta() {
+    const printArea = document.querySelector('.print-area');
+    const originalDisplay = printArea.style.display;
+    
+    printArea.style.display = 'block';
+    window.print();
+    printArea.style.display = originalDisplay;
+}
+
+// Agregar botón de impresión de etiqueta
+document.addEventListener('DOMContentLoaded', function() {
+    const printButton = document.querySelector('button[onclick="window.print()"]');
+    if (printButton) {
+        printButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            printEtiqueta();
+        });
+    }
+});
+
+// Función para descargar código QR
+function descargarQR() {
+    const img = document.querySelector('.qr-code img');
+    const link = document.createElement('a');
+    link.download = `qr-{{ producto.nombre|replace(' ', '_') }}.png`;
+    link.href = img.src;
+    link.click();
+}
+</script>
+{% endblock %}
+

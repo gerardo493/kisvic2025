@@ -21,6 +21,7 @@ import threading
 from typing import Dict, Any, Optional, Tuple
 from datetime import datetime
 from seguridad_fiscal import seguridad_fiscal
+from almacenamiento import cargar_datos, guardar_datos
 
 class ControlNumeracionFiscal:
     """Clase para controlar la numeración consecutiva de documentos fiscales"""
@@ -86,23 +87,24 @@ class ControlNumeracionFiscal:
                 }
             }
             
-            with open(self.archivo_control, 'w', encoding='utf-8') as f:
-                json.dump(estructura_inicial, f, indent=2, ensure_ascii=False)
-                
+            guardar_datos(self.archivo_control, estructura_inicial)
+
     def _cargar_control(self) -> Dict[str, Any]:
         """Carga el archivo de control de numeración"""
         try:
-            with open(self.archivo_control, 'r', encoding='utf-8') as f:
-                return json.load(f)
+            data = cargar_datos(self.archivo_control, crear_vacio=False)
+            if not data:
+                raise FileNotFoundError(self.archivo_control)
+            return data
         except Exception as e:
             raise Exception(f"Error cargando control de numeración: {str(e)}")
-            
+
     def _guardar_control(self, control: Dict[str, Any]) -> None:
         """Guarda el archivo de control de numeración"""
         try:
             control['auditoria']['ultima_modificacion'] = datetime.now().isoformat()
-            with open(self.archivo_control, 'w', encoding='utf-8') as f:
-                json.dump(control, f, indent=2, ensure_ascii=False)
+            if not guardar_datos(self.archivo_control, control):
+                raise Exception('No se pudo guardar')
         except Exception as e:
             raise Exception(f"Error guardando control de numeración: {str(e)}")
             
@@ -177,12 +179,11 @@ class ControlNumeracionFiscal:
             # Verificar en facturas existentes
             if tipo_documento == 'FACTURA':
                 facturas_file = 'facturas_json/facturas.json'
-                if os.path.exists(facturas_file):
-                    with open(facturas_file, 'r', encoding='utf-8') as f:
-                        facturas = json.load(f)
-                        for factura in facturas.values():
-                            if factura.get('numero') == numero:
-                                return True
+                facturas = cargar_datos(facturas_file, crear_vacio=False)
+                if facturas:
+                    for factura in facturas.values():
+                        if factura.get('numero') == numero:
+                            return True
                                 
             # TODO: Verificar en notas de crédito y débito cuando se implementen
             return False

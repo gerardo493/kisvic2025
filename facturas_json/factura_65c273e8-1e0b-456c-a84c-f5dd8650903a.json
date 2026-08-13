@@ -1,0 +1,144 @@
+{
+    "total_bs": 7181.478,
+    "fecha": "2025-06-03",
+    "numero": "FAC-00000645",
+    "descuento": 0.0,
+    "id": "65c273e8-1e0b-456c-a84c-f5dd8650903a",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "11:45:00",
+    "productos": [
+        "12",
+        "10",
+        "30",
+        "48",
+        "33",
+        "22",
+        "24"
+    ],
+    "total_usd": 73.8,
+    "cantidades": [
+        3,
+        3,
+        3,
+        3,
+        2,
+        3,
+        2
+    ],
+    "total_abonado": 10.03,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:56:31",
+            "metodo": "efectivo_usd",
+            "id": "37e9107f-9583-4be7-a712-886854607b56",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 10.03
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 63.77,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Sector 1 Caña De Azucar  Mbi",
+        "email": "farmacia.viña.del.mar@dominioinventado.com",
+        "rif": "J-501899064",
+        "telefono": "",
+        "nombre": "FARMACIA VIÑA DEL MAR"
+    },
+    "subtotal_bs": 7181.478,
+    "estado": "abonada",
+    "fecha_vencimiento": "2025-06-23",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        4.2,
+        4.2,
+        9.0,
+        3.0,
+        1.8
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899064",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "12",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "10",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 3,
+            "id_producto": "30",
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 1226.1060000000002,
+            "subtotal_usd": 12.600000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "48",
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 1226.1060000000002,
+            "subtotal_usd": 12.600000000000001,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 9.0,
+            "cantidad": 2,
+            "id_producto": "33",
+            "precio_unitario_bs": 875.79,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "22",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "24",
+            "cantidad": 2,
+            "precio_unitario_bs": 175.15800000000002,
+            "categoria": "",
+            "subtotal_bs": 350.31600000000003,
+            "subtotal_usd": 3.6,
+            "precio_unitario_usd": 1.8
+        }
+    ],
+    "subtotal_usd": 73.8,
+    "firma_fiscal": "e9d9942a61d75b17d36823c0ec1cdd575105b135d17b39e4955a4ba2eb2a09c4"
+}

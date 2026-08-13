@@ -1,0 +1,196 @@
+{
+    "total_bs": 7289.740000000001,
+    "fecha": "2025-06-05",
+    "numero": "FAC-00000652",
+    "descuento": 0.0,
+    "id": "b75a9b0a-b223-4d53-99df-79e728600848",
+    "tasa_bcv": 98.51,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:26:00",
+    "productos": [
+        "10",
+        "11",
+        "34",
+        "12",
+        "13",
+        "2",
+        "32",
+        "40",
+        "29",
+        "8",
+        "39"
+    ],
+    "total_usd": 74.0,
+    "cantidades": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3
+    ],
+    "total_abonado": 74.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 22:01:25",
+            "metodo": "efectivo_usd",
+            "id": "3265eb02-2bb2-4cd0-9a55-0c48b9c47f28",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 74.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle 8, Av Principal, Manzana 69, Local 01, Frente  A La Feria Cristiana De Hortalizas, Puerto Ordaz, Venezuela",
+        "email": "",
+        "rif": "V-205048142",
+        "telefono": "+5804147619184",
+        "nombre": "DANIELA CASTRO"
+    },
+    "subtotal_bs": 7289.740000000001,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-25",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-205048142",
+    "items": [
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 1,
+            "id_producto": "10",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 364.487,
+            "subtotal_usd": 3.7,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "11",
+            "cantidad": 1,
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 364.487,
+            "subtotal_usd": 3.7,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "34",
+            "cantidad": 1,
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 364.487,
+            "subtotal_usd": 3.7,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "12",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "13",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 2,
+            "id_producto": "2",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "32",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "40",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "29",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 2,
+            "id_producto": "8",
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 728.974,
+            "subtotal_usd": 7.4,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "39",
+            "cantidad": 3,
+            "precio_unitario_bs": 364.487,
+            "categoria": "",
+            "subtotal_bs": 1093.4610000000002,
+            "subtotal_usd": 11.100000000000001,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 74.0,
+    "firma_fiscal": "a53e595b634206c6b570f94b9f59a2589f0ff78a454255ff10728da080af3059"
+}

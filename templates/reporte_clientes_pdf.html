@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte_Clientes_Kisvic_{{ fecha_reporte|replace('/', '_')|replace(':', '_') }}.pdf</title>
+    <!-- FontAwesome icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- html2pdf.js for 1-click PDF download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @page {
+            size: letter portrait;
+            margin: 6mm 6mm 6mm 6mm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', 'Arial', sans-serif;
+            font-size: 9.5pt;
+            line-height: 1.3;
+            color: #000000;
+            background: #E5E7EB;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Top Action Bar (Pantalla) */
+        .top-action-bar {
+            max-width: 215mm;
+            margin: 15px auto 0;
+            background: #1B5E20;
+            color: #FFFFFF;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-pdf-download {
+            background-color: #D4A017;
+            color: #000000;
+            font-weight: 800;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 9.5pt;
+            transition: all 0.2s ease;
+        }
+
+        .btn-pdf-download:hover {
+            background-color: #B8860B;
+            color: #FFFFFF;
+        }
+
+        .btn-pdf-print {
+            background-color: #FFFFFF;
+            color: #1B5E20;
+            font-weight: 700;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 9.5pt;
+            margin-right: 8px;
+        }
+
+        /* Document Container */
+        .document-wrapper {
+            max-width: 215mm;
+            margin: 15px auto 30px;
+            background: #FFFFFF;
+            padding: 12mm 14mm;
+            border: 2px solid #1B5E20;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header Documento Formato Factura */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+            border-bottom: 2.5px solid #1B5E20;
+            padding-bottom: 10px;
+        }
+
+        .logo-cell {
+            width: 110px;
+            vertical-align: middle;
+        }
+
+        .logo-img {
+            max-width: 95px;
+            max-height: 85px;
+            object-fit: contain;
+        }
+
+        .company-cell {
+            vertical-align: middle;
+            padding-left: 10px;
+        }
+
+        .company-title {
+            font-size: 15pt;
+            font-weight: 900;
+            color: #1B5E20;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+
+        .company-details {
+            font-size: 8.5pt;
+            color: #1F2937;
+            line-height: 1.3;
+        }
+
+        .doc-title-cell {
+            width: 220px;
+            vertical-align: middle;
+            text-align: right;
+        }
+
+        .doc-title-box {
+            border: 2px solid #1B5E20;
+            background-color: #F0F7F0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .doc-title-main {
+            font-size: 11.5pt;
+            font-weight: 900;
+            color: #1B5E20;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .doc-title-sub {
+            font-size: 8pt;
+            font-weight: 700;
+            color: #B8860B;
+        }
+
+        /* Grid Metadata de Emisión y Filtros */
+        .meta-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 12px;
+        }
+
+        .meta-col {
+            width: 50%;
+            vertical-align: top;
+            padding: 0 4px;
+        }
+
+        .meta-box {
+            border: 1.5px solid #1B5E20;
+            border-radius: 6px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .meta-box-header {
+            background-color: #1B5E20;
+            color: #FFFFFF;
+            font-size: 8.5pt;
+            font-weight: 800;
+            padding: 5px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-box-body {
+            padding: 7px 10px;
+            font-size: 8.5pt;
+            background-color: #FFFFFF;
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            border-bottom: 1px dashed #E5E7EB;
+            padding-bottom: 2px;
+        }
+
+        .meta-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .meta-label {
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .meta-value {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Totales Summary Bar */
+        .totals-summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+            border: 1.5px solid #1B5E20;
+        }
+
+        .totals-summary-table th {
+            background-color: #1B5E20;
+            color: #FFFFFF;
+            font-size: 8pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 5px 8px;
+            text-align: center;
+            border: 1px solid #1B5E20;
+        }
+
+        .totals-summary-table td {
+            font-size: 11pt;
+            font-weight: 900;
+            padding: 7px 8px;
+            text-align: center;
+            border: 1px solid #1B5E20;
+            background-color: #FFFFFF;
+        }
+
+        /* Main Data Table */
+        .data-table-pdf {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 14px;
+        }
+
+        .data-table-pdf thead th {
+            background-color: #1B5E20 !important;
+            color: #FFFFFF !important;
+            font-size: 8.5pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 7px 8px;
+            border: 1.5px solid #1B5E20;
+            text-align: left;
+        }
+
+        .data-table-pdf tbody td {
+            font-size: 8.5pt;
+            padding: 6px 8px;
+            border: 1px solid #D1D5DB;
+            vertical-align: middle;
+        }
+
+        .data-table-pdf tbody tr:nth-child(even) {
+            background-color: #F9FAFB;
+        }
+
+        .num-col {
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .amount-col {
+            text-align: right;
+            font-weight: 800;
+            color: #1B5E20;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 7.5pt;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .badge-cobrada { background-color: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+        .badge-por_cobrar { background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+        .badge-vencida { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+
+        /* Secondary Tables Section */
+        .sec-table-title {
+            font-size: 9pt;
+            font-weight: 800;
+            color: #1B5E20;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            border-left: 3px solid #D4A017;
+            padding-left: 6px;
+        }
+
+        /* Signatures Footer */
+        .signatures-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+
+        .signature-cell {
+            width: 50%;
+            text-align: center;
+            vertical-align: bottom;
+            padding-top: 35px;
+        }
+
+        .signature-line {
+            border-top: 1.5px solid #000000;
+            margin: 0 auto;
+            width: 75%;
+            padding-top: 4px;
+            font-size: 8pt;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        .doc-footer-legal {
+            border-top: 1px solid #D1D5DB;
+            padding-top: 6px;
+            font-size: 7.5pt;
+            color: #6B7280;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media print {
+            body {
+                background: #FFFFFF;
+            }
+            .top-action-bar {
+                display: none !important;
+            }
+            .document-wrapper {
+                margin: 0;
+                padding: 0;
+                border: none;
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Control Bar para Descargar o Imprimir en Navegador -->
+<div class="top-action-bar no-print">
+    <div>
+        <i class="fas fa-file-pdf text-warning fa-lg me-2"></i>
+        <strong>Documento PDF Formato Oficial - Reporte General de Clientes</strong>
+    </div>
+    <div>
+        <button onclick="descargarPDFDirecto()" class="btn-pdf-download">
+            <i class="fas fa-download me-1"></i>Descargar PDF
+        </button>
+        <button onclick="window.print()" class="btn-pdf-print">
+            <i class="fas fa-print me-1"></i>Imprimir / PDF Nativo
+        </button>
+        <button onclick="window.close()" style="background: transparent; color: white; border: 1px solid white; padding: 7px 12px; border-radius: 6px; cursor: pointer;">
+            <i class="fas fa-times me-1"></i>Cerrar
+        </button>
+    </div>
+</div>
+
+<!-- Contenido Imprimible Formato Documento -->
+<div class="document-wrapper" id="pdfDocument">
+
+    <!-- Membrete Oficial Kisvic Estilo Factura -->
+    <table class="header-table">
+        <tr>
+            <td class="logo-cell">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="Kisvic Logo" class="logo-img">
+            </td>
+            <td class="company-cell">
+                <h1 class="company-title">PRODUCTOS NATURALES KISVIC 1045, C.A.</h1>
+                <div class="company-details">
+                    <strong>RIF:</strong> J-41103273-0 &nbsp;|&nbsp; <strong>Nº REGISTRO:</strong> 1045-2025<br>
+                    <strong>Dirección:</strong> Av. Principal Los Prados, Edif. Kisvic, Valencia, Edo. Carabobo, Venezuela<br>
+                    <strong>Teléfono:</strong> +58 (241) 800-5478 &nbsp;|&nbsp; <strong>Email:</strong> ventas@kisvic.com
+                </div>
+            </td>
+            <td class="doc-title-cell">
+                <div class="doc-title-box">
+                    <div class="doc-title-main">REPORTE DE CLIENTES</div>
+                    <div class="doc-title-sub">DOCUMENTO OFICIAL</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Grid Metadata de Emisión y Filtros Aplicados -->
+    <table class="meta-grid">
+        <tr>
+            <td class="meta-col">
+                <div class="meta-box">
+                    <div class="meta-box-header">
+                        <i class="fas fa-info-circle me-1"></i>DATOS DE EMISIÓN DEL DOCUMENTO
+                    </div>
+                    <div class="meta-box-body">
+                        <div class="meta-item">
+                            <span class="meta-label">Fecha y Hora de Emisión:</span>
+                            <span class="meta-value">{{ fecha_reporte }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Tasa Oficial BCV:</span>
+                            <span class="meta-value" style="color: #1B5E20; font-weight: 800;">{{ tasa_bcv|es_number }} Bs/USD</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Total Registros Encontrados:</span>
+                            <span class="meta-value">{{ "{:,}".format(clientes_filtrados|length) }} clientes</span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td class="meta-col">
+                <div class="meta-box">
+                    <div class="meta-box-header" style="background-color: #B8860B;">
+                        <i class="fas fa-filter me-1"></i>PARÁMETROS Y FILTROS DEL REPORTE
+                    </div>
+                    <div class="meta-box-body">
+                        <div class="meta-item">
+                            <span class="meta-label">Término de Búsqueda:</span>
+                            <span class="meta-value">{{ q if q else 'Ninguno (Todos)' }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Tipo de Cliente / Segmento:</span>
+                            <span class="meta-value">{{ tipo_cliente|title }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Período de Fechas:</span>
+                            <span class="meta-value">
+                                {% if fecha_desde or fecha_hasta %}
+                                    {{ fecha_desde or 'Inicio' }} a {{ fecha_hasta or 'Actual' }}
+                                {% else %}
+                                    Histórico Completo
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Rango de Montos:</span>
+                            <span class="meta-value">
+                                {% if monto_min or monto_max %}
+                                    ${{ "{:,.2f}".format(monto_min|float if monto_min else 0) }} - ${{ "{:,.2f}".format(monto_max|float if monto_max else 999999) }}
+                                {% else %}
+                                    Sin restricciones
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Cuadro de Totales y Resumen Financiero -->
+    <table class="totals-summary-table">
+        <thead>
+            <tr>
+                <th>CLIENTES EVALUADOS</th>
+                <th>FACTURADO TOTAL (USD)</th>
+                <th>TOTAL ABONADO (USD)</th>
+                <th>SALDO POR COBRAR (USD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="color: #1B5E20;">{{ "{:,}".format(clientes_filtrados|length) }}</td>
+                <td style="color: #1B5E20;">${{ "{:,.2f}".format(total_facturado_usd) }}</td>
+                <td style="color: #0284C7;">${{ "{:,.2f}".format(total_abonado_usd) }}</td>
+                <td style="color: #D4A017;">${{ "{:,.2f}".format(total_por_cobrar_usd) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Tabla Principal de Resultados de Clientes -->
+    <table class="data-table-pdf">
+        <thead>
+            <tr>
+                <th style="width: 4%; text-align: center;">#</th>
+                <th style="width: 28%;">Cliente / Razón Social</th>
+                <th style="width: 14%;">RIF / ID</th>
+                <th style="width: 20%;">Contacto</th>
+                <th style="width: 14%; text-align: right;">Total Compras</th>
+                <th style="width: 8%; text-align: center;">Fact.</th>
+                <th style="width: 12%; text-align: right;">Por Cobrar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for id_cliente, cliente in clientes_filtrados.items() %}
+            {% set stats = stats_clientes.get(id_cliente, {}) %}
+            <tr>
+                <td class="num-col">{{ loop.index }}</td>
+                <td>
+                    <strong>{{ cliente.nombre }}</strong>
+                    {% if id_cliente in clientes_vip_ids %}
+                    <span class="badge-status badge-por_cobrar ms-1">VIP</span>
+                    {% endif %}
+                </td>
+                <td>{{ cliente.get('rif', id_cliente) }}</td>
+                <td>
+                    {% if cliente.get('telefono') %}<small><i class="fas fa-phone me-1"></i>{{ cliente.telefono }}</small><br>{% endif %}
+                    {% if cliente.get('email') %}<small><i class="fas fa-envelope me-1"></i>{{ cliente.email }}</small>{% endif %}
+                </td>
+                <td class="amount-col">${{ "{:,.2f}".format(stats.get('total_compras', 0)) }}</td>
+                <td class="text-center fw-bold">{{ "{:,}".format(stats.get('total_facturas', 0)) }}</td>
+                <td class="text-end fw-bold" style="color: {% if stats.get('total_por_cobrar', 0) > 0 %}#DC2626{% else %}#10B981{% endif %};">
+                    ${{ "{:,.2f}".format(stats.get('total_por_cobrar', 0)) }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center py-3 text-muted">
+                    No hay registros de clientes que cumplan los filtros seleccionados.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Tablas Secundarias en 2 Columnas -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+        <tr>
+            <td style="width: 50%; vertical-align: top; padding-right: 6px;">
+                <div class="sec-table-title">TOP 5 MEJORES CLIENTES</div>
+                <table class="data-table-pdf">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th style="text-align: right;">Total Facturado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stats in top_clientes[:5] %}
+                        <tr>
+                            <td><strong>{{ stats.nombre }}</strong></td>
+                            <td class="amount-col">${{ "{:,.2f}".format(stats.total_compras) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+            <td style="width: 50%; vertical-align: top; padding-left: 6px;">
+                <div class="sec-table-title">TOP 5 PRODUCTOS MÁS COMPRADOS</div>
+                <table class="data-table-pdf">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th style="text-align: right;">Total Vendido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for prod in top_productos[:5] %}
+                        <tr>
+                            <td><strong>{{ prod.nombre }}</strong></td>
+                            <td class="amount-col" style="color: #1B5E20;">${{ "{:,.2f}".format(prod.valor) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Sección de Firmas y Sello Oficial -->
+    <table class="signatures-table">
+        <tr>
+            <td class="signature-cell">
+                <div class="signature-line">
+                    ELABORADO POR / DEPARTAMENTO DE VENTAS<br>
+                    PRODUCTOS NATURALES KISVIC 1045, C.A.
+                </div>
+            </td>
+            <td class="signature-cell">
+                <div class="signature-line">
+                    FIRMA AUTORIZADA Y SELLO DE LA EMPRESA<br>
+                    RIF: J-41103273-0
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Pie Legal de Página -->
+    <div class="doc-footer-legal">
+        <span>Documento oficial de control comercial emitido por el Sistema ERP Kisvic.</span>
+        <span>Página 1 de 1</span>
+    </div>
+
+</div>
+
+<script>
+function descargarPDFDirecto() {
+    const elemento = document.getElementById('pdfDocument');
+    const opciones = {
+        margin: [5, 5, 5, 5],
+        filename: 'Reporte_Clientes_Kisvic.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opciones).from(elemento).save();
+}
+
+// Disparar diálogo de impresión automáticamente si se requiere
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('autoprint') === 'true') {
+        setTimeout(() => window.print(), 800);
+    }
+});
+</script>
+
+</body>
+</html>

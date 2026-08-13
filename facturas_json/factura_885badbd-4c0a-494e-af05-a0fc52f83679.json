@@ -1,0 +1,69 @@
+{
+    "total_bs": 7335.36,
+    "fecha": "2025-08-26",
+    "numero": "FAC-00000756",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:16:14",
+    "productos": [
+        "46"
+    ],
+    "total_usd": 48.0,
+    "cantidades": [
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 48.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:16:14.456983",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "885badbd-4c0a-494e-af05-a0fc52f83679",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:16:14.456",
+        "firma_digital": "ffaa49fb408f5978130f6f62f0dac1099fa63da2d7661197703f320ebc5b4480",
+        "hash_inmutable": "ebdf7c3c0e13c29dcdc1ea2efd23ea7484efe8b899fbec1e86575ecd79bcb16c",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 7335.36,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-15",
+    "descuento_total": 0.0,
+    "precios": [
+        8.0
+    ],
+    "numero_secuencial": 755,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "precio_unitario_usd": 8.0,
+            "cantidad": 6,
+            "subtotal_usd": 48.0,
+            "id": "46",
+            "precio_unitario_bs": 1222.56,
+            "categoria": "Laxante",
+            "subtotal_bs": 7335.36,
+            "codigo_barras": "",
+            "nombre": "DOC QUENOPODIO X 12 UND"
+        }
+    ],
+    "subtotal_usd": 48.0,
+    "firma_fiscal": "c09e9030e0f5f29c1c40ea94b8b40b0bbae036206c53372a9b6c616d43fecd22",
+    "id": "885badbd-4c0a-494e-af05-a0fc52f83679"
+}

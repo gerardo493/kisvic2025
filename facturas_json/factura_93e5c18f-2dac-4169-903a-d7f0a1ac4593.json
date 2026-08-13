@@ -1,0 +1,83 @@
+{
+    "total_bs": 3667.68,
+    "fecha": "2025-09-01",
+    "numero": "FAC-00000763",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:42:20",
+    "productos": [
+        "4",
+        "19"
+    ],
+    "total_usd": 24.0,
+    "cantidades": [
+        4,
+        4
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 24.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:42:20.571306",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "93e5c18f-2dac-4169-903a-d7f0a1ac4593",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:42:20.572",
+        "firma_digital": "93e6b5e968f4dc9a91c8be560028af03bd8fbf3c7961c0639e762bec9ffa1315",
+        "hash_inmutable": "365d74f2f49bd076b77c71d940690c2c3bb020185cad7348d2232ad66bdd87d9",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle El Comercio Cc Paseo Colonial Don Pedro Nivel, Pb, Higuerote Edo Miranda",
+        "email": "salud.dietetica.v&d.2006.c.a.@dominioinventado.com",
+        "rif": "J-503178574",
+        "telefono": "",
+        "nombre": "SALUD DIETETICA V&D 2006 C.A."
+    },
+    "subtotal_bs": 3667.68,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-21",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 763,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178574",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "4",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Bactericida",
+            "subtotal_bs": 1833.84,
+            "codigo_barras": "",
+            "nombre": "ARANDANO ROJO X 60 CAP"
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "19",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 1833.84,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 24.0,
+    "firma_fiscal": "fdaa8c00f64a57a9fa6552cc227d91d229acd383b7cb3c312ec6f356b37e64a6",
+    "id": "93e5c18f-2dac-4169-903a-d7f0a1ac4593"
+}

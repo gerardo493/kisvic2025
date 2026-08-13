@@ -1,0 +1,144 @@
+{
+    "total_bs": 8728.707,
+    "fecha": "2025-05-30",
+    "numero": "FAC-00000641",
+    "descuento": 0.0,
+    "id": "268b07fd-d648-43e1-949e-06b70288bd58",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "17:52:00",
+    "productos": [
+        "19",
+        "16",
+        "39",
+        "29",
+        "17",
+        "44",
+        "33"
+    ],
+    "total_usd": 89.7,
+    "cantidades": [
+        2,
+        3,
+        3,
+        6,
+        3,
+        4,
+        1
+    ],
+    "total_abonado": 89.7,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:53:38",
+            "metodo": "efectivo_usd",
+            "id": "1484d362-22d1-465f-acd5-7d6b64b657fd",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 89.7
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Av. Miranda, Local 133 Sector Pueblo Nuevo Anzoategui",
+        "email": "",
+        "rif": "V-19289407",
+        "telefono": "",
+        "nombre": "BAUTISTA MUNDO NATURAL FP"
+    },
+    "subtotal_bs": 8728.707,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-19",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        12.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-19289407",
+    "items": [
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "19",
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 720.094,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "16",
+            "cantidad": 3,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1080.141,
+            "subtotal_usd": 11.100000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "39",
+            "cantidad": 3,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1080.141,
+            "subtotal_usd": 11.100000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "29",
+            "cantidad": 6,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 2160.282,
+            "subtotal_usd": 22.200000000000003,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "nombre": "",
+            "id_producto": "17",
+            "cantidad": 3,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1080.141,
+            "subtotal_usd": 11.100000000000001,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "44",
+            "cantidad": 4,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1440.188,
+            "subtotal_usd": 14.8,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "33",
+            "cantidad": 1,
+            "precio_unitario_bs": 1167.72,
+            "categoria": "",
+            "subtotal_bs": 1167.72,
+            "subtotal_usd": 12.0,
+            "precio_unitario_usd": 12.0
+        }
+    ],
+    "subtotal_usd": 89.7,
+    "firma_fiscal": "0ce98e18c1e5c05b2c3b592787617575a802697a8b5d99dd96c23760e2c8c30b"
+}

@@ -1,0 +1,118 @@
+{
+    "total_bs": 12261.06,
+    "fecha": "2025-05-31",
+    "numero": "FAC-00000642",
+    "descuento": 0.0,
+    "id": "fe3b2cdf-493a-44eb-8974-51ebc2fce302",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "11:54:00",
+    "productos": [
+        "34",
+        "13",
+        "58",
+        "56",
+        "60"
+    ],
+    "total_usd": 126.0,
+    "cantidades": [
+        12,
+        12,
+        6,
+        12,
+        6
+    ],
+    "total_abonado": 126.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:53:54",
+            "metodo": "efectivo_usd",
+            "id": "ae279489-dbe3-422a-89be-a583404b5f8e",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 126.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Santos  Michelena Cc Boulevard  Perez Almarza Nivel Pb Local # 159 Maracay",
+        "email": "empredimiento.jose.vasquez.20@dominioinventado.com",
+        "rif": "J-501899063",
+        "telefono": "",
+        "nombre": "EMPREDIMIENTO JOSE VASQUEZ 20"
+    },
+    "subtotal_bs": 12261.06,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-20",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        1.5,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899063",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "34",
+            "cantidad": 12,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 3503.16,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "13",
+            "cantidad": 12,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 3503.16,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "58",
+            "cantidad": 6,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "id_producto": "56",
+            "cantidad": 12,
+            "precio_unitario_bs": 145.965,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "60",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 126.0,
+    "firma_fiscal": "0f6f628f432e2d3273283aeba78bd3c40e7671c9d41fbd73b402fec2d2ee2ffe"
+}

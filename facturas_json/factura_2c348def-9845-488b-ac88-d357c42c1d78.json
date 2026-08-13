@@ -1,0 +1,97 @@
+{
+    "total_bs": 26239.2,
+    "fecha": "2025-08-11",
+    "numero": "FAC-00000740",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:49:57",
+    "productos": [
+        "12",
+        "10",
+        "57"
+    ],
+    "total_usd": 174.0,
+    "cantidades": [
+        24,
+        24,
+        10
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 174.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:49:57.281869",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "2c348def-9845-488b-ac88-d357c42c1d78",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:49:57.281",
+        "firma_digital": "24a1a353a39681cbb4ab3f79b2b4838636be6c603a7596d3e980344c18c614c2",
+        "hash_inmutable": "d9afc3a9de081396a82ea5e04327f2c1a293f90b9c9429ccebc5b9428ffa40a4",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 26239.2,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-31",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 740,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 24,
+            "subtotal_usd": 72.0,
+            "id": "12",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 10857.6,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 24,
+            "subtotal_usd": 72.0,
+            "id": "10",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 10857.6,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "QUINCHONCHO X 60 CAP",
+            "cantidad": 10,
+            "codigo_barras": "",
+            "id": "57",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Via Respiratoria",
+            "subtotal_bs": 4524.0,
+            "subtotal_usd": 30.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 174.0,
+    "firma_fiscal": "b9705d8193665bc0a3e4e8645774a3435b1bf0eaf3a4bef3af3c256528995bd1",
+    "id": "2c348def-9845-488b-ac88-d357c42c1d78"
+}

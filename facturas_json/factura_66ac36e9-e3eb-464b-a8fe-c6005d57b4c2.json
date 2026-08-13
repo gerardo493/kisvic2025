@@ -1,0 +1,139 @@
+{
+    "total_bs": 32391.839999999997,
+    "fecha": "2025-08-07",
+    "numero": "FAC-00000730",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:56:51",
+    "productos": [
+        "9",
+        "19",
+        "17",
+        "12",
+        "38",
+        "48"
+    ],
+    "total_usd": 214.79999999999995,
+    "cantidades": [
+        12,
+        12,
+        24,
+        6,
+        6,
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 214.79999999999995,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T21:56:51.985154",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "66ac36e9-e3eb-464b-a8fe-c6005d57b4c2",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 21:56:51.985",
+        "firma_digital": "51725d2393011b854a228243717a7eaa1325923aca58459b9239feac6eb1c8bb",
+        "hash_inmutable": "844f4aa1e6b3c4fab91cb489d2899d97765df86d8f804d309ebf1358330b18f6",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 32391.839999999997,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-27",
+    "descuento_total": 0.0,
+    "precios": [
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        3.9
+    ],
+    "numero_secuencial": 731,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "nombre": "CARDO MARIANO X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 36.0,
+            "id": "9",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 5428.8,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 12,
+            "codigo_barras": "",
+            "id": "19",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 5428.8,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP",
+            "cantidad": 24,
+            "subtotal_usd": 72.0,
+            "id": "17",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Anti-inflamatorio",
+            "subtotal_bs": 10857.6,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "12",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 2714.4,
+            "codigo_barras": "",
+            "nombre": "CENTELLA ASIATICA X 60 CAP"
+        },
+        {
+            "nombre": "ZARZAPARRILLA X 60CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "38",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Depurativo Desintoxicante",
+            "subtotal_bs": 2714.4,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CITRATO DE MAGNESIO",
+            "cantidad": 12,
+            "subtotal_usd": 50.400000000000006,
+            "id": "48",
+            "precio_unitario_bs": 633.3600000000001,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 7600.3200000000015,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        }
+    ],
+    "subtotal_usd": 214.79999999999995,
+    "firma_fiscal": "f75570c161f7d98043a87b1a5ddb934dcb26e19441a1485200fb294a4af8f830",
+    "id": "66ac36e9-e3eb-464b-a8fe-c6005d57b4c2"
+}

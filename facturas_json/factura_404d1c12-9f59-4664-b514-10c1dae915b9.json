@@ -1,0 +1,92 @@
+{
+    "total_bs": 3422.88,
+    "fecha": "2025-05-07",
+    "numero": "FAC-00000608",
+    "descuento": 0.0,
+    "id": "404d1c12-9f59-4664-b514-10c1dae915b9",
+    "tasa_bcv": 95.08,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:36:00",
+    "productos": [
+        "4",
+        "27",
+        "16"
+    ],
+    "total_usd": 36.0,
+    "cantidades": [
+        6,
+        3,
+        3
+    ],
+    "total_abonado": 36.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 20:56:43",
+            "metodo": "pago_movil",
+            "id": "8b50ce23-c687-451a-95b8-e22daa063ab7",
+            "banco": "0102",
+            "captura_path": null,
+            "referencia": "3332",
+            "monto": 36.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Mercado Libre Maracay Estado Aragua",
+        "email": "",
+        "rif": "J-501924334",
+        "telefono": "+5800054",
+        "nombre": "T/N LOS MORROS"
+    },
+    "subtotal_bs": 3422.88,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-05-27",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501924334",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "4",
+            "cantidad": 6,
+            "precio_unitario_bs": 285.24,
+            "categoria": "",
+            "subtotal_bs": 1711.44,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "27",
+            "cantidad": 3,
+            "precio_unitario_bs": 285.24,
+            "categoria": "",
+            "subtotal_bs": 855.72,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "16",
+            "cantidad": 3,
+            "precio_unitario_bs": 285.24,
+            "categoria": "",
+            "subtotal_bs": 855.72,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 36.0,
+    "firma_fiscal": "a88813e1d608b6ce3493c9447a1f9e4d60a7aceea2528a0827135e9d7993c959"
+}

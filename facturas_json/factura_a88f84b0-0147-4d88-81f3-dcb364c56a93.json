@@ -1,0 +1,153 @@
+{
+    "total_bs": 12410.840000000002,
+    "fecha": "2025-08-07",
+    "numero": "FAC-00000735",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:28:24",
+    "productos": [
+        "8",
+        "9",
+        "4",
+        "34",
+        "31",
+        "35",
+        "46"
+    ],
+    "total_usd": 82.30000000000001,
+    "cantidades": [
+        3,
+        3,
+        3,
+        4,
+        2,
+        4,
+        1
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 82.30000000000001,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:28:24.775608",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "a88f84b0-0147-4d88-81f3-dcb364c56a93",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:28:24.775",
+        "firma_digital": "96998ab3bd6c3ac76d8dc7481957f10d56e0bf9dc11f7a146bf5a1ae54ff08dd",
+        "hash_inmutable": "ecd01c0a166fa63ca5179f7a281edb0c495d55752ebe778784fa1465d6dce650",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Av. Miranda, Local 133 Sector Pueblo Nuevo Anzoategui",
+        "email": "",
+        "rif": "V-19289407",
+        "telefono": "",
+        "nombre": "BAUTISTA MUNDO NATURAL FP"
+    },
+    "subtotal_bs": 12410.840000000002,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-27",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        12.0
+    ],
+    "numero_secuencial": 735,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-19289407",
+    "items": [
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 3,
+            "subtotal_usd": 11.100000000000001,
+            "id": "8",
+            "precio_unitario_bs": 557.96,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 1673.8800000000003,
+            "codigo_barras": "",
+            "nombre": "CARDO LECHOZO X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 3,
+            "subtotal_usd": 11.100000000000001,
+            "id": "9",
+            "precio_unitario_bs": 557.96,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 1673.8800000000003,
+            "codigo_barras": "",
+            "nombre": "CARDO MARIANO X 60 CAP"
+        },
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 3,
+            "subtotal_usd": 11.100000000000001,
+            "id": "4",
+            "precio_unitario_bs": 557.96,
+            "categoria": "Bactericida",
+            "subtotal_bs": 1673.8800000000003,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "nombre": "SAW PALMETO X 60 CAP",
+            "cantidad": 4,
+            "subtotal_usd": 14.8,
+            "id": "34",
+            "precio_unitario_bs": 557.96,
+            "categoria": "hiperplasia prostatica",
+            "subtotal_bs": 2231.84,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "subtotal_usd": 7.4,
+            "id": "31",
+            "precio_unitario_bs": 557.96,
+            "categoria": "Oxigenante Cerebral",
+            "subtotal_bs": 1115.92,
+            "codigo_barras": "",
+            "nombre": "PIRA X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 4,
+            "subtotal_usd": 14.8,
+            "id": "35",
+            "precio_unitario_bs": 557.96,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 2231.84,
+            "codigo_barras": "",
+            "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 12.0,
+            "cantidad": 1,
+            "subtotal_usd": 12.0,
+            "id": "46",
+            "precio_unitario_bs": 1809.6000000000001,
+            "categoria": "Laxante",
+            "subtotal_bs": 1809.6000000000001,
+            "codigo_barras": "",
+            "nombre": "DOC QUENOPODIO X 12 UND"
+        }
+    ],
+    "subtotal_usd": 82.30000000000001,
+    "firma_fiscal": "95e9e69ba822658198b5ac4ee16a7b4c109a5dbc01cfe345cc25317fe30a57a8",
+    "id": "a88f84b0-0147-4d88-81f3-dcb364c56a93"
+}

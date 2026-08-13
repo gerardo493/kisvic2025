@@ -1,0 +1,107 @@
+{
+    "total_bs": 7255.584000000001,
+    "fecha": "2025-06-09",
+    "numero": "FAC-00000660",
+    "descuento": 0.0,
+    "id": "632f5753-43c7-462c-b147-d704d2cd90b4",
+    "tasa_bcv": 99.12,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:21:00",
+    "productos": [
+        "12",
+        "48",
+        "37",
+        "14",
+        "10"
+    ],
+    "total_usd": 73.2,
+    "cantidades": [
+        6,
+        2,
+        2,
+        12,
+        8
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 73.2,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Sanchez Carrero, Maracay -  Edo Arargua",
+        "email": "la.boutique.de.la.miel@dominioinventado.com",
+        "rif": "J-501899062",
+        "telefono": "",
+        "nombre": "LA BOUTIQUE DE LA MIEL"
+    },
+    "subtotal_bs": 7255.584000000001,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-29",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        4.2,
+        4.2,
+        1.2,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899062",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "12",
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 1784.16,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "48",
+            "cantidad": 2,
+            "precio_unitario_bs": 416.30400000000003,
+            "categoria": "",
+            "subtotal_bs": 832.6080000000001,
+            "subtotal_usd": 8.4,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 2,
+            "id_producto": "37",
+            "precio_unitario_bs": 416.30400000000003,
+            "categoria": "",
+            "subtotal_bs": 832.6080000000001,
+            "subtotal_usd": 8.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 1.2,
+            "cantidad": 12,
+            "id_producto": "14",
+            "precio_unitario_bs": 118.944,
+            "categoria": "",
+            "subtotal_bs": 1427.328,
+            "subtotal_usd": 14.399999999999999,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 8,
+            "id_producto": "10",
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 2378.88,
+            "subtotal_usd": 24.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 73.2,
+    "firma_fiscal": "cab4b4e6b797dfa1d73009f0d12357e1276ad2b7427b84c34ff780b200aa1f2a"
+}

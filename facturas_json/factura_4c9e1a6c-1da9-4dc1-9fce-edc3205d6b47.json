@@ -1,0 +1,107 @@
+{
+    "total_bs": 9581.49,
+    "fecha": "2025-07-06",
+    "numero": "FAC-00000694",
+    "descuento": 0.0,
+    "id": "4c9e1a6c-1da9-4dc1-9fce-edc3205d6b47",
+    "tasa_bcv": 118.29,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "20:15:00",
+    "productos": [
+        "12",
+        "27",
+        "1",
+        "13",
+        "34"
+    ],
+    "total_usd": 81.0,
+    "cantidades": [
+        12,
+        6,
+        3,
+        3,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 81.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Mercado Libre Maracay Estado Aragua",
+        "email": "",
+        "rif": "J-501924334",
+        "telefono": "+5800054",
+        "nombre": "T/N LOS MORROS"
+    },
+    "subtotal_bs": 9581.49,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-26",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501924334",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "12",
+            "cantidad": 12,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 4258.4400000000005,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "27",
+            "cantidad": 6,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 2129.2200000000003,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "1",
+            "cantidad": 3,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "13",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "34",
+            "cantidad": 3,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 81.0,
+    "firma_fiscal": "0b9c416f010438deeeae98885f40fb3b6fd2fdb1dded420858e349ffbbaede45"
+}

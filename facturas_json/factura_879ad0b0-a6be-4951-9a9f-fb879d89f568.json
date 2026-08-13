@@ -1,0 +1,55 @@
+{
+    "total_bs": 1751.58,
+    "fecha": "2025-05-26",
+    "numero": "FAC-00000635",
+    "descuento": 0.0,
+    "id": "879ad0b0-a6be-4951-9a9f-fb879d89f568",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:44:00",
+    "productos": [
+        "10"
+    ],
+    "total_usd": 18.0,
+    "cantidades": [
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 18.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Vargas Entre Av Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.renacer.natural@dominioinventado.com",
+        "rif": "J-308435378",
+        "telefono": "+5804120333026",
+        "nombre": "T/N RENACER NATURAL"
+    },
+    "subtotal_bs": 1751.58,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-15",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-308435378",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "10",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 18.0,
+    "firma_fiscal": "cac9b045610b56ebaf86b0fb68c0f98955063dbea97d085aa09f912c05a2058d"
+}

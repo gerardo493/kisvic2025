@@ -1,0 +1,69 @@
+{
+    "total_bs": 642468.0,
+    "fecha": "2026-05-25",
+    "numero": "FAC-00000780",
+    "descuento": 0.0,
+    "tasa_bcv": 535.39,
+    "iva_total": 0.0,
+    "condicion_pago": "contado",
+    "tipo_descuento": "bs",
+    "hora": "22:51:18",
+    "productos": [
+        "26"
+    ],
+    "total_usd": 1200.0,
+    "cantidades": [
+        400
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 1200.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2026-05-25T22:51:22.023105",
+    "dias_credito": "30",
+    "_metadatos_seguridad": {
+        "id_documento": "bf8be35c-ae93-4363-a69f-2e85d68267c9",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2026-05-25 22:51:22.024",
+        "firma_digital": "0b39203bedb0c72cefa1d503e185cc772ecf4d365f999b4738176afa753ef914",
+        "hash_inmutable": "d15ba81859fc4ae6c37d04aa6e85f888a2c7f79b6a0ca976fc69fffaebe05a19",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 642468.0,
+    "estado": "pendiente",
+    "fecha_vencimiento": "",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0
+    ],
+    "numero_secuencial": 780,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "nombre": "LOCHITA X 60 CAP",
+            "cantidad": 400,
+            "subtotal_usd": 1200.0,
+            "id": "26",
+            "precio_unitario_bs": 1606.17,
+            "categoria": "Oxigenate Cerebral",
+            "subtotal_bs": 642468.0,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 1200.0,
+    "firma_fiscal": "69de75e1deb7764a6338c25ce751540d493c685fde7ffa88c01468fee9ac63e9",
+    "id": "bf8be35c-ae93-4363-a69f-2e85d68267c9"
+}

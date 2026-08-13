@@ -1,0 +1,55 @@
+{
+    "total_bs": 4745.25,
+    "fecha": "2025-06-19",
+    "numero": "FAC-00000669",
+    "descuento": 0.0,
+    "id": "7bed7234-dcb6-41dc-9ee5-4c8d30774dde",
+    "tasa_bcv": 105.45,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "14:42:00",
+    "productos": [
+        "60"
+    ],
+    "total_usd": 45.0,
+    "cantidades": [
+        15
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 45.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Gran Demócrata, 18 sector centro I, Palo Negro 2117, Aragua",
+        "email": "",
+        "rif": "N/A",
+        "telefono": "0243-2673767",
+        "nombre": "T/N CASA VERDE"
+    },
+    "subtotal_bs": 4745.25,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-09",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "N/A",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 15,
+            "id_producto": "60",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 4745.25,
+            "subtotal_usd": 45.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 45.0,
+    "firma_fiscal": "0644923a8659beefb76f1056d92f82c1406108f0716ab6b08775dc75712ca264"
+}

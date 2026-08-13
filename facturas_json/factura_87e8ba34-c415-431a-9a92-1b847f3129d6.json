@@ -1,0 +1,69 @@
+{
+    "total_bs": 5428.8,
+    "fecha": "2025-08-13",
+    "numero": "FAC-00000742",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:53:35",
+    "productos": [
+        "14"
+    ],
+    "total_usd": 36.0,
+    "cantidades": [
+        36
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 36.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:53:35.012755",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "87e8ba34-c415-431a-9a92-1b847f3129d6",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:53:35.012",
+        "firma_digital": "6493ec0079f691c8d9ea42394b47cf951b9ae5898c8313721fc843a8bc2a90fa",
+        "hash_inmutable": "3025a0f6c24418613a6907e0b304ea8a4af3ad07fc355c02395163c919fd4c51",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 5428.8,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-02",
+    "descuento_total": 0.0,
+    "precios": [
+        1.0
+    ],
+    "numero_secuencial": 742,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "nombre": "CLORURO DE MAGNESIO X 33 GR",
+            "cantidad": 36,
+            "subtotal_usd": 36.0,
+            "id": "14",
+            "precio_unitario_bs": 150.8,
+            "categoria": "Regenerador osio",
+            "subtotal_bs": 5428.8,
+            "codigo_barras": "",
+            "precio_unitario_usd": 1.0
+        }
+    ],
+    "subtotal_usd": 36.0,
+    "firma_fiscal": "4803a9d838a5242500bf51028c7baae56947b1edf31c11253f800a2d7859ee04",
+    "id": "87e8ba34-c415-431a-9a92-1b847f3129d6"
+}

@@ -1,0 +1,136 @@
+{
+    "total_bs": 4928.039999999999,
+    "fecha": "2025-08-18",
+    "numero": "FAC-00000747",
+    "descuento": 0.0,
+    "tasa_bcv": 136.89,
+    "iva_total": 0.0,
+    "condicion_pago": "contado",
+    "tipo_descuento": "bs",
+    "hora": "13:03:30",
+    "productos": [
+        "16",
+        "36",
+        "19",
+        "18",
+        "20"
+    ],
+    "total_usd": 36.0,
+    "cantidades": [
+        3,
+        2,
+        2,
+        2,
+        3
+    ],
+    "total_abonado": 36.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-09-02 23:07:52",
+            "metodo": "pago_movil",
+            "id": "c94a5a44-58d6-4931-9993-69034796afcc",
+            "banco": "mercantil",
+            "captura_path": null,
+            "referencia": "5656",
+            "monto": 36.0
+        }
+    ],
+    "saldo_pendiente": 0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-18T13:03:30.504701",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "e132cd06-496d-44db-ba3d-9843455e1ad4",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-18 13:03:30.504",
+        "firma_digital": "bbabc78da478184365e3e956c98a58478d81cd95edbf7f16ef6add2374826a6a",
+        "hash_inmutable": "e010ef4fc4b5f6805a4d249a714e46e302d812d81903e90ff5663a4f2bc6b4b0",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Cajua Aragua",
+        "email": "josegregorioruiz@gmail.com",
+        "rif": "V-8576138",
+        "telefono": "+5804121447869",
+        "nombre": "JOSE GREGORIO RUIZ"
+    },
+    "subtotal_bs": 4928.039999999999,
+    "estado": "pagada",
+    "fecha_vencimiento": "",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 726,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-8576138",
+    "items": [
+        {
+            "nombre": "COLON CLEANSER X 60 CAP",
+            "cantidad": 3,
+            "codigo_barras": "",
+            "id": "16",
+            "precio_unitario_bs": 410.66999999999996,
+            "categoria": "Limpieza De colon",
+            "subtotal_bs": 1232.0099999999998,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "VENA CLEASNER X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "36",
+            "precio_unitario_bs": 410.66999999999996,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 821.3399999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "19",
+            "precio_unitario_bs": 410.66999999999996,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 821.3399999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "DIENTE DE LEON X 60 CAP",
+            "cantidad": 2,
+            "codigo_barras": "",
+            "id": "18",
+            "precio_unitario_bs": 410.66999999999996,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 821.3399999999999,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "GINKGO C/ GINSENG X 60 CAP",
+            "cantidad": 3,
+            "codigo_barras": "",
+            "id": "20",
+            "precio_unitario_bs": 410.66999999999996,
+            "categoria": "Oxigenante/ Energizante",
+            "subtotal_bs": 1232.0099999999998,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 36.0,
+    "firma_fiscal": "5ddd8e3f9e6eef9444baffffdef0ec509482fe099960394c395c359a441fc735",
+    "id": "e132cd06-496d-44db-ba3d-9843455e1ad4"
+}

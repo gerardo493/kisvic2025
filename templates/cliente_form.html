@@ -1,240 +1,494 @@
 {% extends "base.html" %}
 
-{% block title %}{{ 'Editar Cliente' if cliente else 'Nuevo Cliente' }} - SENIAT{% endblock %}
+{% block title %}{{ 'Editar Cliente' if cliente else 'Nuevo Cliente' }} - SENIAT • Kisvic{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 offset-md-1">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
-                    <i class="fas fa-shield-alt me-2"></i>
-                    {{ 'Editar Cliente SENIAT' if cliente else 'Nuevo Cliente SENIAT' }}
-                </h4>
-                <small>Formulario con validaciones según Providencia 00102</small>
-            </div>
-            <div class="card-body">
-                <!-- Alerta de información SENIAT -->
-                <div class="alert alert-info border-left-info" role="alert">
-                    <div class="d-flex">
-                        <div class="flex-shrink-0">
-                            <i class="fas fa-info-circle fa-2x text-info"></i>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <h6 class="alert-heading">📋 Requisitos SENIAT</h6>
-                            <p class="mb-0"><strong>Campos obligatorios:</strong> RIF completo, nombre, dirección completa (mínimo 10 caracteres), teléfono válido.</p>
-                            <small class="text-muted">Todos los datos se validan automáticamente según normativas fiscales.</small>
+<style>
+    .form-container-kisvic {
+        background-color: #F5F7F5;
+        min-height: 100vh;
+        padding: 1.5rem 0;
+    }
+
+    .kisvic-card-form {
+        background: #FFFFFF;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #E5E7EB;
+        overflow: hidden;
+    }
+
+    .kisvic-section-card {
+        background: #FFFFFF;
+        border-radius: 12px;
+        border: 1px solid #E5E7EB;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .kisvic-accent-green-top {
+        border-top: 3px solid #2E7D32 !important;
+    }
+
+    .kisvic-accent-gold-top {
+        border-top: 3px solid #D4A017 !important;
+    }
+
+    .section-title-green {
+        color: #2E7D32;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .section-title-gold {
+        color: #D4A017;
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .form-label.fw-bold {
+        color: #212121;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #D1D5DB;
+        border-radius: 8px;
+        padding: 0.6rem 0.9rem;
+        font-size: 0.95rem;
+        color: #212121;
+        outline: none !important;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2E7D32 !important;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15) !important;
+    }
+
+    .btn-kisvic-save {
+        background-color: #2E7D32 !important;
+        border-color: #1B5E20 !important;
+        color: #FFFFFF !important;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.65rem 1.4rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-kisvic-save:hover {
+        background-color: #1B5E20 !important;
+        color: #FFFFFF !important;
+    }
+
+    .btn-kisvic-cancel {
+        border-radius: 8px;
+        padding: 0.65rem 1.4rem;
+        font-weight: 600;
+    }
+
+    .seniat-badge-valid {
+        background-color: #E8F5E9;
+        color: #2E7D32;
+        border: 1px solid #C8E6C9;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .seniat-badge-warning {
+        background-color: #FFFBEB;
+        color: #D97706;
+        border: 1px solid #FDE68A;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="form-container-kisvic">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header de Formulario -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h2 class="mb-0" style="color: #2E7D32; font-weight: 700;">
+                            <i class="fas fa-user-plus me-2" style="color: #D4A017;"></i>
+                            {{ 'Editar Cliente' if cliente else 'Nuevo Cliente' }} SENIAT
+                        </h2>
+                        <p class="text-muted mb-0">Gestión de datos fiscales y persona de contacto • Productos Naturales Kisvic 1045, C.A.</p>
+                    </div>
+                    <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-outline-secondary btn-kisvic-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al Catálogo
+                    </a>
+                </div>
+
+                <div class="kisvic-gold-divider mb-4"></div>
+
+                <!-- Alerta SENIAT -->
+                <div class="alert alert-light border-0 shadow-sm mb-4" style="border-left: 4px solid #D4A017 !important; border-radius: 10px;">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt fa-2x me-3" style="color: #D4A017;"></i>
+                        <div>
+                            <h6 class="mb-1 fw-bold" style="color: #212121;">Normativa SENIAT - Providencia 00102</h6>
+                            <small style="color: #6B7280;">Campos obligatorios: RIF verificado, Razón Social completa, dirección fiscal (mínimo 10 caracteres) y teléfono con código de país.</small>
                         </div>
                     </div>
                 </div>
 
                 <form method="POST" action="{% if cliente %}{{ url_for('editar_cliente', id=cliente.id|urlencode) }}{% else %}{{ url_for('nuevo_cliente') }}{% endif %}" id="cliente-form">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    
-                    <!-- IDENTIFICACIÓN FISCAL -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-id-card me-2"></i>Identificación Fiscal
+
+                    <!-- 1. IDENTIFICACIÓN FISCAL -->
+                    <div class="kisvic-section-card kisvic-accent-green-top">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="section-title-green mb-0">
+                                <i class="fas fa-id-card me-2"></i>1. Identificación Fiscal SENIAT
                             </h5>
+                            <span id="seniat-validation-badge" class="seniat-badge-warning" style="display: none;">
+                                <i class="fas fa-clock me-1"></i>Ingresando RIF...
+                            </span>
                         </div>
+
+                        {% if not cliente %}
+                        <!-- NUEVO CLIENTE -->
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="tipo_id" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Tipo de Documento
+                                </label>
+                                <select class="form-select" id="tipo_id" name="tipo_id" required onchange="onTipoIdChange()">
+                                    <option value="">Seleccione...</option>
+                                    <option value="V">V - Venezolano</option>
+                                    <option value="E">E - Extranjero</option>
+                                    <option value="J" selected>J - Persona Jurídica</option>
+                                    <option value="P">P - Pasaporte</option>
+                                    <option value="G">G - Gubernamental</option>
+                                </select>
+                                <div class="form-text">Registro SENIAT</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="numero_id" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Número de Cédula / RIF
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="numero_id" 
+                                       name="numero_id" 
+                                       pattern="[0-9]{7,10}" 
+                                       minlength="7" 
+                                       maxlength="10"
+                                       placeholder="Ej: 12345678"
+                                       required>
+                                <div class="form-text">De 7 a 10 dígitos numéricos</div>
+                            </div>
+                            <div class="col-md-3" id="digito-verificador-container">
+                                <label for="digito_verificador" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Dígito Verificador
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="digito_verificador" 
+                                       name="digito_verificador" 
+                                       pattern="[0-9]{1}" 
+                                       maxlength="1"
+                                       placeholder="0-9">
+                                <div class="form-text">Último dígito del RIF</div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="alert alert-warning py-2 mb-0" id="rif-preview" style="display: none; border-radius: 8px;">
+                                    <i class="fas fa-barcode me-2"></i><strong>RIF Completo SENIAT:</strong> <span id="rif-display" class="fw-bold fs-6"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% else %}
+                        <!-- CLIENTE EXISTENTE -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="id" class="form-label fw-bold">RIF / Identificación Fiscal (Inmutable)</label>
+                                <input type="text" class="form-control bg-light fw-bold" id="id" name="id_visible" value="{{ cliente.rif or cliente.id }}" readonly>
+                                <div class="form-text text-muted">
+                                    <i class="fas fa-lock me-1"></i>El RIF permanece inalterable por seguridad fiscal.
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Estatus Fiscal SENIAT</label>
+                                <div class="seniat-badge-valid d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    {% if cliente.validado_seniat %}
+                                        Homologado y Validado ante el SENIAT
+                                    {% else %}
+                                        Registrado (Pendiente por homologar)
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
 
-                    {% if not cliente %}
-                    <!-- NUEVO CLIENTE -->
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="tipo_id" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Tipo de ID
-                            </label>
-                            <select class="form-select" id="tipo_id" name="tipo_id" required onchange="toggleDigitoVerificador()">
-                                <option value="">Seleccione...</option>
-                                <option value="V">V - Venezolano</option>
-                                <option value="E">E - Extranjero</option>
-                                <option value="J">J - Persona Jurídica</option>
-                                <option value="P">P - Pasaporte</option>
-                                <option value="G">G - Gubernamental</option>
-                            </select>
-                            <div class="form-text">Según registro SENIAT</div>
+                    <!-- 2. DATOS GENERALES Y CONTACTO PRINCIPAL -->
+                    <div class="kisvic-section-card kisvic-accent-green-top">
+                        <h5 class="section-title-green mb-3">
+                            <i class="fas fa-building me-2"></i>2. Datos Generales de la Empresa / Cliente
+                        </h5>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label for="nombre" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Nombre Completo / Razón Social
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="nombre" 
+                                       name="nombre" 
+                                       value="{{ cliente.nombre if cliente else '' }}" 
+                                       minlength="3"
+                                       maxlength="100"
+                                       placeholder="Razón Social registrada en el RIF"
+                                       required>
+                                <div class="form-text">Nombre legal para emisión de comprobantes</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="email" class="form-label fw-bold">Correo Electrónico de Facturación</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       value="{{ cliente.email if cliente else '' }}"
+                                       placeholder="facturacion@empresa.com">
+                                <div class="form-text">Para envío de facturas y notas</div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="numero_id" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Número de Identificación
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="numero_id" 
-                                   name="numero_id" 
-                                   pattern="[0-9]{7,10}" 
-                                   minlength="7" 
-                                   maxlength="10"
-                                   placeholder="Ej: 12345678"
-                                   required>
-                            <div class="form-text">Entre 7 y 10 dígitos, solo números</div>
-                        </div>
-                        <div class="col-md-3" id="digito-verificador-container" style="display: none;">
-                            <label for="digito_verificador" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Dígito Verificador
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="digito_verificador" 
-                                   name="digito_verificador" 
-                                   pattern="[0-9]{1}" 
-                                   maxlength="1"
-                                   placeholder="0-9">
-                            <div class="form-text">Solo para personas jurídicas</div>
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <div class="alert alert-warning" id="rif-preview" style="display: none;">
-                                <strong>RIF generado:</strong> <span id="rif-display"></span>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="codigo_pais" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Código País
+                                </label>
+                                <select class="form-select" id="codigo_pais" name="codigo_pais">
+                                    <option value="+58" {% if not cliente or (cliente.telefono and cliente.telefono.startswith('+58')) %}selected{% endif %}>
+                                        🇻🇪 +58 (Venezuela)
+                                    </option>
+                                    <option value="+1" {% if cliente and cliente.telefono and cliente.telefono.startswith('+1') %}selected{% endif %}>
+                                        🇺🇸 +1 (USA/Canadá)
+                                    </option>
+                                    <option value="+57" {% if cliente and cliente.telefono and cliente.telefono.startswith('+57') %}selected{% endif %}>
+                                        🇨🇴 +57 (Colombia)
+                                    </option>
+                                    <option value="+34" {% if cliente and cliente.telefono and cliente.telefono.startswith('+34') %}selected{% endif %}>
+                                        🇪🇸 +34 (España)
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="telefono" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Número de Teléfono Principal
+                                </label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="telefono" 
+                                       name="telefono" 
+                                       value="{% if cliente and cliente.telefono %}{{ cliente.telefono[3:] if cliente.telefono.startswith('+') else cliente.telefono }}{% endif %}" 
+                                       pattern="[0-9]{10,11}"
+                                       minlength="10"
+                                       placeholder="4121234567 (10 dígitos)"
+                                       required>
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <label for="estado" class="form-label fw-bold">
+                                    <i class="fas fa-map-marker-alt text-success me-1"></i>Estado de Venezuela
+                                </label>
+                                <select class="form-select" id="estado" name="estado">
+                                    <option value="">Seleccione Estado...</option>
+                                    <option value="Distrito Capital" {% if cliente and cliente.estado == 'Distrito Capital' %}selected{% endif %}>Distrito Capital</option>
+                                    <option value="Miranda" {% if cliente and cliente.estado == 'Miranda' %}selected{% endif %}>Miranda</option>
+                                    <option value="Aragua" {% if cliente and cliente.estado == 'Aragua' %}selected{% endif %}>Aragua</option>
+                                    <option value="Carabobo" {% if cliente and cliente.estado == 'Carabobo' %}selected{% endif %}>Carabobo</option>
+                                    <option value="Zulia" {% if cliente and cliente.estado == 'Zulia' %}selected{% endif %}>Zulia</option>
+                                    <option value="Lara" {% if cliente and cliente.estado == 'Lara' %}selected{% endif %}>Lara</option>
+                                    <option value="Anzoátegui" {% if cliente and cliente.estado == 'Anzoátegui' %}selected{% endif %}>Anzoátegui</option>
+                                    <option value="Monagas" {% if cliente and cliente.estado == 'Monagas' %}selected{% endif %}>Monagas</option>
+                                    <option value="Bolívar" {% if cliente and cliente.estado == 'Bolívar' %}selected{% endif %}>Bolívar</option>
+                                    <option value="Sucre" {% if cliente and cliente.estado == 'Sucre' %}selected{% endif %}>Sucre</option>
+                                    <option value="Falcón" {% if cliente and cliente.estado == 'Falcón' %}selected{% endif %}>Falcón</option>
+                                    <option value="Táchira" {% if cliente and cliente.estado == 'Táchira' %}selected{% endif %}>Táchira</option>
+                                    <option value="Mérida" {% if cliente and cliente.estado == 'Mérida' %}selected{% endif %}>Mérida</option>
+                                    <option value="Trujillo" {% if cliente and cliente.estado == 'Trujillo' %}selected{% endif %}>Trujillo</option>
+                                    <option value="Nueva Esparta" {% if cliente and cliente.estado == 'Nueva Esparta' %}selected{% endif %}>Nueva Esparta</option>
+                                    <option value="Yaracuy" {% if cliente and cliente.estado == 'Yaracuy' %}selected{% endif %}>Yaracuy</option>
+                                    <option value="Portuguesa" {% if cliente and cliente.estado == 'Portuguesa' %}selected{% endif %}>Portuguesa</option>
+                                    <option value="Barinas" {% if cliente and cliente.estado == 'Barinas' %}selected{% endif %}>Barinas</option>
+                                    <option value="Guárico" {% if cliente and cliente.estado == 'Guárico' %}selected{% endif %}>Guárico</option>
+                                    <option value="La Guaira" {% if cliente and cliente.estado == 'La Guaira' %}selected{% endif %}>La Guaira</option>
+                                </select>
+                                <div class="form-text">Mejora la precisión de geocodificación comercial</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="municipio" class="form-label fw-bold">
+                                    <i class="fas fa-city text-success me-1"></i>Municipio / Ciudad
+                                </label>
+                                <input type="text" class="form-control" id="municipio" name="municipio" value="{{ cliente.municipio if cliente else '' }}" placeholder="Ej: Libertador, Chacao, Girardot...">
+                                <div class="form-text">Municipio o ciudad principal del cliente</div>
                             </div>
                         </div>
                     </div>
 
-                    {% else %}
-                    <!-- CLIENTE EXISTENTE -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="id" class="form-label fw-bold">RIF/Identificación (Inmutable)</label>
-                            <input type="text" class="form-control bg-light" id="id" name="id_visible" value="{{ cliente.rif or cliente.id }}" readonly>
-                            <div class="form-text text-muted">
-                                <i class="fas fa-lock me-1"></i>
-                                El RIF no se puede modificar por seguridad fiscal
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Estado SENIAT</label>
-                            <div class="form-control bg-success text-white">
-                                <i class="fas fa-check-circle me-2"></i>
-                                {% if cliente.validado_seniat %}
-                                    ✅ Validado SENIAT
-                                {% else %}
-                                    ⚠️ Requiere validación
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- DATOS GENERALES -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-user me-2"></i>Datos Generales
+                    <!-- 3. PERSONA DE CONTACTO (NUEVA SECCIÓN CON LÓGICA DINÁMICA) -->
+                    {% set contacto = cliente.contacto if cliente and cliente.contacto else {} %}
+                    <div class="kisvic-section-card kisvic-accent-gold-top" id="section-persona-contacto">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="section-title-gold mb-0">
+                                <i class="fas fa-id-badge me-2"></i>3. Persona de Contacto
                             </h5>
+                            <span class="badge bg-warning text-dark px-3 py-2" id="contacto-badge-recomendado" style="font-weight: 600;">
+                                Recomendado para Empresas SENIAT
+                            </span>
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-8">
-                            <label for="nombre" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Nombre Completo / Razón Social
+                        <!-- Switch de Autorellenado para Persona Natural -->
+                        <div class="form-check form-switch mb-3" id="switch-autofill-container">
+                            <input class="form-check-input" type="checkbox" id="switchAutofillContacto" onchange="copiarDatosClienteAContacto()">
+                            <label class="form-check-input-label fw-semibold text-dark" for="switchAutofillContacto">
+                                <i class="fas fa-copy me-1 text-warning"></i> La persona de contacto es el mismo cliente (Copiar datos automáticamente)
                             </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="nombre" 
-                                   name="nombre" 
-                                   value="{{ cliente.nombre if cliente else '' }}" 
-                                   minlength="3"
-                                   maxlength="100"
-                                   placeholder="Nombre completo o razón social"
-                                   required>
-                            <div class="form-text">Según documento de identidad</div>
                         </div>
-                        <div class="col-md-4">
-                            <label for="email" class="form-label fw-bold">Correo Electrónico</label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   value="{{ cliente.email if cliente else '' }}"
-                                   placeholder="correo@ejemplo.com">
-                            <div class="form-text">Opcional, para notificaciones</div>
-                        </div>
-                    </div>
 
-                    <!-- CONTACTO -->
-                    <div class="row mb-4">
-                        <div class="col-12">
-                            <h5 class="text-primary mb-3">
-                                <i class="fas fa-phone me-2"></i>Información de Contacto
-                            </h5>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="contacto_nombre" class="form-label fw-bold">Nombre de la Persona de Contacto</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="contacto_nombre" 
+                                       name="contacto_nombre" 
+                                       value="{{ contacto.nombre if contacto else '' }}"
+                                       placeholder="Ej: Lic. Juan Pérez">
+                                <div class="form-text">Representante autorizado o comprador</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="contacto_cargo" class="form-label fw-bold">Cargo en la Empresa</label>
+                                <select class="form-select" id="contacto_cargo" name="contacto_cargo">
+                                    <option value="">Seleccione o escriba...</option>
+                                    <option value="Comprador" {% if contacto and contacto.cargo == 'Comprador' %}selected{% endif %}>Comprador</option>
+                                    <option value="Administrador" {% if contacto and contacto.cargo == 'Administrador' %}selected{% endif %}>Administrador / Finanzas</option>
+                                    <option value="Encargado de Compras" {% if contacto and contacto.cargo == 'Encargado de Compras' %}selected{% endif %}>Encargado de Compras</option>
+                                    <option value="Gerente de Administración" {% if contacto and contacto.cargo == 'Gerente de Administración' %}selected{% endif %}>Gerente de Administración</option>
+                                    <option value="Propietario / Gerente General" {% if contacto and contacto.cargo == 'Propietario / Gerente General' %}selected{% endif %}>Propietario / Gerente General</option>
+                                    <option value="Otro" {% if contacto and contacto.cargo == 'Otro' %}selected{% endif %}>Otro</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="codigo_pais" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Código País
-                            </label>
-                            <select class="form-select" id="codigo_pais" name="codigo_pais">
-                                <option value="+58" {% if not cliente or (cliente.telefono and cliente.telefono.startswith('+58')) %}selected{% endif %}>
-                                    🇻🇪 +58 (Venezuela)
-                                </option>
-                                <option value="+1" {% if cliente and cliente.telefono and cliente.telefono.startswith('+1') %}selected{% endif %}>
-                                    🇺🇸 +1 (USA/Canadá)
-                                </option>
-                                <option value="+57" {% if cliente and cliente.telefono and cliente.telefono.startswith('+57') %}selected{% endif %}>
-                                    🇨🇴 +57 (Colombia)
-                                </option>
-                                <option value="+34" {% if cliente and cliente.telefono and cliente.telefono.startswith('+34') %}selected{% endif %}>
-                                    🇪🇸 +34 (España)
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-md-8">
-                            <label for="telefono" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Número de Teléfono
-                            </label>
-                            <input type="tel" 
-                                   class="form-control" 
-                                   id="telefono" 
-                                   name="telefono" 
-                                   value="{% if cliente and cliente.telefono %}{{ cliente.telefono[3:] if cliente.telefono.startswith('+') else cliente.telefono }}{% endif %}" 
-                                   pattern="[0-9]{10,11}"
-                                   minlength="10"
-                                   placeholder="4121234567 (sin espacios)"
-                                   required>
-                            <div class="form-text">Mínimo 10 dígitos, sin espacios ni guiones</div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <label for="direccion" class="form-label fw-bold">
-                                <span class="text-danger">*</span> Dirección Fiscal Completa
-                            </label>
-                            <textarea class="form-control" 
-                                      id="direccion" 
-                                      name="direccion" 
-                                      rows="3" 
-                                      minlength="10"
-                                      maxlength="500"
-                                      placeholder="Dirección completa con estado, municipio, código postal..."
-                                      required>{{ cliente.direccion if cliente else '' }}</textarea>
-                            <div class="form-text">
-                                <strong>Mínimo 10 caracteres.</strong> Incluya: Calle, número, ciudad, estado, código postal.
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="contacto_codigo_pais" class="form-label fw-bold">Código País</label>
+                                <select class="form-select" id="contacto_codigo_pais" name="contacto_codigo_pais">
+                                    <option value="+58" {% if not contacto or (contacto.telefono and contacto.telefono.startswith('+58')) %}selected{% endif %}>🇻🇪 +58</option>
+                                    <option value="+1" {% if contacto and contacto.telefono and contacto.telefono.startswith('+1') %}selected{% endif %}>🇺🇸 +1</option>
+                                    <option value="+57" {% if contacto and contacto.telefono and contacto.telefono.startswith('+57') %}selected{% endif %}>🇨🇴 +57</option>
+                                    <option value="+34" {% if contacto and contacto.telefono and contacto.telefono.startswith('+34') %}selected{% endif %}>🇪🇸 +34</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="contacto_telefono" class="form-label fw-bold">Teléfono Directo Contacto</label>
+                                <input type="tel" 
+                                       class="form-control" 
+                                       id="contacto_telefono" 
+                                       name="contacto_telefono" 
+                                       value="{% if contacto and contacto.telefono %}{{ contacto.telefono[3:] if contacto.telefono.startswith('+') else contacto.telefono }}{% endif %}" 
+                                       placeholder="4141234567"
+                                       pattern="[0-9]{10,11}">
+                                <div class="form-text">Para contacto directo vía WhatsApp</div>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="contacto_email" class="form-label fw-bold">Correo Directo Contacto</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="contacto_email" 
+                                       name="contacto_email" 
+                                       value="{{ contacto.email if contacto else '' }}"
+                                       placeholder="contacto.directo@empresa.com">
+                                <div class="form-text">Email directo de la persona de contacto</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- BOTONES -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-outline-secondary me-md-2">
+                    <!-- 4. TÉRMINOS DE CRÉDITO COMERCIAL ($ USD) -->
+                    <div class="kisvic-section-card kisvic-accent-green-top">
+                        <h5 class="section-title-green mb-3">
+                            <i class="fas fa-hand-holding-usd me-2"></i>4. Términos de Crédito Comercial
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="limite_credito" class="form-label fw-bold">Límite de Crédito Aprobado ($ USD)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-success fw-bold">$</span>
+                                    <input type="number" 
+                                           step="0.01" 
+                                           min="0" 
+                                           class="form-control" 
+                                           id="limite_credito" 
+                                           name="limite_credito" 
+                                           value="{{ cliente.limite_credito if cliente and cliente.limite_credito is defined else 0.00 }}" 
+                                           placeholder="0.00">
+                                </div>
+                                <div class="form-text">Cupo máximo de crédito financiado en dólares</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dias_credito" class="form-label fw-bold">Días de Crédito Permitidos</label>
+                                <select class="form-select" id="dias_credito" name="dias_credito">
+                                    <option value="0" {% if not cliente or cliente.dias_credito == 0 %}selected{% endif %}>0 Días (Estricto Contado)</option>
+                                    <option value="7" {% if cliente and cliente.dias_credito == 7 %}selected{% endif %}>7 Días</option>
+                                    <option value="15" {% if cliente and cliente.dias_credito == 15 %}selected{% endif %}>15 Días</option>
+                                    <option value="30" {% if cliente and cliente.dias_credito == 30 %}selected{% endif %}>30 Días</option>
+                                    <option value="45" {% if cliente and cliente.dias_credito == 45 %}selected{% endif %}>45 Días</option>
+                                    <option value="60" {% if cliente and cliente.dias_credito == 60 %}selected{% endif %}>60 Días</option>
+                                </select>
+                                <div class="form-text">Plazo máximo para el pago de facturas pendientes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. DIRECCIÓN FISCAL -->
+                    <div class="kisvic-section-card kisvic-accent-green-top mb-4">
+                        <h5 class="section-title-green mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>5. Dirección Fiscal Completa SENIAT
+                        </h5>
+                        <div class="row">
+                            <div class="col-12">
+                                <label for="direccion" class="form-label fw-bold">
+                                    <span class="text-danger">*</span> Dirección Fiscal Completa
+                                </label>
+                                <textarea class="form-control" 
+                                          id="direccion" 
+                                          name="direccion" 
+                                          rows="3" 
+                                          minlength="10"
+                                          maxlength="500"
+                                          placeholder="Dirección exacta según registro de RIF (Estado, municipio, avenida, edificio/local)..."
+                                          required>{{ cliente.direccion if cliente else '' }}</textarea>
+                                <div class="form-text">
+                                    <strong>Mínimo 10 caracteres.</strong> Incluya detalles de ubicación fiscal para la impresión de facturas.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTONES DE ACCIÓN -->
+                    <div class="d-flex justify-content-end gap-3 mb-4">
+                        <a href="{{ url_for('mostrar_clientes') }}" class="btn btn-outline-secondary btn-kisvic-cancel">
                             <i class="fas fa-times me-2"></i>Cancelar
                         </a>
-                                <button type="submit" class="btn btn-primary" id="submit-btn">
-                                    <i class="fas fa-shield-alt me-2"></i>
-                                    {{ 'Actualizar Cliente SENIAT' if cliente else 'Guardar Cliente SENIAT' }}
-                                </button>
-                            </div>
-                        </div>
+                        <button type="submit" class="btn btn-kisvic-save" id="submit-btn">
+                            <i class="fas fa-check-circle me-2"></i>
+                            {{ 'Actualizar Cliente SENIAT' if cliente else 'Guardar Cliente SENIAT' }}
+                        </button>
                     </div>
                 </form>
             </div>
@@ -243,12 +497,19 @@
 </div>
 
 <script>
-// JavaScript para validaciones dinámicas SENIAT
+// Lógica dinámica de visualización según Tipo de ID
+function onTipoIdChange() {
+    toggleDigitoVerificador();
+    togglePersonaContacto();
+}
+
 function toggleDigitoVerificador() {
-    const tipoId = document.getElementById('tipo_id').value;
+    const tipoId = document.getElementById('tipo_id') ? document.getElementById('tipo_id').value : '';
     const container = document.getElementById('digito-verificador-container');
     const digitoField = document.getElementById('digito_verificador');
     
+    if (!container || !digitoField) return;
+
     if (['J', 'P', 'G'].includes(tipoId)) {
         container.style.display = 'block';
         digitoField.required = true;
@@ -260,12 +521,38 @@ function toggleDigitoVerificador() {
     updateRifPreview();
 }
 
+function togglePersonaContacto() {
+    const tipoId = document.getElementById('tipo_id') ? document.getElementById('tipo_id').value : 'J';
+    const secContacto = document.getElementById('section-persona-contacto');
+    const badgeRecomendado = document.getElementById('contacto-badge-recomendado');
+    const switchAutofill = document.getElementById('switch-autofill-container');
+
+    if (!secContacto) return;
+
+    if (['V', 'E'].includes(tipoId)) {
+        // Persona Natural: Mostrar switch de autorellenado rápido
+        if (switchAutofill) switchAutofill.style.display = 'block';
+        if (badgeRecomendado) badgeRecomendado.textContent = 'Opcional (Persona Natural)';
+    } else {
+        // Persona Jurídica / Gubernamental: Expandir y resaltar recomendación
+        if (switchAutofill) switchAutofill.style.display = 'none';
+        if (badgeRecomendado) badgeRecomendado.textContent = 'Recomendado para Empresas SENIAT';
+    }
+}
+
 function updateRifPreview() {
-    const tipo = document.getElementById('tipo_id').value;
-    const numero = document.getElementById('numero_id').value;
-    const digito = document.getElementById('digito_verificador').value;
+    const tipoElem = document.getElementById('tipo_id');
+    const numElem = document.getElementById('numero_id');
+    const digElem = document.getElementById('digito_verificador');
     const preview = document.getElementById('rif-preview');
     const display = document.getElementById('rif-display');
+    const badgeSeniat = document.getElementById('seniat-validation-badge');
+    
+    if (!tipoElem || !numElem) return;
+
+    const tipo = tipoElem.value;
+    const numero = numElem.value;
+    const digito = digElem ? digElem.value : '';
     
     if (tipo && numero && numero.length >= 7) {
         let rif = tipo + '-' + numero;
@@ -274,55 +561,60 @@ function updateRifPreview() {
         }
         display.textContent = rif;
         preview.style.display = 'block';
+
+        if (badgeSeniat) {
+            badgeSeniat.style.display = 'inline-block';
+            badgeSeniat.className = 'seniat-badge-valid';
+            badgeSeniat.innerHTML = '<i class="fas fa-check-circle me-1"></i>Formato RIF Válido SENIAT';
+        }
     } else {
-        preview.style.display = 'none';
+        if (preview) preview.style.display = 'none';
+        if (badgeSeniat) badgeSeniat.style.display = 'none';
     }
 }
 
-// Event listeners
+function copiarDatosClienteAContacto() {
+    const isChecked = document.getElementById('switchAutofillContacto').checked;
+    if (isChecked) {
+        document.getElementById('contacto_nombre').value = document.getElementById('nombre').value;
+        document.getElementById('contacto_email').value = document.getElementById('email').value;
+        document.getElementById('contacto_codigo_pais').value = document.getElementById('codigo_pais').value;
+        document.getElementById('contacto_telefono').value = document.getElementById('telefono').value;
+        document.getElementById('contacto_cargo').value = 'Propietario / Gerente General';
+    }
+}
+
+// Inicializar listeners al cargar el DOM
 document.addEventListener('DOMContentLoaded', function() {
-    // Actualizar preview del RIF al escribir
+    onTipoIdChange();
+
     ['tipo_id', 'numero_id', 'digito_verificador'].forEach(function(id) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.addEventListener('input', updateRifPreview);
-            element.addEventListener('change', updateRifPreview);
+        const elem = document.getElementById(id);
+        if (elem) {
+            elem.addEventListener('input', updateRifPreview);
+            elem.addEventListener('change', updateRifPreview);
         }
     });
-    
-    // Validación del formulario
-    document.getElementById('cliente-form').addEventListener('submit', function(e) {
-        const submitBtn = document.getElementById('submit-btn');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando SENIAT...';
-        submitBtn.disabled = true;
+
+    ['telefono', 'contacto_telefono'].forEach(function(id) {
+        const elem = document.getElementById(id);
+        if (elem) {
+            elem.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
     });
-    
-    // Formatear teléfono automáticamente
-    const telefonoField = document.getElementById('telefono');
-    if (telefonoField) {
-        telefonoField.addEventListener('input', function(e) {
-            // Remover todo excepto números
-            this.value = this.value.replace(/[^0-9]/g, '');
+
+    const form = document.getElementById('cliente-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            const btn = document.getElementById('submit-btn');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando y Guardando...';
+                btn.disabled = true;
+            }
         });
     }
 });
 </script>
-
-<style>
-.border-left-info {
-    border-left: 4px solid #3498db !important;
-}
-.text-danger {
-    font-weight: bold;
-}
-.form-label.fw-bold {
-    color: #2c3e50;
-}
-.alert-info {
-    background-color: #e8f4f8;
-    border-color: #bee5eb;
-    color: #0c5460;
-}
-</style>
-
 {% endblock %}

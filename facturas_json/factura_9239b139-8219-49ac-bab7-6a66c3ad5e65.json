@@ -1,0 +1,69 @@
+{
+    "total_bs": 9651.2,
+    "fecha": "2025-08-11",
+    "numero": "FAC-00000741",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:52:15",
+    "productos": [
+        "51"
+    ],
+    "total_usd": 64.0,
+    "cantidades": [
+        20
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 64.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:52:15.033037",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "9239b139-8219-49ac-bab7-6a66c3ad5e65",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:52:15.033",
+        "firma_digital": "ecab70a79ab76e253f4d2ba23459bef584dd2ee19c5018a8d3272272ea13b4a8",
+        "hash_inmutable": "f544e72495b74abc0122898c5390fe9469a74665defa5a8b5c318c0e45ea0fc4",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 9651.2,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-31",
+    "descuento_total": 0.0,
+    "precios": [
+        3.2
+    ],
+    "numero_secuencial": 741,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "nombre": "REDUCTIL FAST X 60CAPS",
+            "cantidad": 20,
+            "subtotal_usd": 64.0,
+            "id": "51",
+            "precio_unitario_bs": 482.56000000000006,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 9651.2,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.2
+        }
+    ],
+    "subtotal_usd": 64.0,
+    "firma_fiscal": "58bca3d263f79c7a3513969e8cf20367e971640493ce8f96c6ed2c8c00f86926",
+    "id": "9239b139-8219-49ac-bab7-6a66c3ad5e65"
+}

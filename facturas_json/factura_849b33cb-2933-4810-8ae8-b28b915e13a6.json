@@ -1,0 +1,133 @@
+{
+    "total_bs": 31820.010000000002,
+    "fecha": "2025-07-11",
+    "numero": "FAC-00000703",
+    "descuento": 0.0,
+    "id": "849b33cb-2933-4810-8ae8-b28b915e13a6",
+    "tasa_bcv": 118.29,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:53:00",
+    "productos": [
+        "24",
+        "1",
+        "8",
+        "21",
+        "34",
+        "29",
+        "50"
+    ],
+    "total_usd": 269.0,
+    "cantidades": [
+        30,
+        12,
+        12,
+        12,
+        6,
+        6,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 269.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Sucre/ Con Calle Girardot #94 Lateral Iglesia Virgen Del Valle  Sector Casco Viejo El Tigre",
+        "email": "",
+        "rif": "J-300473090",
+        "telefono": "+5804121123420",
+        "nombre": "TIENDA DIETETICA EL MANA C.A"
+    },
+    "subtotal_bs": 31820.010000000002,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-06",
+    "descuento_total": 0.0,
+    "precios": [
+        2.8,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-300473090",
+    "items": [
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 30,
+            "id_producto": "24",
+            "precio_unitario_bs": 331.212,
+            "categoria": "",
+            "subtotal_bs": 9936.36,
+            "subtotal_usd": 84.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 12,
+            "id_producto": "1",
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 5252.076000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "8",
+            "cantidad": 12,
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 5252.076000000001,
+            "subtotal_usd": 44.400000000000006,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "21",
+            "cantidad": 12,
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 5252.076000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "34",
+            "cantidad": 6,
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 2626.0380000000005,
+            "subtotal_usd": 22.200000000000003,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "29",
+            "cantidad": 6,
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 2626.0380000000005,
+            "subtotal_usd": 22.200000000000003,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 2,
+            "id_producto": "50",
+            "precio_unitario_bs": 437.67300000000006,
+            "categoria": "",
+            "subtotal_bs": 875.3460000000001,
+            "subtotal_usd": 7.4,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 269.0,
+    "firma_fiscal": "78f1d9db20cc9824cfa767852a5bc828be76524896dd1df24d6d4e9b7ec21ec2"
+}

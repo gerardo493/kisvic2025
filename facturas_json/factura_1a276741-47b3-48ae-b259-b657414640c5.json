@@ -1,0 +1,111 @@
+{
+    "total_bs": 15200.640000000001,
+    "fecha": "2025-08-15",
+    "numero": "FAC-00000745",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:05:47",
+    "productos": [
+        "65",
+        "65",
+        "56",
+        "14"
+    ],
+    "total_usd": 100.8,
+    "cantidades": [
+        22,
+        7,
+        3,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 100.8,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T23:05:47.212972",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "1a276741-47b3-48ae-b259-b657414640c5",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 23:05:47.212",
+        "firma_digital": "c22007646cb45cc440c5f8552addee58e286a921371254b0543dd5bf19a34251",
+        "hash_inmutable": "5c0d94df5b0c5caec370271c19a7ed8b5d9ccbc8ff32d82d988cebc98a44b4a0",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Cagua Aragua",
+        "email": "josegregorioruiz@gmail.com",
+        "rif": "V-8576138",
+        "telefono": "+5804121447869",
+        "nombre": "JOSE GREGORIO RUIZ"
+    },
+    "subtotal_bs": 15200.640000000001,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-04",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        4.2,
+        0.8,
+        1.5
+    ],
+    "numero_secuencial": 745,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-8576138",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 22,
+            "subtotal_usd": 66.0,
+            "id": "65",
+            "precio_unitario_bs": 452.40000000000003,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 9952.800000000001,
+            "codigo_barras": "",
+            "nombre": "PRODUCTOS VARIOS KISVIC "
+        },
+        {
+            "nombre": "PRODUCTOS VARIOS KISVIC ",
+            "cantidad": 7,
+            "codigo_barras": "",
+            "id": "65",
+            "precio_unitario_bs": 633.3600000000001,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 4433.52,
+            "subtotal_usd": 29.400000000000002,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "nombre": "SABILAX-6 X  30 UNDS",
+            "cantidad": 3,
+            "codigo_barras": "",
+            "id": "56",
+            "precio_unitario_bs": 120.64000000000001,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 361.9200000000001,
+            "subtotal_usd": 2.4000000000000004,
+            "precio_unitario_usd": 0.8
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "cantidad": 2,
+            "subtotal_usd": 3.0,
+            "id": "14",
+            "precio_unitario_bs": 226.20000000000002,
+            "categoria": "Regenerador osio",
+            "subtotal_bs": 452.40000000000003,
+            "codigo_barras": "",
+            "nombre": "CLORURO DE MAGNESIO X 33 GR"
+        }
+    ],
+    "subtotal_usd": 100.8,
+    "firma_fiscal": "cd3a97ca54f857a85b4e1eb15067853e792aafd6fd6863ce25e9499d1474c99e",
+    "id": "1a276741-47b3-48ae-b259-b657414640c5"
+}

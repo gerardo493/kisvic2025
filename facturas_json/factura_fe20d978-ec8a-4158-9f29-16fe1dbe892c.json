@@ -1,0 +1,133 @@
+{
+    "total_bs": 5747.544,
+    "fecha": "2025-07-01",
+    "numero": "FAC-00000681",
+    "descuento": 0.0,
+    "id": "fe20d978-ec8a-4158-9f29-16fe1dbe892c",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:07:00",
+    "productos": [
+        "48",
+        "37",
+        "7",
+        "19",
+        "50",
+        "38",
+        "17"
+    ],
+    "total_usd": 49.2,
+    "cantidades": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 49.2,
+    "dias_credito": "15",
+    "cliente_datos": {
+        "direccion": "Calle Soublet Cruze Con Santos Michelena",
+        "email": "",
+        "rif": "V-6471279",
+        "telefono": "+5804144909579",
+        "nombre": "JOSE RODRIGUEZ"
+    },
+    "subtotal_bs": 5747.544,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-15",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        4.2,
+        4.2,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-6471279",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "48",
+            "cantidad": 2,
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 981.288,
+            "subtotal_usd": 8.4,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 2,
+            "id_producto": "37",
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 981.288,
+            "subtotal_usd": 8.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "7",
+            "cantidad": 2,
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 981.288,
+            "subtotal_usd": 8.4,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 2,
+            "id_producto": "19",
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 700.92,
+            "subtotal_usd": 6.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "50",
+            "cantidad": 2,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 700.92,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "38",
+            "cantidad": 2,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 700.92,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "17",
+            "cantidad": 2,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 700.92,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 49.2,
+    "firma_fiscal": "4d799744368ae23b8b747fd0cd7362262ca142e07118dac9365a8ce0295ff900"
+}

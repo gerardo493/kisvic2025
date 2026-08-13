@@ -1,0 +1,153 @@
+{
+    "total_bs": 58992.95999999999,
+    "fecha": "2025-08-21",
+    "numero": "FAC-00000750",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:30:05",
+    "productos": [
+        "48",
+        "59",
+        "4",
+        "17",
+        "19",
+        "9",
+        "13"
+    ],
+    "total_usd": 391.19999999999993,
+    "cantidades": [
+        24,
+        24,
+        24,
+        12,
+        12,
+        12,
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 391.19999999999993,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T23:30:05.053087",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "90c901b3-fe64-4c5b-8037-7a1b74a750c2",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 23:30:05.053",
+        "firma_digital": "46a77fa46f61bdacb1661e9149c92e5aea94bc03182f60786723ec8669cc42e7",
+        "hash_inmutable": "3da020967d37f5c9cc76981eae9710bcda112933b197c7188465461f9fcca729",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 58992.95999999999,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-10",
+    "descuento_total": 0.0,
+    "precios": [
+        4.0,
+        3.9,
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        2.8
+    ],
+    "numero_secuencial": 750,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "nombre": "CITRATO DE MAGNESIO",
+            "cantidad": 24,
+            "subtotal_usd": 96.0,
+            "id": "48",
+            "precio_unitario_bs": 603.2,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 14476.800000000001,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.0
+        },
+        {
+            "precio_unitario_usd": 3.9,
+            "cantidad": 24,
+            "subtotal_usd": 93.6,
+            "id": "59",
+            "precio_unitario_bs": 588.12,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 14114.880000000001,
+            "codigo_barras": "",
+            "nombre": "RESVERATROL X 60 CAP"
+        },
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 24,
+            "subtotal_usd": 67.19999999999999,
+            "id": "4",
+            "precio_unitario_bs": 422.24,
+            "categoria": "Bactericida",
+            "subtotal_bs": 10133.759999999998,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "17",
+            "precio_unitario_bs": 422.24,
+            "categoria": "Anti-inflamatorio",
+            "subtotal_bs": 5066.879999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "19",
+            "precio_unitario_bs": 422.24,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 5066.879999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "9",
+            "precio_unitario_bs": 422.24,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 5066.879999999999,
+            "codigo_barras": "",
+            "nombre": "CARDO MARIANO X 60 CAP"
+        },
+        {
+            "nombre": "CHANCA PIEDRA X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "13",
+            "precio_unitario_bs": 422.24,
+            "categoria": "Calculo Renal",
+            "subtotal_bs": 5066.879999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        }
+    ],
+    "subtotal_usd": 391.19999999999993,
+    "firma_fiscal": "295441006389c6186041107475770f1b91b02db71220d3a45ca5cff7af4ecec5",
+    "id": "90c901b3-fe64-4c5b-8037-7a1b74a750c2"
+}

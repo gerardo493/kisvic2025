@@ -1,0 +1,131 @@
+{
+    "total_bs": 36102.01,
+    "fecha": "2025-05-30",
+    "numero": "FAC-00000639",
+    "descuento": 0.0,
+    "id": "8a683fa3-1681-495f-aff8-cfd18aab5e99",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "15:44:00",
+    "productos": [
+        "8",
+        "9",
+        "11",
+        "35",
+        "25",
+        "24"
+    ],
+    "total_usd": 371.0,
+    "cantidades": [
+        40,
+        20,
+        15,
+        10,
+        60,
+        40
+    ],
+    "total_abonado": 371.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:52:18",
+            "metodo": "efectivo_usd",
+            "id": "de1c9346-2eb0-4675-8c33-36b8a4c992d9",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 371.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Carrera 29 # 14.59, Urb La Coromoto, La Corcordia, Edo- Tachira",
+        "email": "drogueria.pronaltivo@dominioinventado.com",
+        "rif": "J-312239760",
+        "telefono": "+5804123873431",
+        "nombre": "DROGUERIA PRONALTIVO"
+    },
+    "subtotal_bs": 36102.01,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-19",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        1.5,
+        1.5
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-312239760",
+    "items": [
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 40,
+            "id_producto": "8",
+            "precio_unitario_bs": 253.00600000000003,
+            "categoria": "",
+            "subtotal_bs": 10120.24,
+            "subtotal_usd": 104.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "9",
+            "cantidad": 20,
+            "precio_unitario_bs": 253.00600000000003,
+            "categoria": "",
+            "subtotal_bs": 5060.12,
+            "subtotal_usd": 52.0,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "id_producto": "11",
+            "cantidad": 15,
+            "precio_unitario_bs": 253.00600000000003,
+            "categoria": "",
+            "subtotal_bs": 3795.09,
+            "subtotal_usd": 39.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "id_producto": "35",
+            "cantidad": 10,
+            "precio_unitario_bs": 253.00600000000003,
+            "categoria": "",
+            "subtotal_bs": 2530.06,
+            "subtotal_usd": 26.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 60,
+            "id_producto": "25",
+            "precio_unitario_bs": 145.965,
+            "categoria": "",
+            "subtotal_bs": 8757.9,
+            "subtotal_usd": 90.0,
+            "precio_unitario_usd": 1.5
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "cantidad": 40,
+            "id_producto": "24",
+            "precio_unitario_bs": 145.965,
+            "categoria": "",
+            "subtotal_bs": 5838.6,
+            "subtotal_usd": 60.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 371.0,
+    "firma_fiscal": "4aa361e94d8425e66d796944bae0c847896ae56095c932007e04660251ecce81"
+}

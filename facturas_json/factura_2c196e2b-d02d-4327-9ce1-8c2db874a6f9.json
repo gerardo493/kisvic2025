@@ -1,0 +1,94 @@
+{
+    "total_bs": 11915.64,
+    "fecha": "2025-07-02",
+    "numero": "FAC-00000685",
+    "descuento": 0.0,
+    "id": "2c196e2b-d02d-4327-9ce1-8c2db874a6f9",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:27:00",
+    "productos": [
+        "13",
+        "34",
+        "32",
+        "1"
+    ],
+    "total_usd": 102.0,
+    "cantidades": [
+        16,
+        8,
+        6,
+        4
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 102.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle El Comercio Cc Paseo Colonial Don Pedro Nivel, Pb, Higuerote Edo Miranda",
+        "email": "salud.dietetica.v&d.2006.c.a.@dominioinventado.com",
+        "rif": "J-503178574",
+        "telefono": "",
+        "nombre": "SALUD DIETETICA V&D 2006 C.A."
+    },
+    "subtotal_bs": 11915.64,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-22",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178574",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "13",
+            "cantidad": 16,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 5607.36,
+            "subtotal_usd": 48.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 8,
+            "id_producto": "34",
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 2803.68,
+            "subtotal_usd": 24.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 6,
+            "id_producto": "32",
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 2102.7599999999998,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "id_producto": "1",
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 1401.84,
+            "subtotal_usd": 12.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 102.0,
+    "firma_fiscal": "6a53631e81f44c7006c3afd270699d8653d25cad859f49f14d98fbbb6d9fabbb"
+}

@@ -1,0 +1,66 @@
+{
+    "total_bs": 3651.0720000000006,
+    "fecha": "2025-05-07",
+    "numero": "FAC-00000607",
+    "descuento": 0.0,
+    "id": "a44ced9d-e11f-4c44-9c90-da54c4a94cfb",
+    "tasa_bcv": 95.08,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:31:00",
+    "productos": [
+        "51"
+    ],
+    "total_usd": 38.400000000000006,
+    "cantidades": [
+        12
+    ],
+    "total_abonado": 38.4,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 20:57:30",
+            "metodo": "pago_movil",
+            "id": "f0896d9a-2b5e-4ee6-ade6-25bc059ebdee",
+            "banco": "0105",
+            "captura_path": null,
+            "referencia": "6564",
+            "monto": 38.4
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 3651.0720000000006,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-05-27",
+    "descuento_total": 0.0,
+    "precios": [
+        3.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "precio_unitario_usd": 3.2,
+            "cantidad": 12,
+            "id_producto": "51",
+            "precio_unitario_bs": 304.25600000000003,
+            "categoria": "",
+            "subtotal_bs": 3651.0720000000006,
+            "subtotal_usd": 38.400000000000006,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 38.400000000000006,
+    "firma_fiscal": "9d697aceb6208ceb87bf769d29929912f8c705f22af8ffa6bdbd725fcbef5063"
+}

@@ -1,0 +1,66 @@
+{
+    "total_bs": 6913.872,
+    "fecha": "2025-06-13",
+    "numero": "FAC-00000662",
+    "descuento": 0.0,
+    "id": "5d1aecf4-0899-481a-b38d-ce30325c3f7a",
+    "tasa_bcv": 101.08,
+    "iva_total": 0.0,
+    "condicion_pago": "contado",
+    "tipo_descuento": "bs",
+    "hora": "11:35:00",
+    "productos": [
+        "24"
+    ],
+    "total_usd": 68.4,
+    "cantidades": [
+        38
+    ],
+    "total_abonado": 68.4,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-23 14:33:51",
+            "metodo": "pago_movil",
+            "id": "fff0147a-cf1d-459c-8eab-41d937639fad",
+            "banco": "0102",
+            "captura_path": null,
+            "referencia": "1234",
+            "monto": 68.4
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 6913.872,
+    "estado": "pagada",
+    "fecha_vencimiento": "",
+    "descuento_total": 0.0,
+    "precios": [
+        1.8
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "precio_unitario_usd": 1.8,
+            "cantidad": 38,
+            "id_producto": "24",
+            "precio_unitario_bs": 181.944,
+            "categoria": "",
+            "subtotal_bs": 6913.872,
+            "subtotal_usd": 68.4,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 68.4,
+    "firma_fiscal": "5f598b2b341f2afe5c89c4a16631f400106dfa659cfa8f458d422e41f2056a89"
+}

@@ -1,0 +1,102 @@
+{
+    "total_bs": 5400.705,
+    "fecha": "2025-05-30",
+    "numero": "FAC-00000640",
+    "descuento": 0.0,
+    "id": "954fb41b-77c9-4530-a205-7b7f0466af20",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "17:33:00",
+    "productos": [
+        "39",
+        "45",
+        "1"
+    ],
+    "total_usd": 55.5,
+    "cantidades": [
+        5,
+        5,
+        5
+    ],
+    "total_abonado": 55.5,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-05 22:59:36",
+            "metodo": "pago_movil",
+            "id": "51a6eccf-b719-4772-806d-42569ef85316",
+            "banco": "0108",
+            "captura_path": "uploads/capturas/pago.jpg",
+            "referencia": "3551",
+            "monto": 20.0
+        },
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:53:02",
+            "metodo": "efectivo_usd",
+            "id": "a8533393-59b4-496a-b33c-1afb23975c9e",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 35.5
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "A.V Antonio Berrios Local El Roble , San Felix Bolivar",
+        "email": "edith.figuera@dominioinventado.com",
+        "rif": "V-17432268",
+        "telefono": "",
+        "nombre": "EDITH FIGUERA"
+    },
+    "subtotal_bs": 5400.705,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-19",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-17432268",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "39",
+            "cantidad": 5,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1800.2350000000001,
+            "subtotal_usd": 18.5,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "nombre": "",
+            "id_producto": "45",
+            "cantidad": 5,
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1800.2350000000001,
+            "subtotal_usd": 18.5,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 5,
+            "id_producto": "1",
+            "precio_unitario_bs": 360.047,
+            "categoria": "",
+            "subtotal_bs": 1800.2350000000001,
+            "subtotal_usd": 18.5,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 55.5,
+    "firma_fiscal": "c9b79fa20fc6fd793b3a6cb4387389a54478c664674be1e0c5d0289cf9dee801"
+}

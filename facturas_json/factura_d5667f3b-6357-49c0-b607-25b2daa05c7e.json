@@ -1,0 +1,206 @@
+{
+    "total_bs": 51514.98000000001,
+    "fecha": "2025-05-09",
+    "numero": "FAC-00000612",
+    "descuento": 0.0,
+    "id": "d5667f3b-6357-49c0-b607-25b2daa05c7e",
+    "tasa_bcv": 97.9,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:12:00",
+    "productos": [
+        "31",
+        "18",
+        "9",
+        "17",
+        "29",
+        "35",
+        "34",
+        "22",
+        "1",
+        "20",
+        "33"
+    ],
+    "total_usd": 526.2,
+    "cantidades": [
+        6,
+        6,
+        12,
+        12,
+        18,
+        12,
+        24,
+        12,
+        12,
+        12,
+        5
+    ],
+    "total_abonado": 526.2,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 21:41:03",
+            "metodo": "pago_movil",
+            "id": "3e8117fa-8a5e-469b-adcd-2a678384e654",
+            "banco": "0102",
+            "captura_path": "uploads/capturas/zuleima.jpg",
+            "referencia": "4773",
+            "monto": 126.2
+        },
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-21 22:58:26",
+            "metodo": "pago_movil",
+            "id": "2b503f6a-6760-4344-8da2-bc5ec7da2741",
+            "banco": "0102",
+            "captura_path": null,
+            "referencia": "51545",
+            "monto": 400.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Unare Ii Sector Ii Mercado Municipal Unare Edo Bolivar (Pasillo Principal)",
+        "email": "zuleima.sanchez@dominioinventado.com",
+        "rif": "V-6479143",
+        "telefono": "+5804148943822",
+        "nombre": "ZULEIMA SANCHEZ"
+    },
+    "subtotal_bs": 51514.98000000001,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-05-29",
+    "descuento_total": 0.0,
+    "precios": [
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        3.7,
+        12.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-6479143",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "31",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 2173.3800000000006,
+            "subtotal_usd": 22.200000000000003,
+            "precio_unitario_usd": 3.7
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "18",
+            "cantidad": 6,
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 2173.3800000000006,
+            "subtotal_usd": 22.200000000000003,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 12,
+            "id_producto": "9",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "17",
+            "cantidad": 12,
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "29",
+            "cantidad": 18,
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 6520.140000000001,
+            "subtotal_usd": 66.60000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 12,
+            "id_producto": "35",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 24,
+            "id_producto": "34",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 8693.520000000002,
+            "subtotal_usd": 88.80000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "id_producto": "22",
+            "cantidad": 12,
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 12,
+            "id_producto": "1",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.7,
+            "cantidad": 12,
+            "id_producto": "20",
+            "precio_unitario_bs": 362.23,
+            "categoria": "",
+            "subtotal_bs": 4346.760000000001,
+            "subtotal_usd": 44.400000000000006,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "33",
+            "cantidad": 5,
+            "precio_unitario_bs": 1174.8000000000002,
+            "categoria": "",
+            "subtotal_bs": 5874.0,
+            "subtotal_usd": 60.0,
+            "precio_unitario_usd": 12.0
+        }
+    ],
+    "subtotal_usd": 526.2,
+    "firma_fiscal": "9dda006e0dd80740a559b13e382ecc3859f0823a68aaa7959e6c8a1cff69dccf"
+}

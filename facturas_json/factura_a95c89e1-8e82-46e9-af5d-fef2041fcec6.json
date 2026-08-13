@@ -1,0 +1,153 @@
+{
+    "total_bs": 26957.447999999997,
+    "fecha": "2025-09-05",
+    "numero": "FAC-00000765",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:54:36",
+    "productos": [
+        "18",
+        "38",
+        "19",
+        "45",
+        "34",
+        "13",
+        "44"
+    ],
+    "total_usd": 176.39999999999998,
+    "cantidades": [
+        12,
+        12,
+        12,
+        6,
+        6,
+        12,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 176.39999999999998,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T22:54:36.431166",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "a95c89e1-8e82-46e9-af5d-fef2041fcec6",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 22:54:36.431",
+        "firma_digital": "c06ea488e25d71933076eee04d5c3f267b93c75b4009cf090768b81d0e7341e6",
+        "hash_inmutable": "c36ab1fb28ff7b37ac42d062167200c5e0784f3112c414b9d9331199c4c99bb0",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Mariño Entre Av. Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.fernatural@dominioinventado.com",
+        "rif": "J-503178576",
+        "telefono": "+5804243771007",
+        "nombre": "T/N FERNATURAL"
+    },
+    "subtotal_bs": 26957.447999999997,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-25",
+    "descuento_total": 0.0,
+    "precios": [
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        2.8,
+        2.8
+    ],
+    "numero_secuencial": 765,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178576",
+    "items": [
+        {
+            "nombre": "DIENTE DE LEON X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "18",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 5134.751999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "38",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Depurativo Desintoxicante",
+            "subtotal_bs": 5134.751999999999,
+            "codigo_barras": "",
+            "nombre": "ZARZAPARRILLA X 60CAP"
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "19",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 5134.751999999999,
+            "codigo_barras": "",
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP"
+        },
+        {
+            "nombre": "PIÑA + GRAPPEFRUIT X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 16.799999999999997,
+            "id": "45",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 2567.3759999999993,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "nombre": "SAW PALMETO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 16.799999999999997,
+            "id": "34",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "hiperplasia prostatica",
+            "subtotal_bs": 2567.3759999999993,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "nombre": "CHANCA PIEDRA X 60 CAP",
+            "cantidad": 12,
+            "subtotal_usd": 33.599999999999994,
+            "id": "13",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Calculo Renal",
+            "subtotal_bs": 5134.751999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.8
+        },
+        {
+            "precio_unitario_usd": 2.8,
+            "cantidad": 3,
+            "subtotal_usd": 8.399999999999999,
+            "id": "44",
+            "precio_unitario_bs": 427.89599999999996,
+            "categoria": "Bactericida",
+            "subtotal_bs": 1283.6879999999996,
+            "codigo_barras": "",
+            "nombre": "ORTIGA X 60 CAP"
+        }
+    ],
+    "subtotal_usd": 176.39999999999998,
+    "firma_fiscal": "31bee909ae929c5cad6c2460fa22c0e893337de70ae7c74135497fba1d5e6f92",
+    "id": "a95c89e1-8e82-46e9-af5d-fef2041fcec6"
+}

@@ -10,14 +10,18 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='LOGO-KISVIC.ico') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/neumorphism.css') }}">
     <style>
         :root {
-            --primary-color: #1a237e;
-            --secondary-color: #3498db;
+            --primary-color: #2E7D32;
+            --secondary-color: #4CAF50;
+            --gold-color: #D4A017;
             --sidebar-width: 240px;
         }
         body {
-            background-color: #f8f9fa;
+            background-color: #F5F7F5;
+            color: #212121;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         .sidebar {
             position: fixed;
@@ -25,39 +29,43 @@
             left: -220px;
             height: 100vh;
             width: var(--sidebar-width);
-            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+            background: linear-gradient(180deg, #1B5E20 0%, #2E7D32 100%);
             color: #fff;
             z-index: 1040;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding-top: 2rem;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.08);
+            padding-top: 1.5rem;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.12);
             transition: left 0.35s cubic-bezier(.4,2,.6,1), box-shadow 0.2s;
             max-height: 100vh;
             overflow-y: auto;
+            border-right: 3px solid #D4A017;
         }
         .sidebar.visible {
             left: 0;
-            box-shadow: 2px 0 16px rgba(0,0,0,0.18);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.2);
         }
         .sidebar-tab {
             position: fixed;
             top: 50%;
             left: 0;
             transform: translateY(-50%);
-            width: 32px;
+            width: 34px;
             height: 90px;
-            background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-            color: #fff;
+            background: linear-gradient(180deg, #1B5E20 0%, #2E7D32 100%);
+            color: #FFF8E1;
+            border: 2px solid #D4A017;
+            border-left: none;
             border-radius: 0 20px 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 1050;
             cursor: pointer;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.10);
+            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
         }
+
         .sidebar-tab i {
             font-size: 1.5rem;
         }
@@ -103,16 +111,17 @@
             transition: transform 0.3s, color 0.3s;
         }
         .sidebar .nav-link.active, .sidebar .nav-link:hover {
-            background: linear-gradient(90deg, #0d47a1 60%, #42a5f5 100%);
+            background: linear-gradient(90deg, #1B5E20 40%, #4CAF50 100%);
             color: #fff;
             transform: translateX(8px) scale(1.04);
-            box-shadow: 2px 4px 16px rgba(66,165,245,0.08);
+            border-left: 4px solid #D4A017;
         }
         .sidebar .nav-link.active .fa, .sidebar .nav-link:hover .fa {
-            color: #ffd600;
-            transform: scale(1.2) rotate(-10deg);
-            filter: drop-shadow(0 0 6px #ffd60088);
+            color: #D4A017;
+            transform: scale(1.2) rotate(-5deg);
+            filter: drop-shadow(0 0 6px rgba(212, 160, 23, 0.5));
         }
+
         .sidebar .logout {
             margin-top: auto;
             margin-bottom: 2rem;

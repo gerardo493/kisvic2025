@@ -26,6 +26,9 @@ dist-ssr
 # Environment variables
 .env
 .env.local
+.env.production
+.env.production.local
+dist/
 .env.development.local
 .env.test.local
 .env.production.local
@@ -39,6 +42,17 @@ node_modules/
 .pnp
 .pnp.js
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
 # Testing
 coverage/
 .nyc_output
@@ -46,3 +60,13 @@ coverage/
 # Misc
 .DS_Store
 *.tsbuildinfo
+
+# Firebase (credenciales secretas)
+firebase_credentials.json
+firebase_config.json
+.firebase/
+contraseña.txt
+contraseña*.txt
+
+# Hosting build cache
+.firebase/hosting.*

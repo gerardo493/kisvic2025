@@ -72,22 +72,21 @@ class SeguridadFiscal:
         key = base64.urlsafe_b64encode(kdf.derive(clave_bytes))
         return Fernet(key)
         
-    def generar_hash_documento(self, documento: Dict[str, Any]) -> str:
+    def generar_hash_documento(self, documento: Optional[Dict[str, Any]] = None, **kwargs) -> str:
         """
         Genera un hash SHA-256 único e inmutable para un documento fiscal
         
         Args:
-            documento: Diccionario con los datos del documento
+            documento: Diccionario con los datos del documento o pares clave-valor
             
         Returns:
             Hash SHA-256 del documento en formato hexadecimal
         """
-        # Ordenar las claves para asegurar consistencia en el hash
-        documento_ordenado = self._ordenar_recursivamente(documento)
+        doc = (documento.copy() if isinstance(documento, dict) else {})
+        doc.update(kwargs)
+        documento_ordenado = self._ordenar_recursivamente(doc)
         documento_json = json.dumps(documento_ordenado, sort_keys=True, ensure_ascii=False)
-        documento_bytes = documento_json.encode('utf-8')
         
-        # Agregar timestamp de creación para unicidad
         timestamp = datetime.now().isoformat()
         datos_completos = f"{documento_json}|{timestamp}".encode('utf-8')
         

@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+
+{% block title %}Métricas y Analítica - Productos Naturales Kisvic 1045, C.A.{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<div class="kisvic-container p-3 p-md-4">
+    <!-- Header Principal Kisvic -->
+    <div class="row align-items-center mb-2">
+        <div class="col-md-7">
+            <div class="d-flex align-items-center mb-2">
+                <div class="bg-white p-2 rounded-3 me-3 shadow-sm" style="border: 1px solid #e5e7eb;">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Kisvic Logo" style="height: 42px; width: auto; object-fit: contain;">
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0" style="color: #2E7D32;">Métricas y Analítica Financiera</h3>
+                    <small style="color: #6B7280; font-weight: 500;">Productos Naturales Kisvic 1045, C.A.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('cuentas.mostrar_cuentas_por_cobrar') }}" class="kisvic-btn me-2">
+                <i class="fas fa-table me-2"></i>Ver Listado
+            </a>
+            <button id="btnRefrescar" class="kisvic-btn kisvic-btn-primary">
+                <i class="fas fa-sync-alt me-1"></i>Actualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Divisor Dorado Corporativo (Anillo Kisvic) -->
+    <div class="kisvic-gold-divider"></div>
+
+    <!-- Barra de Filtros (Card con Acento Dorado) -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="kisvic-card kisvic-accent-gold p-3 p-md-4">
+                <form id="filterMetricsForm" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label for="cliente" class="form-label fw-bold small" style="color: #6B7280;">Filtrar por Cliente</label>
+                        <select name="cliente" id="cliente" class="form-select kisvic-select">
+                            <option value="">Todos los clientes</option>
+                            {% for c in clientes_disponibles %}
+                            <option value="{{ c.id }}">{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="mes" class="form-label fw-bold small" style="color: #6B7280;">Filtrar por Mes</label>
+                        <select name="mes" id="mes" class="form-select kisvic-select">
+                            <option value="">Todos los meses</option>
+                            {% for m in range(1, 13) %}
+                            <option value="{{ m }}">
+                                {{ ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'][m-1] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="anio" class="form-label fw-bold small" style="color: #6B7280;">Filtrar por Año</label>
+                        <select name="anio" id="anio" class="form-select kisvic-select">
+                            <option value="">Todos los años</option>
+                            {% for a in anios_disponibles %}
+                            <option value="{{ a }}">{{ a }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="kisvic-btn kisvic-btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Aplicar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 1: 4 Cards de KPI Kisvic -->
+    <div class="row mb-4 g-4">
+        <!-- KPI 1: Total por Cobrar -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-gold p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Total Por Cobrar</span>
+                    <h3 class="fw-bold mb-0" style="color: #212121;" id="kpiTotalPorCobrar">
+                        <span class="kisvic-skeleton d-inline-block" style="width: 100px; height: 28px;"></span>
+                    </h3>
+                    <small style="color: #6B7280;" id="kpiTotalFacturadoSub">Cargando...</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-gold">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 2: Tasa de Cobranza -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-green p-4 h-100 d-flex align-items-center justify-content-between">
+                <div class="w-100 me-2">
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Tasa de Cobranza</span>
+                    <h3 class="fw-bold mb-1" style="color: #2E7D32;" id="kpiTasaCobranza">
+                        <span class="kisvic-skeleton d-inline-block" style="width: 80px; height: 28px;"></span>
+                    </h3>
+                    <div class="kisvic-progress-track mt-2">
+                        <div class="kisvic-progress-fill kisvic-progress-fill-success" id="kpiTasaProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-green">
+                    <i class="fas fa-percentage"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 3: Promedio Días de Cobro -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-emerald p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Promedio de Cobro</span>
+                    <h3 class="fw-bold mb-0" style="color: #212121;" id="kpiPromedioDias">
+                        <span class="kisvic-skeleton d-inline-block" style="width: 70px; height: 28px;"></span>
+                    </h3>
+                    <small style="color: #6B7280;">días desde emisión</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-green">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 4: Facturas Vencidas -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-red p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Facturas Vencidas</span>
+                    <h3 class="fw-bold mb-0 text-danger" id="kpiVencidasCount">
+                        <span class="kisvic-skeleton d-inline-block" style="width: 60px; height: 28px;"></span>
+                    </h3>
+                    <small class="text-danger fw-bold" id="kpiVencidasMonto">Cargando...</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-red">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 2: Gráficos Principales -->
+    <div class="row mb-4 g-4">
+        <!-- Evolución Mensual -->
+        <div class="col-12 col-lg-8">
+            <div class="kisvic-card kisvic-accent-green p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0" style="color: #2E7D32;">
+                        <i class="fas fa-chart-line me-2"></i>Evolución Mensual: Facturación vs Cobros
+                    </h5>
+                    <span class="badge kisvic-inset px-3 py-2 fw-bold" style="color: #6B7280;">USD ($)</span>
+                </div>
+                <div style="position: relative; height: 320px;">
+                    <canvas id="chartEvolucion"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Distribución de Cartera -->
+        <div class="col-12 col-lg-4">
+            <div class="kisvic-card kisvic-accent-gold p-4 h-100">
+                <h5 class="fw-bold mb-3" style="color: #212121;">
+                    <i class="fas fa-chart-pie me-2" style="color: #D4A017;"></i>Distribución de Cartera
+                </h5>
+                <div style="position: relative; height: 280px;" class="d-flex align-items-center justify-content-center">
+                    <canvas id="chartDistribucion"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fila 3: Aging & Top Clientes -->
+    <div class="row mb-4 g-4">
+        <!-- Antigüedad de Saldos -->
+        <div class="col-12 col-lg-6">
+            <div class="kisvic-card kisvic-accent-gold p-4 h-100">
+                <h5 class="fw-bold mb-3" style="color: #212121;">
+                    <i class="fas fa-calendar-alt me-2" style="color: #D4A017;"></i>Antigüedad de Saldos (Aging)
+                </h5>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="chartAging"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Clientes Deudores -->
+        <div class="col-12 col-lg-6">
+            <div class="kisvic-card kisvic-accent-green p-4 h-100">
+                <h5 class="fw-bold mb-3" style="color: #2E7D32;">
+                    <i class="fas fa-user-tag me-2"></i>Top Clientes con Mayor Deuda
+                </h5>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="chartTopClientes"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let chartEvolucion = null;
+    let chartDistribucion = null;
+    let chartAging = null;
+    let chartTopClientes = null;
+
+    const filterForm = document.getElementById('filterMetricsForm');
+    const btnRefrescar = document.getElementById('btnRefrescar');
+
+    function cargarMetricas() {
+        const cliente = document.getElementById('cliente').value;
+        const mes = document.getElementById('mes').value;
+        const anio = document.getElementById('anio').value;
+
+        const params = new URLSearchParams({ cliente, mes, anio });
+
+        fetch(`/cuentas-por-cobrar/api/metricas?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    actualizarKPIs(data.kpis);
+                    renderEvolucionChart(data.evolucion_mensual);
+                    renderDistribucionChart(data.distribucion_estado);
+                    renderAgingChart(data.aging);
+                    renderTopClientesChart(data.top_clientes);
+                } else {
+                    console.error('Error en API:', data.error);
+                }
+            })
+            .catch(err => {
+                console.error('Error de red al cargar métricas:', err);
+            });
+    }
+
+    function actualizarKPIs(kpis) {
+        document.getElementById('kpiTotalPorCobrar').textContent = `$${kpis.total_por_cobrar_usd.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        document.getElementById('kpiTotalFacturadoSub').textContent = `Total facturado: $${kpis.total_facturado_usd.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
+        
+        document.getElementById('kpiTasaCobranza').textContent = `${kpis.tasa_cobranza_pct}%`;
+        document.getElementById('kpiTasaProgress').style.width = `${Math.min(100, kpis.tasa_cobranza_pct)}%`;
+        
+        document.getElementById('kpiPromedioDias').textContent = `${kpis.promedio_dias_cobro}`;
+        
+        document.getElementById('kpiVencidasCount').textContent = `${kpis.vencidas_count}`;
+        document.getElementById('kpiVencidasMonto').textContent = `$${kpis.vencidas_monto_usd.toLocaleString('en-US', {minimumFractionDigits: 2})} por cobrar`;
+    }
+
+    function renderEvolucionChart(data) {
+        const ctx = document.getElementById('chartEvolucion').getContext('2d');
+        if (chartEvolucion) chartEvolucion.destroy();
+
+        chartEvolucion = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Facturado ($)',
+                        data: data.facturado,
+                        borderColor: '#2E7D32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        fill: true,
+                        tension: 0.25,
+                        borderWidth: 2.5
+                    },
+                    {
+                        label: 'Cobrado ($)',
+                        data: data.cobrado,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        fill: true,
+                        tension: 0.25,
+                        borderWidth: 2.5
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: '#212121', font: { weight: '600' } } }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#6B7280' } },
+                    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#6B7280' } }
+                }
+            }
+        });
+    }
+
+    function renderDistribucionChart(dist) {
+        const ctx = document.getElementById('chartDistribucion').getContext('2d');
+        if (chartDistribucion) chartDistribucion.destroy();
+
+        chartDistribucion = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Por Cobrar', 'Abonada', 'Cobrada'],
+                datasets: [{
+                    data: [dist.por_cobrar, dist.abonada, dist.cobrada],
+                    backgroundColor: ['#D4A017', '#0284C7', '#2E7D32'],
+                    borderWidth: 0,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#212121', font: { weight: '600' } } }
+                },
+                cutout: '68%'
+            }
+        });
+    }
+
+    function renderAgingChart(aging) {
+        const ctx = document.getElementById('chartAging').getContext('2d');
+        if (chartAging) chartAging.destroy();
+
+        chartAging = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['0-30 días', '31-60 días', '61-90 días', '+90 días'],
+                datasets: [{
+                    label: 'Monto Vencido ($)',
+                    data: [aging.rango_0_30, aging.rango_31_60, aging.rango_61_90, aging.rango_mas_90],
+                    backgroundColor: ['#4CAF50', '#2E7D32', '#D4A017', '#C62828'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { color: '#E5E7EB' }, ticks: { color: '#6B7280' } },
+                    y: { grid: { display: false }, ticks: { color: '#212121', font: { weight: '600' } } }
+                }
+            }
+        });
+    }
+
+    function renderTopClientesChart(top) {
+        const ctx = document.getElementById('chartTopClientes').getContext('2d');
+        if (chartTopClientes) chartTopClientes.destroy();
+
+        chartTopClientes = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: top.labels.length > 0 ? top.labels : ['Sin datos'],
+                datasets: [{
+                    label: 'Deuda Pendiente ($)',
+                    data: top.deuda.length > 0 ? top.deuda : [0],
+                    backgroundColor: '#D4A017',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { grid: { display: false }, ticks: { color: '#212121', font: { weight: '500' } } },
+                    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#6B7280' } }
+                }
+            }
+        });
+    }
+
+    filterForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        cargarMetricas();
+    });
+
+    if (btnRefrescar) {
+        btnRefrescar.addEventListener('click', function () {
+            cargarMetricas();
+        });
+    }
+
+    cargarMetricas();
+});
+</script>
+{% endblock %}

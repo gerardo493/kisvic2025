@@ -1,0 +1,69 @@
+{
+    "total_bs": 43269.6,
+    "fecha": "2025-07-30",
+    "numero": "FAC-00000718",
+    "descuento": 0.0,
+    "tasa_bcv": 131.12,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "01:06:13",
+    "productos": [
+        "47"
+    ],
+    "total_usd": 330.0,
+    "cantidades": [
+        60
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 330.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-09T01:06:13.264267",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "7e2addeb-d015-4116-9e74-75ff352fd8bd",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-09 01:06:13.264",
+        "firma_digital": "e94248e32aea77b678aaa6c572bbeaf1ae38e6a4440861e8bf2e1531eb4fec32",
+        "hash_inmutable": "6038e628a5e5fac49f1758056fb216fe1a305135feaaf956c82357f6e8debc9b",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Gran Demócrata, 18 sector centro I, Palo Negro 2117, Aragua",
+        "email": "",
+        "rif": "N/A",
+        "telefono": "0243-2673767",
+        "nombre": "T/N CASA VERDE"
+    },
+    "subtotal_bs": 43269.6,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-19",
+    "descuento_total": 0.0,
+    "precios": [
+        5.5
+    ],
+    "numero_secuencial": 718,
+    "moneda_secundaria": "VES",
+    "cliente_id": "N/A",
+    "items": [
+        {
+            "precio_unitario_usd": 5.5,
+            "cantidad": 60,
+            "subtotal_usd": 330.0,
+            "id": "47",
+            "precio_unitario_bs": 721.1600000000001,
+            "categoria": "Expectorante",
+            "subtotal_bs": 43269.6,
+            "codigo_barras": "",
+            "nombre": "CUBEA AYOA X 240 ML"
+        }
+    ],
+    "subtotal_usd": 330.0,
+    "firma_fiscal": "16d4133449134b13bc2ecbfbf3cf8f63c59dc958616990dc5dafdf16e78d1099",
+    "id": "7e2addeb-d015-4116-9e74-75ff352fd8bd"
+}

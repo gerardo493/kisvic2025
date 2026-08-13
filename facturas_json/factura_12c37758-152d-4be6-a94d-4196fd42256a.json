@@ -1,0 +1,111 @@
+{
+    "total_bs": 12017.31,
+    "fecha": "2025-08-01",
+    "numero": "FAC-00000724",
+    "descuento": 0.0,
+    "tasa_bcv": 138.13,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "20:48:00",
+    "productos": [
+        "51",
+        "10",
+        "9",
+        "37"
+    ],
+    "total_usd": 87.0,
+    "cantidades": [
+        12,
+        6,
+        6,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 87.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-19T20:48:00.703618",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "12c37758-152d-4be6-a94d-4196fd42256a",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-19 20:48:00.703",
+        "firma_digital": "4222be8d6b694305ca49fb03ee31054fe10f730971e1fe3d6153b12002f542a0",
+        "hash_inmutable": "c02512dee9086b8998019043a6f072b53b9c7543d38abd75df21905ecad5cdf5",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 12017.31,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-08",
+    "descuento_total": 0.0,
+    "precios": [
+        3.2,
+        3.0,
+        3.0,
+        4.2
+    ],
+    "numero_secuencial": 724,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "nombre": "REDUCTIL FAST X 60CAPS",
+            "cantidad": 12,
+            "subtotal_usd": 38.400000000000006,
+            "id": "51",
+            "precio_unitario_bs": 442.016,
+            "categoria": "Adelgazante-Laxante",
+            "subtotal_bs": 5304.192000000001,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.2
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 6,
+            "codigo_barras": "",
+            "id": "10",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2486.34,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CARDO MARIANO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "9",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 2486.34,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 3,
+            "subtotal_usd": 12.600000000000001,
+            "id": "37",
+            "precio_unitario_bs": 580.146,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 1740.438,
+            "codigo_barras": "",
+            "nombre": "VITAMINA E C/SELENIUM X 50 CAP"
+        }
+    ],
+    "subtotal_usd": 87.0,
+    "firma_fiscal": "64dfc496b6d91f85bd5c8f3ed18ee2e5f4773906559c338a9d0e6370976097d6",
+    "id": "12c37758-152d-4be6-a94d-4196fd42256a"
+}

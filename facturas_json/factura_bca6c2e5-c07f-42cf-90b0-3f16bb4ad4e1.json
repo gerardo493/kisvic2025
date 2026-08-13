@@ -1,0 +1,131 @@
+{
+    "total_bs": 18887.7,
+    "fecha": "2025-05-21",
+    "numero": "FAC-00000626",
+    "descuento": 0.0,
+    "id": "bca6c2e5-c07f-42cf-90b0-3f16bb4ad4e1",
+    "tasa_bcv": 96.86,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:12:00",
+    "productos": [
+        "7",
+        "37",
+        "30",
+        "33",
+        "52",
+        "53"
+    ],
+    "total_usd": 195.0,
+    "cantidades": [
+        10,
+        12,
+        13,
+        2,
+        10,
+        10
+    ],
+    "total_abonado": 195.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:47:23",
+            "metodo": "efectivo_usd",
+            "id": "0ddc58a3-8029-4b80-9f6a-d51f2969a5f5",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 195.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Cedeño, Con Calle Mariño, Cerca De Macuto, Turmero, Aragua, Venezuela.",
+        "email": "",
+        "rif": "J-500845600",
+        "telefono": "+5804144673517",
+        "nombre": "TIENDA NATURAL FUTURO NATURAL"
+    },
+    "subtotal_bs": 18887.7,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-10",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        4.2,
+        4.2,
+        9.0,
+        1.5,
+        1.5
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-500845600",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 10,
+            "id_producto": "7",
+            "precio_unitario_bs": 406.812,
+            "categoria": "",
+            "subtotal_bs": 4068.12,
+            "subtotal_usd": 42.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "37",
+            "cantidad": 12,
+            "precio_unitario_bs": 406.812,
+            "categoria": "",
+            "subtotal_bs": 4881.744000000001,
+            "subtotal_usd": 50.400000000000006,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "30",
+            "cantidad": 13,
+            "precio_unitario_bs": 406.812,
+            "categoria": "",
+            "subtotal_bs": 5288.5560000000005,
+            "subtotal_usd": 54.6,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 2,
+            "id_producto": "33",
+            "precio_unitario_bs": 871.74,
+            "categoria": "",
+            "subtotal_bs": 1743.48,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 9.0
+        },
+        {
+            "nombre": "",
+            "cantidad": 10,
+            "id_producto": "52",
+            "precio_unitario_bs": 145.29,
+            "categoria": "",
+            "subtotal_bs": 1452.9,
+            "subtotal_usd": 15.0,
+            "precio_unitario_usd": 1.5
+        },
+        {
+            "nombre": "",
+            "id_producto": "53",
+            "cantidad": 10,
+            "precio_unitario_bs": 145.29,
+            "categoria": "",
+            "subtotal_bs": 1452.9,
+            "subtotal_usd": 15.0,
+            "precio_unitario_usd": 1.5
+        }
+    ],
+    "subtotal_usd": 195.0,
+    "firma_fiscal": "eed3eb7f509b2db4f4537586e1115bfaff43ef2830cca8ea0764dfbe5a0a7376"
+}

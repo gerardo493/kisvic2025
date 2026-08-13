@@ -1,0 +1,164 @@
+{
+    "total_bs": 11602.92,
+    "fecha": "2025-08-06",
+    "numero": "FAC-00000728",
+    "descuento": 0.0,
+    "tasa_bcv": 138.13,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:07:43",
+    "productos": [
+        "15",
+        "12",
+        "10",
+        "29",
+        "18",
+        "11",
+        "19"
+    ],
+    "total_usd": 84.0,
+    "cantidades": [
+        3,
+        9,
+        5,
+        5,
+        2,
+        2,
+        2
+    ],
+    "total_abonado": 84.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-08-28 23:06:04",
+            "metodo": "efectivo_usd",
+            "id": "e14f26ff-08b4-4db6-8663-ee41136898d1",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 84.0
+        }
+    ],
+    "saldo_pendiente": 0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-19T23:07:43.626302",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "d0df56a6-3546-4a91-902d-81f7827c444a",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-19 23:07:43.626",
+        "firma_digital": "e9d0d0e47df7c06c4a9b15dc211ff8b52cdfd5a902d5e8153a011f430c342b61",
+        "hash_inmutable": "a13a0858c9f610b46e23a46d347cfc5241f68f9d456bc2fb220e728bbe598c39",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Vargas Cruce Con Negro Primero Cc Antaño Nivel Pb Local Pb-C, Marcay",
+        "email": "t/n..tu.mundo.natural@dominioinventado.com",
+        "rif": "J-504304603",
+        "telefono": "",
+        "nombre": "T/N  TU MUNDO NATURAL"
+    },
+    "subtotal_bs": 11602.92,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-09-08",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 728,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304603",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "15",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Calculo Renal",
+            "subtotal_bs": 1243.17,
+            "codigo_barras": "",
+            "nombre": "COLA DE CABALLO X 60 CAP"
+        },
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 9,
+            "subtotal_usd": 27.0,
+            "id": "12",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 3729.5099999999998,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 5,
+            "subtotal_usd": 15.0,
+            "id": "10",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2071.95,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "ÑAME SALVAJE X 60 CAP",
+            "cantidad": 5,
+            "subtotal_usd": 15.0,
+            "id": "29",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Menopausia",
+            "subtotal_bs": 2071.95,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "DIENTE DE LEON X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "18",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 828.78,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "11",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 828.78,
+            "codigo_barras": "",
+            "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP"
+        },
+        {
+            "nombre": "ESCOBA DE CARNICERO X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "19",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 828.78,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 84.0,
+    "firma_fiscal": "ac39f09428d49d9bac3ece90c4a839f1a8e408cbb60e150d06a07a1cb3d95e1a",
+    "id": "d0df56a6-3546-4a91-902d-81f7827c444a"
+}

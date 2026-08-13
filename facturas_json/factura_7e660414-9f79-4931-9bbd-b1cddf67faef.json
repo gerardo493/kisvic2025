@@ -1,0 +1,94 @@
+{
+    "total_bs": 5079.582,
+    "fecha": "2025-05-26",
+    "numero": "FAC-00000634",
+    "descuento": 0.0,
+    "id": "7e660414-9f79-4931-9bbd-b1cddf67faef",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:43:00",
+    "productos": [
+        "13",
+        "48",
+        "30",
+        "35"
+    ],
+    "total_usd": 52.2,
+    "cantidades": [
+        6,
+        3,
+        3,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 52.2,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Cc De La Economia Informal - Maracay -Edo Aragua",
+        "email": "yagel.briceño@dominioinventado.com",
+        "rif": "V-27286925",
+        "telefono": "",
+        "nombre": "YAGEL BRICEÑO"
+    },
+    "subtotal_bs": 5079.582,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-15",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        4.2,
+        4.2,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-27286925",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "13",
+            "cantidad": 6,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 1751.58,
+            "subtotal_usd": 18.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "48",
+            "cantidad": 3,
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 1226.1060000000002,
+            "subtotal_usd": 12.600000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "30",
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 1226.1060000000002,
+            "subtotal_usd": 12.600000000000001,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "35",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 52.2,
+    "firma_fiscal": "5f1e85440e4b4eb2eb1c89a46f0ad182ccc0208c9d2c0bd3cd3029856b02c24c"
+}

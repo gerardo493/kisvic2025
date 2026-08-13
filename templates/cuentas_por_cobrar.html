@@ -1,454 +1,543 @@
 {% extends "base.html" %}
 
-{% block title %}Cuentas por Cobrar - Dashboard Integrado{% endblock %}
+{% block title %}Cuentas por Cobrar - Productos Naturales Kisvic 1045, C.A.{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-4">
-    <!-- Header con estadísticas integradas -->
+<div class="kisvic-container p-3 p-md-4">
+    <!-- Header Principal Corporativo con Logo y Divisor Dorado -->
+    <div class="row align-items-center mb-2">
+        <div class="col-md-7">
+            <div class="d-flex align-items-center mb-2">
+                <div class="bg-white p-2 rounded-3 me-3 shadow-sm" style="border: 1px solid #e5e7eb;">
+                    <img src="{{ url_for('static', filename='logo.png') }}" alt="Kisvic Logo" style="height: 42px; width: auto; object-fit: contain;">
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0" style="color: #2E7D32;">Cuentas por Cobrar</h3>
+                    <small style="color: #6B7280; font-weight: 500;">Productos Naturales Kisvic 1045, C.A.</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <a href="{{ url_for('cuentas.mostrar_dashboard_metricas') }}" class="kisvic-btn kisvic-btn-primary me-2">
+                <i class="fas fa-chart-pie me-2"></i>Métricas y Analítica
+            </a>
+            <button class="kisvic-btn kisvic-btn-gold" id="btnExportarCSV">
+                <i class="fas fa-file-excel me-2"></i>Exportar CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Divisor Dorado Corporativo (Anillo Kisvic) -->
+    <div class="kisvic-gold-divider"></div>
+
+    <!-- Banner de Alerta BCV Desactualizada -->
+    {% if tasa_bcv_desactualizada %}
+    <div class="kisvic-card kisvic-accent-gold p-3 mb-4 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="kisvic-icon-circle kisvic-icon-gold me-3">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+                <h6 class="fw-bold mb-0" style="color: #212121;">Tasa BCV Desactualizada</h6>
+                <small style="color: #6B7280;">Utilizando tasa de contingencia del sistema: <strong style="color: #D4A017;">{{ "%.2f"|format(tasa_bcv) }} Bs/USD</strong></small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tarjetas de Métricas Principales (Flat 2.0 con Acento Superior) -->
+    <div class="row mb-4 g-4">
+        <!-- KPI 1: Total Por Cobrar (Acento Dorado) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-gold p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Total Por Cobrar (USD)</span>
+                    <h3 class="fw-bold mb-0" style="color: #212121;">${{ "%.2f"|format(total_por_cobrar_usd) }}</h3>
+                    <small style="color: #6B7280;">~ {{ "%.2f"|format(total_por_cobrar_bs) }} Bs</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-gold">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 2: Facturas Vencidas (Acento Rojo/Ámbar) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-red p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Facturas Vencidas</span>
+                    <h3 class="fw-bold mb-0" style="color: #C62828;">{{ vencidas_count }}</h3>
+                    <small style="color: #C62828; font-weight: 600;">Requieren atención (> {{ dias_vencimiento_limite }}d)</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-red">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 3: Pagos del Mes / Cobradas (Acento Verde Oscuro) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-green p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Pagos del Mes (Cobradas)</span>
+                    <h3 class="fw-bold mb-0" style="color: #2E7D32;">${{ "%.2f"|format(total_cobradas_usd) }}</h3>
+                    <small style="color: #6B7280;">Saldadas completamente</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-green">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI 4: Clientes Activos / Abonadas (Acento Verde Medio) -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="kisvic-card kisvic-card-hover kisvic-accent-emerald p-4 h-100 d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.75rem; color: #6B7280;">Abonadas Parcial</span>
+                    <h3 class="fw-bold mb-0" style="color: #212121;">${{ "%.2f"|format(total_abonadas_usd) }}</h3>
+                    <small style="color: #6B7280;">Abonos parciales recibidos</small>
+                </div>
+                <div class="kisvic-icon-circle kisvic-icon-green">
+                    <i class="fas fa-piggy-bank"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros Avanzados Kisvic (Card con Acento Dorado) -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card bg-gradient-primary text-white">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                        <div class="col-md-8">
-                            <h1 class="mb-2"><i class="fas fa-money-bill-wave me-3"></i>Dashboard de Cuentas por Cobrar</h1>
-                            <p class="mb-0 opacity-75">Sistema integrado con Notas de Entrega y Facturación</p>
+            <div class="kisvic-card kisvic-accent-gold p-3 p-md-4">
+                <form method="GET" id="filterForm" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="estado" class="form-label fw-bold small" style="color: #6B7280;">Estado de Factura</label>
+                        <select name="estado" id="estado" class="form-select kisvic-select">
+                            <option value="por_cobrar" {% if filtro_estado == 'por_cobrar' %}selected{% endif %}>Por Cobrar</option>
+                            <option value="abonada" {% if filtro_estado == 'abonada' %}selected{% endif %}>Abonadas</option>
+                            <option value="cobrada" {% if filtro_estado == 'cobrada' %}selected{% endif %}>Cobradas</option>
+                            <option value="todas" {% if filtro_estado == 'todas' %}selected{% endif %}>Todas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cliente" class="form-label fw-bold small" style="color: #6B7280;">Cliente</label>
+                        <select name="cliente" id="cliente" class="form-select kisvic-select">
+                            <option value="">Todos los clientes</option>
+                            {% for c in clientes_disponibles %}
+                            <option value="{{ c.id }}" {% if request.args.get('cliente') == c.id %}selected{% endif %}>
+                                {{ c.nombre }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="mes" class="form-label fw-bold small" style="color: #6B7280;">Mes</label>
+                        <select name="mes" id="mes" class="form-select kisvic-select">
+                            <option value="">Todos</option>
+                            {% for m in range(1, 13) %}
+                            <option value="{{ m }}" {% if request.args.get('mes')|int == m %}selected{% endif %}>
+                                {{ ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][m-1] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="anio" class="form-label fw-bold small" style="color: #6B7280;">Año</label>
+                        <select name="anio" id="anio" class="form-select kisvic-select">
+                            <option value="">Todos</option>
+                            {% for a in anios_disponibles %}
+                            <option value="{{ a }}" {% if request.args.get('anio')|int == a %}selected{% endif %}>
+                                {{ a }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" id="btnFiltrar" class="kisvic-btn kisvic-btn-primary w-100">
+                            <i class="fas fa-search me-2"></i>Filtrar
+                        </button>
+                    </div>
+
+                    <!-- Secundario -->
+                    <div class="col-md-6 d-flex align-items-center gap-3 mt-3">
+                        <div class="form-check">
+                            <input class="form-check-input kisvic-input" type="checkbox" id="solo_vencidas" name="solo_vencidas" value="1" 
+                                   {% if request.args.get('solo_vencidas') == '1' %}checked{% endif %}>
+                            <label class="form-check-label fw-bold small" style="color: #212121;" for="solo_vencidas">
+                                Solo facturas vencidas
+                            </label>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <div class="row text-center">
-                                <div class="col-4">
-                                    <h3 class="mb-0">{{ total_por_cobrar|length }}</h3>
-                                    <small>Por Cobrar</small>
-                                </div>
-                                <div class="col-4">
-                                    <h3 class="mb-0">{{ total_abonadas|length }}</h3>
-                                    <small>Abonadas</small>
-                                </div>
-                                <div class="col-4">
-                                    <h3 class="mb-0">{{ total_cobradas|length }}</h3>
-                                    <small>Cobradas</small>
-                                </div>
-                            </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="dias_vencimiento" class="form-label mb-0 small" style="color: #6B7280;">Días vencimiento:</label>
+                            <input type="number" id="dias_vencimiento" name="dias_vencimiento" class="kisvic-input form-control form-control-sm" style="width: 75px;" value="{{ dias_vencimiento_limite }}" min="1">
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filtros avanzados -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filtros Avanzados</h5>
-                </div>
-                <div class="card-body">
-                    <form method="GET" class="row g-3">
-                        <div class="col-md-3">
-                            <label for="estado" class="form-label">Estado</label>
-                            <select name="estado" id="estado" class="form-select">
-                                <option value="por_cobrar" {% if request.args.get('estado') == 'por_cobrar' %}selected{% endif %}>Por Cobrar</option>
-                                <option value="abonada" {% if request.args.get('estado') == 'abonada' %}selected{% endif %}>Abonadas</option>
-                                <option value="cobrada" {% if request.args.get('estado') == 'cobrada' %}selected{% endif %}>Cobradas</option>
-                                <option value="todas" {% if request.args.get('estado') == 'todas' %}selected{% endif %}>Todas</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="cliente" class="form-label">Cliente</label>
-                            <select name="cliente" id="cliente" class="form-select">
-                                <option value="">Todos los clientes</option>
-                                {% for cliente in clientes_disponibles %}
-                                <option value="{{ cliente.id }}" {% if request.args.get('cliente') == cliente.id %}selected{% endif %}>
-                                    {{ cliente.nombre }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="mes" class="form-label">Mes</label>
-                            <select name="mes" id="mes" class="form-select">
-                                <option value="">Todos</option>
-                                {% for mes in range(1, 13) %}
-                                <option value="{{ mes }}" {% if request.args.get('mes')|int == mes %}selected{% endif %}>
-                                    {{ ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][mes-1] }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="anio" class="form-label">Año</label>
-                            <select name="anio" id="anio" class="form-select">
-                                <option value="">Todos</option>
-                                {% for anio in anios_disponibles %}
-                                <option value="{{ anio }}" {% if request.args.get('anio')|int == anio %}selected{% endif %}>
-                                    {{ anio }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">&nbsp;</label>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-search me-2"></i>Filtrar
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                    
-                    <!-- Filtros adicionales -->
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="solo_vencidas" name="solo_vencidas" value="1" 
-                                       {% if request.args.get('solo_vencidas') == '1' %}checked{% endif %}>
-                                <label class="form-check-label" for="solo_vencidas">
-                                    Solo facturas vencidas
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6 text-end">
-                            <a href="{{ url_for('mostrar_cuentas_por_cobrar') }}" class="btn btn-outline-secondary btn-sm">
-                                <i class="fas fa-undo me-2"></i>Limpiar filtros
-                            </a>
-                        </div>
+                    <div class="col-md-6 text-end mt-3">
+                        <a href="{{ url_for('cuentas.mostrar_cuentas_por_cobrar') }}" class="kisvic-btn small" style="color: #6B7280;">
+                            <i class="fas fa-undo me-1"></i>Limpiar Filtros
+                        </a>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Resumen de totales -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-warning text-white">
-                <div class="card-body text-center">
-                    <h4 class="mb-0">${{ "%.2f"|format(total_por_cobrar_usd) }}</h4>
-                    <small>Por Cobrar (USD)</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-info text-white">
-                <div class="card-body text-center">
-                    <h4 class="mb-0">${{ "%.2f"|format(total_abonadas_usd) }}</h4>
-                    <small>Abonadas (USD)</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body text-center">
-                    <h4 class="mb-0">${{ "%.2f"|format(total_cobradas_usd) }}</h4>
-                    <small>Cobradas (USD)</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body text-center">
-                    <h4 class="mb-0">{{ vencidas_count }}</h4>
-                    <small>Vencidas</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tabla de cuentas por cobrar -->
+    <!-- Listado Principal (Tabla Corporativa Kisvic) -->
     <div class="row">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Cuentas por Cobrar
-                        <span class="badge bg-secondary ms-2">{{ cuentas_filtradas|length }}</span>
+            <div class="kisvic-card kisvic-accent-green p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0" style="color: #212121;">
+                        <i class="fas fa-list-alt me-2" style="color: #2E7D32;"></i>Cuentas Registradas
+                        <span class="badge kisvic-inset ms-2 px-3 py-2" style="color: #2E7D32; font-weight: 700;">{{ cuentas_filtradas|length }}</span>
                     </h5>
-                    <div>
-                        <button class="btn btn-success btn-sm me-2" onclick="exportarCSV()">
-                            <i class="fas fa-download me-2"></i>Exportar CSV
-                        </button>
-                        <button class="btn btn-info btn-sm" onclick="mostrarEstadisticas()">
-                            <i class="fas fa-chart-bar me-2"></i>Estadísticas
-                        </button>
-                    </div>
                 </div>
-                <div class="card-body">
-                    {% if cuentas_filtradas %}
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Factura</th>
-                                    <th>Cliente</th>
-                                    <th>Fecha</th>
-                                    <th>Total USD</th>
-                                    <th>Abonado USD</th>
-                                    <th>Saldo USD</th>
-                                    <th>Estado</th>
-                                    <th>Último Pago</th>
-                                    <th>Nota Entrega</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for id, cuenta in cuentas_filtradas.items() %}
-                                <tr class="{% if cuenta.vencida %}table-danger{% elif cuenta.estado == 'Por Cobrar' %}table-warning{% elif cuenta.estado == 'Abonada' %}table-info{% else %}table-success{% endif %}">
-                                    <td>
-                                        <strong>{{ cuenta.numero_factura }}</strong>
-                                        {% if cuenta.nota_entrega_origen %}
-                                        <br><small class="text-muted">Desde NE: {{ cuenta.nota_entrega_origen }}</small>
+
+                {% if cuentas_filtradas %}
+                <!-- ESCRITORIO -->
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table align-middle mb-0" id="tablaCuentas" style="background: transparent;">
+                        <thead>
+                            <tr style="background-color: #F5F7F5; border-bottom: 2px solid #E5E7EB;">
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="factura">Factura <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="cliente">Cliente <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="fecha">Fecha <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="total">Total USD <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="abonado">Abonado USD <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="saldo">Saldo USD <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;">Progreso</th>
+                                <th class="sortable-header py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;" data-sort="estado">Estado <i class="fas fa-sort ms-1 small"></i></th>
+                                <th class="py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;">Último Pago</th>
+                                <th class="text-center py-3" style="color: #6B7280; font-size: 0.8rem; text-transform: uppercase;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for key_id, cuenta in cuentas_filtradas.items() %}
+                            {% set pct = (cuenta.abonado_usd / cuenta.total_usd * 100)|round|int if cuenta.total_usd > 0 else (100 if cuenta.estado == 'Cobrada' else 0) %}
+                            <tr style="border-bottom: 1px solid #E5E7EB;">
+                                <td>
+                                    <span class="fw-bold" style="color: #212121;" title="{{ cuenta.numero_factura }}">
+                                        {{ cuenta.numero_factura_display or cuenta.numero_factura }}
+                                    </span>
+                                    {% if cuenta.nota_entrega_origen %}
+                                    <br><small style="color: #6B7280;"><i class="fas fa-receipt me-1"></i>NE: {{ cuenta.nota_entrega_origen }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="fw-bold" style="color: #2E7D32;">{{ cuenta.cliente_nombre }}</span>
+                                    <br><small style="color: #6B7280;">{{ cuenta.rif }}</small>
+                                </td>
+                                <td><small style="color: #6B7280;">{{ cuenta.fecha_emision }}</small></td>
+                                <td class="fw-bold" style="color: #212121;">${{ "%.2f"|format(cuenta.total_usd) }}</td>
+                                <td class="fw-bold" style="color: #2E7D32;">${{ "%.2f"|format(cuenta.abonado_usd) }}</td>
+                                <td>
+                                    <span class="fw-bold {% if cuenta.saldo_pendiente > 0 %}text-danger{% else %}text-muted{% endif %}">
+                                        ${{ "%.2f"|format(cuenta.saldo_pendiente) }}
+                                    </span>
+                                </td>
+                                <td style="min-width: 110px;">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="kisvic-progress-track flex-grow-1">
+                                            <div class="kisvic-progress-fill {% if pct == 100 %}kisvic-progress-fill-success{% elif pct > 0 %}kisvic-progress-fill-warning{% endif %}" style="width: {{ pct }}%"></div>
+                                        </div>
+                                        <small class="fw-bold" style="font-size: 0.75rem; color: #6B7280;">{{ pct }}%</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge px-3 py-2 font-weight-bold flat-badge-{{ cuenta.estado_key }}">
+                                        {{ cuenta.estado }}
+                                    </span>
+                                    {% if cuenta.vencida %}
+                                    <br><span class="badge flat-badge-vencida mt-1"><i class="fas fa-exclamation-triangle me-1"></i>Vencida</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if cuenta.fecha_ultimo_abono %}
+                                    <small class="d-block fw-bold" style="color: #212121;">{{ cuenta.fecha_ultimo_abono }}</small>
+                                    <small style="color: #6B7280;">{{ cuenta.tipo_pago }}</small>
+                                    {% else %}
+                                    <span class="small" style="color: #6B7280;">Sin abonos</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a href="{{ url_for('ver_factura', id=cuenta.numero_factura) }}" 
+                                           class="kisvic-btn px-2 py-1 small" title="Ver detalle">
+                                            <i class="fas fa-eye" style="color: #2E7D32;"></i>
+                                        </a>
+                                        {% if cuenta.estado != 'Cobrada' %}
+                                        <button type="button" class="kisvic-btn px-2 py-1 small btn-registrar-pago" 
+                                                data-factura="{{ cuenta.numero_factura }}"
+                                                title="Registrar Pago">
+                                            <i class="fas fa-hand-holding-usd" style="color: #D4A017;"></i>
+                                        </button>
+                                        <button type="button" class="kisvic-btn px-2 py-1 small btn-enviar-recordatorio" 
+                                                data-cliente-id="{{ cuenta.cliente_id }}" 
+                                                data-cliente-nombre="{{ cuenta.cliente_nombre }}"
+                                                title="WhatsApp">
+                                            <i class="fab fa-whatsapp" style="color: #4CAF50;"></i>
+                                        </button>
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        <strong>{{ cuenta.cliente_nombre }}</strong>
-                                        <br><small class="text-muted">{{ cuenta.rif }}</small>
-                                    </td>
-                                    <td>{{ cuenta.fecha_emision }}</td>
-                                    <td>${{ "%.2f"|format(cuenta.total_usd) }}</td>
-                                    <td>${{ "%.2f"|format(cuenta.abonado_usd) }}</td>
-                                    <td>
-                                        <strong>${{ "%.2f"|format(cuenta.saldo_pendiente) }}</strong>
-                                        {% if cuenta.vencida %}
-                                        <br><span class="badge bg-danger">Vencida</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span class="badge {% if cuenta.estado == 'Por Cobrar' %}bg-warning{% elif cuenta.estado == 'Abonada' %}bg-info{% else %}bg-success{% endif %}">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MÓVIL -->
+                <div class="d-block d-md-none">
+                    <div class="row g-3">
+                        {% for key_id, cuenta in cuentas_filtradas.items() %}
+                        {% set pct = (cuenta.abonado_usd / cuenta.total_usd * 100)|round|int if cuenta.total_usd > 0 else (100 if cuenta.estado == 'Cobrada' else 0) %}
+                        <div class="col-12">
+                            <div class="kisvic-card kisvic-accent-green p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-0 fw-bold" style="color: #212121;">{{ cuenta.numero_factura_display or cuenta.numero_factura }}</h6>
+                                        <small class="fw-bold" style="color: #2E7D32;">{{ cuenta.cliente_nombre }}</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge px-2 py-1 small flat-badge-{{ cuenta.estado_key }}">
                                             {{ cuenta.estado }}
                                         </span>
-                                    </td>
-                                    <td>
-                                        {% if cuenta.fecha_ultimo_abono %}
-                                        {{ cuenta.fecha_ultimo_abono }}
-                                        <br><small class="text-muted">{{ cuenta.tipo_pago }}</small>
-                                        {% else %}
-                                        <span class="text-muted">Sin pagos</span>
+                                    </div>
+                                </div>
+                                <div class="row text-center kisvic-inset p-2 rounded my-2 g-0">
+                                    <div class="col-4 border-end">
+                                        <small class="d-block" style="color: #6B7280;">Total</small>
+                                        <span class="fw-bold" style="color: #212121;">${{ "%.2f"|format(cuenta.total_usd) }}</span>
+                                    </div>
+                                    <div class="col-4 border-end">
+                                        <small class="d-block" style="color: #6B7280;">Abonado</small>
+                                        <span class="fw-bold" style="color: #2E7D32;">${{ "%.2f"|format(cuenta.abonado_usd) }}</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="d-block" style="color: #6B7280;">Saldo</small>
+                                        <span class="fw-bold text-danger">${{ "%.2f"|format(cuenta.saldo_pendiente) }}</span>
+                                    </div>
+                                </div>
+                                <div class="kisvic-progress-track my-2">
+                                    <div class="kisvic-progress-fill {% if pct == 100 %}kisvic-progress-fill-success{% elif pct > 0 %}kisvic-progress-fill-warning{% endif %}" style="width: {{ pct }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small style="color: #6B7280;"><i class="far fa-calendar-alt me-1"></i>{{ cuenta.fecha_emision }}</small>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ url_for('ver_factura', id=cuenta.numero_factura) }}" class="kisvic-btn px-2 py-1 small"><i class="fas fa-eye" style="color: #2E7D32;"></i></a>
+                                        {% if cuenta.estado != 'Cobrada' %}
+                                        <button type="button" class="kisvic-btn px-2 py-1 small btn-registrar-pago" data-factura="{{ cuenta.numero_factura }}"><i class="fas fa-dollar-sign" style="color: #D4A017;"></i></button>
+                                        <button type="button" class="kisvic-btn px-2 py-1 small btn-enviar-recordatorio" data-cliente-id="{{ cuenta.cliente_id }}" data-cliente-nombre="{{ cuenta.cliente_nombre }}"><i class="fab fa-whatsapp" style="color: #4CAF50;"></i></button>
                                         {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if cuenta.nota_entrega_origen %}
-                                        <span class="badge bg-info">{{ cuenta.nota_entrega_origen }}</span>
-                                        {% else %}
-                                        <span class="text-muted">Directa</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ url_for('ver_factura', id=cuenta.numero_factura) }}" 
-                                               class="btn btn-sm btn-outline-primary" title="Ver factura">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            {% if cuenta.estado != 'Cobrada' %}
-                                            <button class="btn btn-sm btn-outline-success" 
-                                                    onclick="registrarPago('{{ cuenta.numero_factura }}')" 
-                                                    title="Registrar pago">
-                                                <i class="fas fa-dollar-sign"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-warning" 
-                                                    onclick="enviarRecordatorio('{{ cuenta.cliente_id }}', '{{ cuenta.cliente_nombre }}')" 
-                                                    title="Enviar recordatorio">
-                                                <i class="fas fa-bell"></i>
-                                            </button>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No se encontraron cuentas por cobrar</h5>
-                        <p class="text-muted">Ajusta los filtros o crea nuevas facturas</p>
-                    </div>
-                    {% endif %}
                 </div>
+
+                {% else %}
+                <div class="text-center py-5 px-3">
+                    <div class="kisvic-icon-circle kisvic-icon-green mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.8rem;">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <h4 class="fw-bold" style="color: #212121;">No se encontraron cuentas por cobrar</h4>
+                    <p class="mb-4" style="max-width: 500px; margin: 0 auto; color: #6B7280;">
+                        No existen registros que coincidan con los filtros seleccionados. Intenta ajustar los parámetros de búsqueda o registra una nueva factura.
+                    </p>
+                    <a href="{{ url_for('nueva_factura') if 'nueva_factura' in url_for.__globals__ else '#' }}" class="kisvic-btn kisvic-btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i>Crear Nueva Factura
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal para registrar pago -->
-<div class="modal fade" id="modalPago" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Registrar Pago</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Modal para Registrar Pago -->
+<div class="modal fade" id="modalPago" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content kisvic-card kisvic-accent-gold p-2" style="background-color: #ffffff;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" style="color: #2E7D32;"><i class="fas fa-cash-register me-2" style="color: #D4A017;"></i>Registrar Pago / Abono</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <form id="formPago">
                     <div class="mb-3">
-                        <label for="monto_pago" class="form-label">Monto del Pago</label>
+                        <label for="monto_pago" class="form-label font-weight-bold" style="color: #6B7280;">Monto del Pago (USD)</label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
-                            <input type="number" step="0.01" class="form-control" id="monto_pago" name="monto_pago" required>
+                            <span class="input-group-text kisvic-inset fw-bold" style="color: #6B7280;">$</span>
+                            <input type="number" step="0.01" class="form-control kisvic-input" id="monto_pago" name="monto_pago" required placeholder="0.00">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="metodo_pago" class="form-label">Método de Pago</label>
-                        <select class="form-select" id="metodo_pago" name="metodo_pago" required>
-                            <option value="">Seleccionar método</option>
+                        <label for="metodo_pago" class="form-label font-weight-bold" style="color: #6B7280;">Método de Pago</label>
+                        <select class="form-select kisvic-select" id="metodo_pago" name="metodo_pago" required>
+                            <option value="">Seleccionar método...</option>
                             <option value="Efectivo">Efectivo</option>
                             <option value="Transferencia">Transferencia</option>
                             <option value="Pago Móvil">Pago Móvil</option>
+                            <option value="Zelle">Zelle</option>
                             <option value="Cheque">Cheque</option>
                             <option value="Otro">Otro</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="referencia_pago" class="form-label">Referencia</label>
-                        <input type="text" class="form-control" id="referencia_pago" name="referencia_pago" 
-                               placeholder="Número de referencia, comprobante, etc.">
+                        <label for="referencia_pago" class="form-label font-weight-bold" style="color: #6B7280;">Referencia / Comprobante</label>
+                        <input type="text" class="form-control kisvic-input" id="referencia_pago" name="referencia_pago" placeholder="N° de comprobante o referencia">
                     </div>
                     <div class="mb-3">
-                        <label for="banco" class="form-label">Banco (si aplica)</label>
-                        <input type="text" class="form-control" id="banco" name="banco" 
-                               placeholder="Nombre del banco">
+                        <label for="banco" class="form-label font-weight-bold" style="color: #6B7280;">Banco emisor (Opcional)</label>
+                        <input type="text" class="form-control kisvic-input" id="banco" name="banco" placeholder="Nombre del banco de origen">
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" onclick="confirmarPago()">Registrar Pago</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de estadísticas -->
-<div class="modal fade" id="modalEstadisticas" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Estadísticas de Cuentas por Cobrar</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6>Resumen por Estado</h6>
-                        <canvas id="chartEstados" width="300" height="300"></canvas>
-                    </div>
-                    <div class="col-md-6">
-                        <h6>Distribución por Cliente</h6>
-                        <canvas id="chartClientes" width="300" height="300"></canvas>
-                    </div>
-                </div>
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <h6>Análisis de Vencimientos</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Rango de Días</th>
-                                        <th>Cantidad</th>
-                                        <th>Total USD</th>
-                                        <th>% del Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaVencimientos">
-                                    <!-- Se llena dinámicamente -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="kisvic-btn" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="kisvic-btn kisvic-btn-primary" id="btnConfirmarPago">
+                    <i class="fas fa-check-circle me-1"></i>Confirmar Pago
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-let facturaActual = null;
+document.addEventListener('DOMContentLoaded', function () {
+    let facturaActual = null;
 
-function registrarPago(numeroFactura) {
-    facturaActual = numeroFactura;
-    const modal = new bootstrap.Modal(document.getElementById('modalPago'));
-    modal.show();
-}
-
-function confirmarPago() {
-    if (!facturaActual) return;
-    
-    const formData = new FormData(document.getElementById('formPago'));
-    formData.append('monto_pago', document.getElementById('monto_pago').value);
-    formData.append('metodo_pago', document.getElementById('metodo_pago').value);
-    formData.append('referencia_pago', document.getElementById('referencia_pago').value);
-    formData.append('banco', document.getElementById('banco').value);
-    
-    fetch(`/facturas/${facturaActual}/registrar_pago`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        if (response.ok) {
-            location.reload();
-        } else {
-            alert('Error al registrar el pago');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al registrar el pago');
-    });
-}
-
-function enviarRecordatorio(clienteId, clienteNombre) {
-    if (confirm(`¿Enviar recordatorio de cuentas por cobrar a ${clienteNombre}?`)) {
-        fetch('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ cliente_id: clienteId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Recordatorio enviado exitosamente');
-            } else {
-                alert('Error al enviar recordatorio: ' + data.error);
+    const filterForm = document.getElementById('filterForm');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function () {
+            const btn = document.getElementById('btnFiltrar');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Filtrando...';
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al enviar recordatorio');
         });
     }
-}
 
-function exportarCSV() {
-    const url = new URL(window.location);
-    url.searchParams.set('export', 'csv');
-    window.location.href = url.toString();
-}
+    const modalPagoElem = document.getElementById('modalPago');
+    const modalPago = modalPagoElem ? new bootstrap.Modal(modalPagoElem) : null;
 
-function mostrarEstadisticas() {
-    const modal = new bootstrap.Modal(document.getElementById('modalEstadisticas'));
-    modal.show();
-    
-    // Aquí se podrían cargar las estadísticas con Chart.js
-    setTimeout(() => {
-        cargarEstadisticas();
-    }, 100);
-}
+    document.querySelectorAll('.btn-registrar-pago').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            facturaActual = this.getAttribute('data-factura');
+            if (modalPago) modalPago.show();
+        });
+    });
 
-function cargarEstadisticas() {
-    // Implementar carga de estadísticas con Chart.js
-    console.log('Cargando estadísticas...');
-}
+    const btnConfirmarPago = document.getElementById('btnConfirmarPago');
+    if (btnConfirmarPago) {
+        btnConfirmarPago.addEventListener('click', function () {
+            if (!facturaActual) return;
 
-// Auto-reload cada 5 minutos para mantener datos actualizados
-setInterval(() => {
-    if (document.visibilityState === 'visible') {
-        location.reload();
+            const monto = document.getElementById('monto_pago').value;
+            const metodo = document.getElementById('metodo_pago').value;
+
+            if (!monto || parseFloat(monto) <= 0 || !metodo) {
+                alert('Por favor ingrese un monto válido y seleccione un método de pago.');
+                return;
+            }
+
+            btnConfirmarPago.disabled = true;
+            btnConfirmarPago.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+            const formData = new FormData(document.getElementById('formPago'));
+
+            fetch(`/facturas/${facturaActual}/registrar_pago`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error al registrar el pago en el servidor.');
+                    btnConfirmarPago.disabled = false;
+                    btnConfirmarPago.innerHTML = '<i class="fas fa-check-circle me-1"></i>Confirmar Pago';
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+                alert('Ocurrió un error de red al procesar el pago.');
+                btnConfirmarPago.disabled = false;
+                btnConfirmarPago.innerHTML = '<i class="fas fa-check-circle me-1"></i>Confirmar Pago';
+            });
+        });
     }
-}, 300000);
+
+    document.querySelectorAll('.btn-enviar-recordatorio').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const clienteId = this.getAttribute('data-cliente-id');
+            const clienteNombre = this.getAttribute('data-cliente-nombre');
+
+            if (confirm(`¿Enviar recordatorio de cuentas por cobrar a ${clienteNombre}?`)) {
+                fetch('/cuentas-por-cobrar/enviar_recordatorio_whatsapp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ cliente_id: clienteId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.enlace_whatsapp) {
+                            window.open(data.enlace_whatsapp, '_blank');
+                        }
+                        alert('Recordatorio de WhatsApp preparado exitosamente.');
+                    } else {
+                        alert('Error al enviar recordatorio: ' + (data.error || 'Desconocido'));
+                    }
+                })
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('Error al procesar la solicitud de recordatorio.');
+                });
+            }
+        });
+    });
+
+    const btnExportarCSV = document.getElementById('btnExportarCSV');
+    if (btnExportarCSV) {
+        btnExportarCSV.addEventListener('click', function () {
+            const url = new URL(window.location.href);
+            url.searchParams.set('export', 'csv');
+            window.location.href = url.toString();
+        });
+    }
+
+    document.querySelectorAll('.sortable-header').forEach(function (header) {
+        header.addEventListener('click', function () {
+            const table = document.getElementById('tablaCuentas');
+            if (!table) return;
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const colIndex = Array.from(header.parentNode.children).indexOf(header);
+            const isAsc = header.classList.contains('sort-asc');
+
+            rows.sort(function (a, b) {
+                const cellA = a.children[colIndex].innerText.trim();
+                const cellB = b.children[colIndex].innerText.trim();
+                const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ""));
+                const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ""));
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    return isAsc ? numA - numB : numB - numA;
+                }
+                return isAsc ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+            });
+
+            document.querySelectorAll('.sortable-header').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+            header.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+        });
+    });
+});
 </script>
 {% endblock %}

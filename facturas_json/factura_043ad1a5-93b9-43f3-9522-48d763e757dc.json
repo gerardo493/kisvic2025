@@ -1,0 +1,94 @@
+{
+    "total_bs": 4068.12,
+    "fecha": "2025-05-19",
+    "numero": "FAC-00000624",
+    "descuento": 0.0,
+    "id": "043ad1a5-93b9-43f3-9522-48d763e757dc",
+    "tasa_bcv": 96.86,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "15:41:00",
+    "productos": [
+        "1",
+        "32",
+        "56",
+        "33"
+    ],
+    "total_usd": 42.0,
+    "cantidades": [
+        5,
+        3,
+        6,
+        1
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 42.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Vargas Entre Av Bolivar Y Santos Michelena Maracay",
+        "email": "t/n.renacer.natural@dominioinventado.com",
+        "rif": "J-308435378",
+        "telefono": "+5804120333026",
+        "nombre": "T/N RENACER NATURAL"
+    },
+    "subtotal_bs": 4068.12,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-08",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        1.5,
+        9.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-308435378",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 5,
+            "id_producto": "1",
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 1452.9,
+            "subtotal_usd": 15.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "32",
+            "precio_unitario_bs": 290.58,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "id_producto": "56",
+            "cantidad": 6,
+            "precio_unitario_bs": 145.29,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "33",
+            "cantidad": 1,
+            "precio_unitario_bs": 871.74,
+            "categoria": "",
+            "subtotal_bs": 871.74,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 9.0
+        }
+    ],
+    "subtotal_usd": 42.0,
+    "firma_fiscal": "9620035506f4c117afcd9e2beb7ae556642b177b1f09092e17ec0adca419ae52"
+}

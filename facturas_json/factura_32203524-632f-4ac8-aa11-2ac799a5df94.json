@@ -1,0 +1,81 @@
+{
+    "total_bs": 14630.112000000003,
+    "fecha": "2025-06-09",
+    "numero": "FAC-00000658",
+    "descuento": 0.0,
+    "id": "32203524-632f-4ac8-aa11-2ac799a5df94",
+    "tasa_bcv": 99.12,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:04:00",
+    "productos": [
+        "48",
+        "19",
+        "10"
+    ],
+    "total_usd": 147.60000000000002,
+    "cantidades": [
+        18,
+        12,
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 147.6,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Santos  Michelena Cc Boulevard  Perez Almarza Nivel Pb Local # 159 Maracay",
+        "email": "empredimiento.jose.vasquez.20@dominioinventado.com",
+        "rif": "J-501899063",
+        "telefono": "",
+        "nombre": "EMPREDIMIENTO JOSE VASQUEZ 20"
+    },
+    "subtotal_bs": 14630.112000000003,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-29",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501899063",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 18,
+            "id_producto": "48",
+            "precio_unitario_bs": 416.30400000000003,
+            "categoria": "",
+            "subtotal_bs": 7493.472000000002,
+            "subtotal_usd": 75.60000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "19",
+            "cantidad": 12,
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 3568.32,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "10",
+            "cantidad": 12,
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 3568.32,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 147.60000000000002,
+    "firma_fiscal": "d59ed82e1c6b7c049b9b4178f3f3be8860c6ef85f007b3982ade4456cea7f048"
+}

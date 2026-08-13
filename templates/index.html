@@ -145,30 +145,23 @@
         }
 
         #fecha-hora-actual {
-            background: linear-gradient(145deg, #4b6cb7, #182848);
-            padding: 1.2rem 2rem;
-            border-radius: 16px;
-            color: #ffffff;
+            background: #FFFFFF;
+            padding: 0.8rem 1.4rem;
+            border-radius: 12px;
+            color: #212121;
             font-weight: 600;
-            font-size: 1.1rem;
-            border: 1px solid rgba(75, 108, 183, 0.8);
-            box-shadow: 
-                8px 8px 20px rgba(24, 40, 72, 0.3),
-                -8px -8px 20px rgba(75, 108, 183, 0.2),
-                inset 2px 2px 4px rgba(255, 255, 255, 0.2),
-                inset -2px -2px 4px rgba(0, 0, 0, 0.2),
-                0 0 20px rgba(75, 108, 183, 0.2);
+            font-size: 1rem;
+            border: 1px solid #D4A017;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
             text-align: center;
             margin-left: 0;
             white-space: normal;
             word-break: break-word;
-            backdrop-filter: blur(10px);
-            transform: translateY(0) translateZ(0);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
-            perspective: 1000px;
         }
+
 
         #fecha-hora-actual::before {
             content: '';
@@ -286,25 +279,18 @@
             }
         }
 
-        .header-container {
-            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-            padding: 2.5rem 0 2rem 0;
-            margin: -1.5rem -1.5rem 0 -1.5rem;
-            border-radius: 0 0 40px 40px;
-            box-shadow: 0 12px 32px rgba(75, 108, 183, 0.15);
+           .header-container {
+            background: transparent;
+            padding: 1.5rem 0 1rem 0;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
             position: relative;
             overflow: visible;
         }
 
         .header-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.5;
+            display: none;
         }
 
         .header-content {
@@ -313,15 +299,17 @@
         }
 
         .header-logo {
-            padding: 0;
+            padding: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: transform 0.3s;
-            background: none;
-            border: none;
-            width: 160px;
-            height: 160px;
+            background: #ffffff;
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            width: 100px;
+            height: 100px;
         }
 
         .header-logo:hover {
@@ -331,8 +319,8 @@
         .header-logo img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
+            object-fit: contain;
+            border-radius: 12px;
             transition: all 0.3s ease;
         }
 
@@ -342,36 +330,36 @@
 
         @media (max-width: 991px) {
             .header-logo {
-                width: 120px;
-                height: 120px;
+                width: 80px;
+                height: 80px;
             }
         }
 
         @media (max-width: 576px) {
             .header-logo {
-                width: 100px;
-                height: 100px;
+                width: 70px;
+                height: 70px;
             }
         }
 
         .welcome-text {
-            color: #ffffff;
-            font-size: 2.5rem;
+            color: #2E7D32;
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.3px;
             line-height: 1.2;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: none;
         }
 
         .welcome-subtext {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 1.3rem;
+            color: #6B7280;
+            font-size: 1.1rem;
             font-weight: 500;
             margin-bottom: 0;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
             line-height: 1.4;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            text-shadow: none;
         }
 
         .main-stats {
@@ -2898,33 +2886,38 @@
     </script>
 
     <div class="main-bg-blur"></div>
+
     <div class="container-fluid px-4">
         <div class="header-container">
-            <div class="container">
+            <div class="container-fluid">
                 <div class="header-content">
-                    <div class="row align-items-center g-3">
-                        <div class="col-auto d-flex align-items-center justify-content-center" style="min-width:120px;">
+                    <div class="row align-items-center g-3 mb-2">
+                        <div class="col-auto d-flex align-items-center justify-content-center" style="min-width:100px;">
                             <div class="header-logo">
-                                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Empresa">
+                                <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Kisvic">
                             </div>
                         </div>
                         <div class="col ps-0 ps-md-3">
                             <h1 class="welcome-text mb-1">Bienvenido al Sistema de Facturación</h1>
-                            <p class="welcome-subtext mb-0">Panel de Control y Gestión Empresarial</p>
+                            <p class="welcome-subtext mb-0">Panel de Control y Gestión Empresarial • Productos Naturales Kisvic 1045, C.A.</p>
                         </div>
                         <div class="col-12 col-md-auto text-md-start mt-3 mt-md-0">
                             <div id="fecha-hora-actual"></div>
                         </div>
                     </div>
+
+                    <!-- Divisor Dorado Corporativo (Anillo Kisvic) -->
+                    <div class="kisvic-gold-divider"></div>
+
                     
-                    <!-- Tarjetas Modernas del Dashboard -->
+                    <!-- Tarjetas Modernas del Dashboard Superiores -->
                     <div class="col-12 mt-4">
                         <div class="row g-4 justify-content-center">
-                            <!-- Cuentas por Cobrar - Rojo -->
+                            <!-- Cuentas por Cobrar - Dorado (Neutro/Pendiente) -->
                             <div class="col-md-6 col-lg-3">
-                                <div class="modern-stats-card modern-stats-card-red" id="card-cobranza">
+                                <div class="modern-stats-card" id="card-cobranza" style="border-top: 3px solid #D4A017;">
                                     <div class="modern-card-header">
-                                        <div class="modern-card-icon modern-icon-red">
+                                        <div class="modern-card-icon modern-icon-gold">
                                             <i class="fas fa-hand-holding-usd"></i>
                                         </div>
                                         <div class="modern-card-filters">
@@ -2942,14 +2935,14 @@
                                         <div class="modern-card-trend">
                                             <i class="fas fa-arrow-up text-success me-1"></i>
                                             <span class="text-success">+12%</span>
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Pagos Recibidos - Verde -->
+                            <!-- Pagos Recibidos - Verde (Ingresos) -->
                             <div class="col-md-6 col-lg-3">
-                                <div class="modern-stats-card modern-stats-card-green" id="card-pagos">
+                                <div class="modern-stats-card" id="card-pagos" style="border-top: 3px solid #2E7D32;">
                                     <div class="modern-card-header">
                                         <div class="modern-card-icon modern-icon-green">
                                             <i class="fas fa-money-check-alt"></i>
@@ -2969,16 +2962,16 @@
                                         <div class="modern-card-trend">
                                             <i class="fas fa-arrow-up text-success me-1"></i>
                                             <span class="text-success">+8%</span>
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Facturado - Azul -->
+                            <!-- Facturado - Verde (Ingresos/Facturación) -->
                             <div class="col-md-6 col-lg-3">
-                                <div class="modern-stats-card modern-stats-card-blue" id="card-facturado">
+                                <div class="modern-stats-card" id="card-facturado" style="border-top: 3px solid #2E7D32;">
                                     <div class="modern-card-header">
-                                        <div class="modern-card-icon modern-icon-blue">
+                                        <div class="modern-card-icon modern-icon-green">
                                             <i class="fas fa-file-invoice-dollar"></i>
                                         </div>
                                         <div class="modern-card-filters">
@@ -2996,16 +2989,16 @@
                                         <div class="modern-card-trend">
                                             <i class="fas fa-arrow-up text-success me-1"></i>
                                             <span class="text-success">+15%</span>
-                                </div>
-                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Promedio por Factura - Amarillo -->
+                            <!-- Promedio por Factura - Dorado (Promedio Neutro) -->
                             <div class="col-md-6 col-lg-3">
-                                <div class="modern-stats-card modern-stats-card-yellow" id="card-promedio">
+                                <div class="modern-stats-card" id="card-promedio" style="border-top: 3px solid #D4A017;">
                                     <div class="modern-card-header">
-                                        <div class="modern-card-icon modern-icon-yellow">
+                                        <div class="modern-card-icon modern-icon-gold">
                                             <i class="fas fa-receipt"></i>
                                         </div>
                                     </div>
@@ -3026,12 +3019,13 @@
             </div>
         </div>
         
-        <!-- Tarjetas Secundarias Modernas -->
+        <!-- Tarjetas Inferiores Corporativas -->
         <div class="row g-4 mt-4">
+            <!-- Total Clientes - Verde Operativo -->
             <div class="col-md-6 col-lg-3">
-                <div class="modern-stats-card modern-stats-card-blue">
+                <div class="modern-stats-card" style="border-top: 3px solid #2E7D32;">
                     <div class="modern-card-header">
-                        <div class="modern-card-icon modern-icon-blue">
+                        <div class="modern-card-icon modern-icon-green">
                             <i class="fas fa-users"></i>
                         </div>
                     </div>
@@ -3042,13 +3036,14 @@
                         <div class="modern-card-trend">
                             <i class="fas fa-arrow-up text-success me-1"></i>
                             <span class="text-success">+5%</span>
-                </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Productos en Inventario - Verde Operativo -->
             <div class="col-md-6 col-lg-3">
-                <div class="modern-stats-card modern-stats-card-green">
+                <div class="modern-stats-card" style="border-top: 3px solid #2E7D32;">
                     <div class="modern-card-header">
                         <div class="modern-card-icon modern-icon-green">
                             <i class="fas fa-boxes"></i>
@@ -3061,15 +3056,16 @@
                         <div class="modern-card-trend">
                             <i class="fas fa-minus text-muted me-1"></i>
                             <span class="text-muted">0%</span>
-                </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- Facturas del Mes - Verde Operativo -->
             <div class="col-md-6 col-lg-3">
-                <div class="modern-stats-card modern-stats-card-blue">
+                <div class="modern-stats-card" style="border-top: 3px solid #2E7D32;">
                     <div class="modern-card-header">
-                        <div class="modern-card-icon modern-icon-blue">
+                        <div class="modern-card-icon modern-icon-green">
                             <i class="fas fa-file-invoice-dollar"></i>
                         </div>
                     </div>
@@ -3080,24 +3076,25 @@
                         <div class="modern-card-trend">
                             <i class="fas fa-arrow-up text-success me-1"></i>
                             <span class="text-success">+22%</span>
-                </div>
                         </div>
-                              </div>
                     </div>
+                </div>
+            </div>
 
+            <!-- Tasa BCV - Dorado Destacado -->
             <div class="col-md-6 col-lg-3">
-                <div class="modern-stats-card modern-stats-card-bcv" id="card-bcv">
+                <div class="modern-stats-card" id="card-bcv" style="border-top: 3px solid #D4A017; background: #ffffff;">
                     <div class="modern-card-header">
-                        <div class="modern-card-icon modern-icon-bcv">
+                        <div class="modern-card-icon modern-icon-gold">
                             <i class="fas fa-chart-line"></i>
-                              </div>
+                        </div>
                         <div class="bcv-status-indicator" id="bcv-status">
-                            <i class="fas fa-circle text-success"></i>
-                            </div>
-                          </div>
+                            <i class="fas fa-circle" style="color: #D4A017;"></i>
+                        </div>
+                    </div>
                     <div class="modern-card-content">
                         <h3 class="modern-card-title">Tasa BCV</h3>
-                        <div class="modern-card-value bcv-value" id="tasa-bcv-valor">{{ tasa_bcv|default('Cargando...', true)|es_number }}</div>
+                        <div class="modern-card-value bcv-value" id="tasa-bcv-valor" style="color: #D4A017;">{{ tasa_bcv|default('Cargando...', true)|es_number }}</div>
                         <div class="modern-card-subtitle">Bs/USD</div>
                         <div class="modern-card-trend bcv-trend">
                             <i class="fas fa-arrow-up text-success me-1"></i>
@@ -3107,7 +3104,7 @@
                             <i class="fas fa-clock text-info"></i> 
                             <span class="update-text">Cargando...</span>
                         </div>
-                        <button class="btn btn-sm btn-bcv-refresh" onclick="forzarActualizacionTasaBCV()" id="btn-actualizar-tasa">
+                        <button class="btn btn-sm btn-bcv-refresh" onclick="forzarActualizacionTasaBCV()" id="btn-actualizar-tasa" style="background: #D4A017; border: none;">
                             <i class="fas fa-sync-alt"></i> 
                             <span>Actualizar</span>
                         </button>
@@ -3116,19 +3113,20 @@
             </div>
         </div>
 
-    <!-- Quick Actions -->
+    <!-- Quick Actions (2 Colores de Marca) -->
     <div class="row mt-4">
         <div class="col-12">
-            <div class="card modern-actions-card">
-                <div class="card-header modern-actions-header">
-                    <h5 class="mb-0 modern-actions-title">
-                        <i class="fas fa-bolt me-2 text-warning"></i>Acciones Rápidas
+            <div class="card modern-actions-card" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 14px; border: 1px solid #E5E7EB;">
+                <div class="card-header modern-actions-header" style="background: #ffffff; border-bottom: 1px solid #E5E7EB; border-radius: 14px 14px 0 0;">
+                    <h5 class="mb-0 modern-actions-title" style="color: #2E7D32; font-weight: 700;">
+                        <i class="fas fa-bolt me-2" style="color: #D4A017;"></i>Acciones Rápidas
                     </h5>
                 </div>
                 <div class="card-body modern-actions-body">
                     <div class="row g-4">
+                        <!-- Verde: Registro/Entidades (Nuevo Cliente) -->
                         <div class="col-12 col-sm-6 col-md-3">
-                            <a href="/clientes/nuevo" class="modern-action-btn modern-action-btn-primary">
+                            <a href="/clientes/nuevo" class="modern-action-btn modern-action-btn-green">
                                 <div class="action-icon">
                                     <i class="fas fa-user-plus"></i>
                                 </div>
@@ -3141,8 +3139,9 @@
                                 </div>
                             </a>
                         </div>
+                        <!-- Verde: Registro/Entidades (Nuevo Producto) -->
                         <div class="col-12 col-sm-6 col-md-3">
-                            <a href="/inventario/nuevo" class="modern-action-btn modern-action-btn-success">
+                            <a href="/inventario/nuevo" class="modern-action-btn modern-action-btn-green">
                                 <div class="action-icon">
                                     <i class="fas fa-box-open"></i>
                                 </div>
@@ -3155,8 +3154,9 @@
                                 </div>
                             </a>
                         </div>
+                        <!-- Dorado: Facturación/Documentos (Nueva Factura) -->
                         <div class="col-12 col-sm-6 col-md-3">
-                            <a href="/facturas/nueva" class="modern-action-btn modern-action-btn-warning">
+                            <a href="/facturas/nueva" class="modern-action-btn modern-action-btn-gold">
                                 <div class="action-icon">
                                     <i class="fas fa-file-invoice-dollar"></i>
                                 </div>
@@ -3169,8 +3169,9 @@
                                 </div>
                             </a>
                         </div>
+                        <!-- Dorado: Facturación/Documentos (Nueva Cotización) -->
                         <div class="col-12 col-sm-6 col-md-3">
-                            <a href="/cotizaciones/nueva" class="modern-action-btn modern-action-btn-info">
+                            <a href="/cotizaciones/nueva" class="modern-action-btn modern-action-btn-gold">
                                 <div class="action-icon">
                                     <i class="fas fa-file-alt"></i>
                                 </div>
@@ -3183,8 +3184,9 @@
                                 </div>
                             </a>
                         </div>
+                        <!-- Dorado: Facturación/Documentos (Nueva Nota de Entrega) -->
                         <div class="col-12 col-sm-6 col-md-3">
-                            <a href="/notas-entrega/nueva" class="modern-action-btn modern-action-btn-delivery">
+                            <a href="/notas-entrega/nueva" class="modern-action-btn modern-action-btn-gold">
                                 <div class="action-icon">
                                     <i class="fas fa-truck"></i>
                                 </div>
@@ -3202,37 +3204,40 @@
             </div>
         </div>
     </div>
+     </div>
+        </div>
+    </div>
 
     <!-- Recent Activity -->
         <div class="row mt-4 g-4">
             <div class="col-12 col-md-6">
-                <div class="card modern-activity-card h-100">
-                    <div class="card-header modern-activity-header">
-                        <h5 class="mb-0 modern-activity-title">
-                            <i class="fas fa-file-invoice me-2 text-primary"></i>Últimas Facturas
+                <div class="card modern-activity-card h-100" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 14px; border: 1px solid #E5E7EB; border-top: 3px solid #2E7D32;">
+                    <div class="card-header modern-activity-header" style="background: #ffffff; border-bottom: 1px solid #E5E7EB; border-radius: 14px 14px 0 0;">
+                        <h5 class="mb-0 modern-activity-title" style="color: #2E7D32; font-weight: 700;">
+                            <i class="fas fa-file-invoice me-2" style="color: #2E7D32;"></i>Últimas Facturas
                         </h5>
-                        <span class="badge modern-activity-badge">{{ ultimas_facturas|length }}</span>
+                        <span class="badge kisvic-inset px-3 py-2" style="color: #2E7D32; font-weight: 700;">{{ ultimas_facturas|length }}</span>
                     </div>
                     <div class="card-body modern-activity-body">
                         <div class="modern-list-group">
                             {% for factura in ultimas_facturas %}
                             <a href="{{ url_for('ver_factura', id=factura.id) }}" class="modern-list-item">
                                 <div class="modern-list-content">
-                                    <div class="modern-list-icon">
+                                    <div class="modern-list-icon" style="background: #E8F5E9; color: #2E7D32;">
                                         <i class="fas fa-file-invoice-dollar"></i>
                                     </div>
                                     <div class="modern-list-details">
-                                        <h6 class="modern-list-title">Factura #{{ factura.numero }}</h6>
-                                        <p class="modern-list-subtitle">{{ factura.cliente }}</p>
+                                        <h6 class="modern-list-title" style="color: #212121;">Factura #{{ factura.numero }}</h6>
+                                        <p class="modern-list-subtitle" style="color: #6B7280;">{{ factura.cliente }}</p>
                                         <div class="modern-list-meta">
-                                            <span class="modern-list-date">
+                                            <span class="modern-list-date" style="color: #6B7280;">
                                                 <i class="fas fa-calendar-alt me-1"></i>{{ factura.fecha }}
                                             </span>
                                         </div>
                                     </div>
                                     <div class="modern-list-amount">
-                                        <span class="modern-amount-value">${{ factura.total }}</span>
-                                        <i class="fas fa-arrow-right modern-list-arrow"></i>
+                                        <span class="modern-amount-value" style="color: #2E7D32; font-weight: 700;">${{ factura.total }}</span>
+                                        <i class="fas fa-arrow-right modern-list-arrow" style="color: #2E7D32;"></i>
                                     </div>
                                 </div>
                             </a>
@@ -3243,13 +3248,14 @@
             </div>
         
             <div class="col-12 col-md-6">
-                <div class="card modern-activity-card h-100">
-                    <div class="card-header modern-activity-header">
-                        <h5 class="mb-0 modern-activity-title">
-                            <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Productos con Bajo Stock
+                <div class="card modern-activity-card h-100" style="box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 14px; border: 1px solid #E5E7EB; border-top: 3px solid #D4A017;">
+                    <div class="card-header modern-activity-header" style="background: #ffffff; border-bottom: 1px solid #E5E7EB; border-radius: 14px 14px 0 0;">
+                        <h5 class="mb-0 modern-activity-title" style="color: #212121; font-weight: 700;">
+                            <i class="fas fa-exclamation-triangle me-2" style="color: #D4A017;"></i>Productos con Bajo Stock
                         </h5>
-                        <span class="badge modern-activity-badge modern-activity-badge-warning">{{ productos_bajo_stock|length }}</span>
+                        <span class="badge kisvic-inset px-3 py-2" style="color: #D4A017; font-weight: 700;">{{ productos_bajo_stock|length }}</span>
                     </div>
+
                     <div class="card-body modern-activity-body">
                         <div class="modern-list-group">
                             {% for producto in productos_bajo_stock %}

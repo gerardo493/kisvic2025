@@ -1,0 +1,120 @@
+{
+    "total_bs": 10439.550000000001,
+    "fecha": "2025-06-23",
+    "numero": "FAC-00000674",
+    "descuento": 0.0,
+    "id": "d625b9bd-5677-4506-bfd4-dcdbe7548d99",
+    "tasa_bcv": 105.45,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "14:23:00",
+    "productos": [
+        "12",
+        "35",
+        "16",
+        "21",
+        "20",
+        "42"
+    ],
+    "total_usd": 99.0,
+    "cantidades": [
+        12,
+        4,
+        3,
+        4,
+        6,
+        4
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 99.0,
+    "dias_credito": "15",
+    "cliente_datos": {
+        "direccion": "Calle El Comercio Cc Paseo Colonial Don Pedro Nivel, Pb, Higuerote Edo Miranda",
+        "email": "salud.dietetica.v&d.2006.c.a.@dominioinventado.com",
+        "rif": "J-503178574",
+        "telefono": "",
+        "nombre": "SALUD DIETETICA V&D 2006 C.A."
+    },
+    "subtotal_bs": 10439.550000000001,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-07",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178574",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "12",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 3796.2000000000003,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 4,
+            "id_producto": "35",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 1265.4,
+            "subtotal_usd": 12.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "16",
+            "cantidad": 3,
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 949.0500000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "id_producto": "21",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 1265.4,
+            "subtotal_usd": 12.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "20",
+            "cantidad": 6,
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 1898.1000000000001,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "id_producto": "42",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 1265.4,
+            "subtotal_usd": 12.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 99.0,
+    "firma_fiscal": "6371d13aa4d83b38c844a21bc4ffb1bfb109b7eba35d922e272a3c9772d3388d"
+}

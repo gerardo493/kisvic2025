@@ -1,0 +1,153 @@
+{
+    "total_bs": 33375.888,
+    "fecha": "2025-08-29",
+    "numero": "FAC-00000758",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:24:32",
+    "productos": [
+        "10",
+        "49",
+        "35",
+        "4",
+        "8",
+        "13",
+        "3"
+    ],
+    "total_usd": 218.4,
+    "cantidades": [
+        12,
+        12,
+        15,
+        6,
+        15,
+        18,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 218.4,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:24:32.265531",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "b6057cb7-c8d6-4262-83a3-12b324609d8b",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:24:32.265",
+        "firma_digital": "6d32b544444cd1050e50f6c4e89dd5156b9aeb3bf5d4a461ad1d670571b55d5a",
+        "hash_inmutable": "50276f6011f5ed6e13b751b47f8b9ed68148974ac1056aff85b71e7efa8c718b",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Urb Las Beatrices Manzana 11 # 09 C/ Bolivar - Edo- Bolivar",
+        "email": "alicia.luna@dominioinventado.com",
+        "rif": "V-13.058.545",
+        "telefono": "+5804121123420",
+        "nombre": "ALICIA LUNA"
+    },
+    "subtotal_bs": 33375.888,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-18",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6
+    ],
+    "numero_secuencial": 758,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-13.058.545",
+    "items": [
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "10",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 4767.984,
+            "codigo_barras": "",
+            "nombre": "CASTAÑA DE INDIA X 60  CAP"
+        },
+        {
+            "nombre": "FIVERPLANT",
+            "cantidad": 12,
+            "subtotal_usd": 31.200000000000003,
+            "id": "49",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 4767.984,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP",
+            "cantidad": 15,
+            "codigo_barras": "",
+            "id": "35",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 5959.98,
+            "subtotal_usd": 39.0,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "4",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Bactericida",
+            "subtotal_bs": 2383.992,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 15,
+            "subtotal_usd": 39.0,
+            "id": "8",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 5959.98,
+            "codigo_barras": "",
+            "nombre": "CARDO LECHOZO X 60 CAP"
+        },
+        {
+            "nombre": "CHANCA PIEDRA X 60 CAP",
+            "cantidad": 18,
+            "subtotal_usd": 46.800000000000004,
+            "id": "13",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Calculo Renal",
+            "subtotal_bs": 7151.976000000001,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "ARANDANO NEGRO X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 15.600000000000001,
+            "id": "3",
+            "precio_unitario_bs": 397.332,
+            "categoria": "Protector Ocular",
+            "subtotal_bs": 2383.992,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        }
+    ],
+    "subtotal_usd": 218.4,
+    "firma_fiscal": "5b80ebdfa5e902a42a7b1cf8ca12494af5bb6f0f702a9c8f67fae1238a6ec3bf",
+    "id": "b6057cb7-c8d6-4262-83a3-12b324609d8b"
+}

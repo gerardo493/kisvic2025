@@ -1,0 +1,139 @@
+{
+    "total_bs": 9282.336,
+    "fecha": "2025-08-06",
+    "numero": "FAC-00000729",
+    "descuento": 0.0,
+    "tasa_bcv": 138.13,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:11:37",
+    "productos": [
+        "30",
+        "37",
+        "44",
+        "3",
+        "10",
+        "20"
+    ],
+    "total_usd": 67.2,
+    "cantidades": [
+        3,
+        3,
+        3,
+        3,
+        4,
+        4
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 67.2,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-19T23:11:37.577075",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "3d07d11a-654a-4ecd-aeb6-09dd2e8b4d1f",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-19 23:11:37.577",
+        "firma_digital": "2b4eb68826ba016f71f0a526e09853934377c0ba4780d8205b5a17290f89da45",
+        "hash_inmutable": "788c940f5b46079efe01c2103be4db25d1c8cb48fdf5c5401423bf915cbe0d62",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Mercado Libre Maracay Estado Aragua",
+        "email": "",
+        "rif": "J-501924334",
+        "telefono": "+5800054",
+        "nombre": "T/N LOS MORROS"
+    },
+    "subtotal_bs": 9282.336,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-26",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        4.2,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 729,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-501924334",
+    "items": [
+        {
+            "nombre": "OMEGA 3 X 30 UND",
+            "cantidad": 3,
+            "subtotal_usd": 12.600000000000001,
+            "id": "30",
+            "precio_unitario_bs": 580.146,
+            "categoria": "Cardiovascular",
+            "subtotal_bs": 1740.438,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "nombre": "VITAMINA E C/SELENIUM X 50 CAP",
+            "cantidad": 3,
+            "subtotal_usd": 12.600000000000001,
+            "id": "37",
+            "precio_unitario_bs": 580.146,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 1740.438,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "nombre": "ORTIGA X 60 CAP",
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "44",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Bactericida",
+            "subtotal_bs": 1243.17,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "3",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Protector Ocular",
+            "subtotal_bs": 1243.17,
+            "codigo_barras": "",
+            "nombre": "ARANDANO NEGRO X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "10",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 1657.56,
+            "codigo_barras": "",
+            "nombre": "CASTAÑA DE INDIA X 60  CAP"
+        },
+        {
+            "nombre": "GINKGO C/ GINSENG X 60 CAP",
+            "cantidad": 4,
+            "subtotal_usd": 12.0,
+            "id": "20",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Oxigenante/ Energizante",
+            "subtotal_bs": 1657.56,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 67.2,
+    "firma_fiscal": "0156b7764096b556bb37ee18f416f2e0c2e8ea3dbe8f4b03d76597418c1f3f2a",
+    "id": "3d07d11a-654a-4ecd-aeb6-09dd2e8b4d1f"
+}

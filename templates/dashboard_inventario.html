@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard de Inventario{% endblock %}
+
+{% block content %}
+<style>
+    .dashboard-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        color: white;
+    }
+
+    .metric-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        border-left: 5px solid;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .metric-card.primary { border-left-color: #3498db; }
+    .metric-card.success { border-left-color: #27ae60; }
+    .metric-card.warning { border-left-color: #f39c12; }
+    .metric-card.danger { border-left-color: #e74c3c; }
+
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .metric-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+
+    .alert-item {
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 0.5rem;
+        border-left: 5px solid;
+    }
+
+    .alert-item.alta {
+        background: #f8d7da;
+        border-left-color: #dc3545;
+        color: #721c24;
+    }
+
+    .alert-item.media {
+        background: #fff3cd;
+        border-left-color: #ffc107;
+        color: #856404;
+    }
+
+    .badge-priority {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .table-responsive {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .btn-action {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        margin: 0 0.1rem;
+    }
+</style>
+
+<div class="dashboard-container">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="mb-0">
+                        <i class="fas fa-chart-line me-3"></i>
+                        Dashboard de Inventario
+                    </h2>
+                    <p class="mb-0 mt-2">Análisis completo y métricas de inventario</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{{ url_for('mostrar_inventario') }}" class="btn btn-light me-2">
+                        <i class="fas fa-list me-1"></i>Ver Inventario
+                    </a>
+                    <a href="{{ url_for('nuevo_producto') }}" class="btn btn-warning">
+                        <i class="fas fa-plus me-1"></i>Nuevo Producto
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Métricas Principales -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="metric-card primary">
+                    <div class="metric-value text-primary">{{ total_productos }}</div>
+                    <div class="metric-label">Total Productos</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card success">
+                    <div class="metric-value text-success">{{ productos_disponibles }}</div>
+                    <div class="metric-label">Disponibles</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card warning">
+                    <div class="metric-value text-warning">{{ productos_agotados }}</div>
+                    <div class="metric-label">Agotados</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card danger">
+                    <div class="metric-value text-danger">${{ "%.2f"|format(valor_total_inventario) }}</div>
+                    <div class="metric-label">Valor Total</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Análisis por Categorías -->
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5 class="mb-3">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Análisis por Categorías
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Productos</th>
+                                    <th>Stock</th>
+                                    <th>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for categoria, datos in categorias_analisis.items() %}
+                                <tr>
+                                    <td><strong>{{ categoria }}</strong></td>
+                                    <td>{{ datos.productos }}</td>
+                                    <td>{{ datos.stock_total }}</td>
+                                    <td>${{ "%.2f"|format(datos.valor_total) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Productos Vendidos -->
+            <div class="col-md-6">
+                <div class="chart-container">
+                    <h5 class="mb-3">
+                        <i class="fas fa-trophy me-2"></i>
+                        Top Productos Vendidos (30 días)
+                    </h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Vendidos</th>
+                                    <th>Stock</th>
+                                    <th>Categoría</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for producto in top_vendidos[:5] %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ producto.nombre }}</strong>
+                                        <br><small class="text-muted">{{ producto.id }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success">{{ producto.cantidad_vendida }}</span>
+                                    </td>
+                                    <td>
+                                        {% if producto.stock_actual > 0 %}
+                                            <span class="badge bg-primary">{{ producto.stock_actual }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ producto.categoria }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alertas de Stock -->
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5 class="mb-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Alertas de Stock
+                        <span class="badge bg-danger ms-2">{{ alertas_stock|length }}</span>
+                    </h5>
+                    
+                    {% if alertas_stock %}
+                    <div class="row">
+                        {% for alerta in alertas_stock %}
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="alert-item {{ alerta.prioridad }}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">{{ alerta.nombre }}</h6>
+                                        <p class="mb-1">
+                                            <strong>Stock:</strong> {{ alerta.cantidad }}
+                                            {% if alerta.tipo == 'bajo' %}
+                                                / {{ alerta.stock_minimo }} mínimo
+                                            {% endif %}
+                                        </p>
+                                        <small class="text-muted">{{ alerta.categoria }}</small>
+                                    </div>
+                                    <div>
+                                        <span class="badge badge-priority bg-{{ 'danger' if alerta.prioridad == 'alta' else 'warning' }}">
+                                            {{ alerta.tipo.title() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="{{ url_for('mostrar_inventario') }}?q={{ alerta.id }}" 
+                                       class="btn btn-sm btn-outline-primary btn-action">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('ajustar_stock') }}" 
+                                       class="btn btn-sm btn-outline-success btn-action">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-circle text-success fa-3x mb-3"></i>
+                        <h5 class="text-muted">¡Excelente! No hay alertas de stock</h5>
+                        <p class="text-muted">Todos los productos tienen stock suficiente</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="row">
+            <div class="col-12">
+                <div class="chart-container">
+                    <h5 class="mb-3">
+                        <i class="fas fa-bolt me-2"></i>
+                        Acciones Rápidas
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('prediccion_demandas') }}" class="btn btn-info w-100">
+                                <i class="fas fa-crystal-ball me-2"></i>
+                                Predicción de Demandas
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('ajustar_stock') }}" class="btn btn-warning w-100">
+                                <i class="fas fa-edit me-2"></i>
+                                Ajustar Stock
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('mostrar_inventario') }}?stock=alertas" class="btn btn-danger w-100">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Ver Alertas
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('mostrar_inventario') }}?vista=tarjetas" class="btn btn-primary w-100">
+                                <i class="fas fa-th-large me-2"></i>
+                                Vista Tarjetas
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de números
+    const metricValues = document.querySelectorAll('.metric-value');
+    metricValues.forEach(element => {
+        const finalValue = parseInt(element.textContent.replace(/[^0-9]/g, ''));
+        if (!isNaN(finalValue)) {
+            animateNumber(element, 0, finalValue, 1000);
+        }
+    });
+});
+
+function animateNumber(element, start, end, duration) {
+    const startTime = performance.now();
+    const isCurrency = element.textContent.includes('$');
+    
+    function updateNumber(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const current = Math.floor(start + (end - start) * progress);
+        
+        if (isCurrency) {
+            element.textContent = '$' + current.toLocaleString();
+        } else {
+            element.textContent = current.toLocaleString();
+        }
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateNumber);
+        }
+    }
+    
+    requestAnimationFrame(updateNumber);
+}
+</script>
+{% endblock %}
+

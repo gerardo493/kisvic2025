@@ -12,7 +12,7 @@ import {
   ClipboardList,
   RefreshCw,
   Receipt,
-  HandCoins
+  Coins
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,13 +30,7 @@ import {
   DashboardFilters,
   LoadingState 
 } from '@/types';
-import { 
-  mockStats, 
-  mockInvoices, 
-  mockProducts, 
-  mockBcvRate,
-  fetchMockData 
-} from '@/mocks/data';
+import { mockStats, mockInvoices, mockProducts, mockBcvRate } from '@/mocks/data';
 import { 
   filterInvoices, 
   filterProducts, 
@@ -47,6 +41,7 @@ import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 const Dashboard: React.FC = () => {
+  const API_URL = import.meta.env.VITE_DASHBOARD_API_URL || '/api/dashboard/resumen';
   // Estado de datos
   const [stats, setStats] = useState<Stats | null>(null);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -73,41 +68,42 @@ const Dashboard: React.FC = () => {
   const loadData = useCallback(async () => {
     try {
       setLoading(prev => ({ ...prev, stats: true, invoices: true, products: true, bcvRate: true }));
-      
-      const [statsData, invoicesData, productsData, bcvData] = await Promise.all([
-        fetchMockData(mockStats, 800),
-        fetchMockData(mockInvoices, 1000),
-        fetchMockData(mockProducts, 600),
-        fetchMockData(mockBcvRate, 400),
-      ]);
-      
-      setStats(statsData);
-      setInvoices(invoicesData);
-      setProducts(productsData);
-      setBcvRate(bcvData);
+
+      const resp = await fetch(API_URL, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}`);
+      }
+
+      const json = await resp.json();
+      if (!json?.success || !json?.data) {
+        throw new Error(json?.error || 'Respuesta inválida');
+      }
+
+      setStats(json.data.stats ?? mockStats);
+      setInvoices(Array.isArray(json.data.invoices) ? json.data.invoices : []);
+      setProducts(Array.isArray(json.data.products) ? json.data.products : []);
+      setBcvRate(json.data.bcvRate ?? mockBcvRate);
     } catch (error) {
       console.error('Error cargando datos:', error);
+      // Fallback seguro para no dejar el dashboard vacío.
+      setStats(mockStats);
+      setInvoices(mockInvoices);
+      setProducts(mockProducts);
+      setBcvRate(mockBcvRate);
     } finally {
       setLoading(prev => ({ ...prev, stats: false, invoices: false, products: false, bcvRate: false }));
     }
-  }, []);
+  }, [API_URL]);
 
   // Actualizar tasa BCV
   const handleUpdateBcvRate = useCallback(async () => {
-    try {
-      setLoading(prev => ({ ...prev, bcvRate: true }));
-      const newRate = await fetchMockData({
-        ...mockBcvRate,
-        tasa: mockBcvRate.tasa + (Math.random() - 0.5) * 2, // Simular cambio
-        ultima_actualizacion: new Date().toISOString(),
-      }, 1000);
-      setBcvRate(newRate);
-    } catch (error) {
-      console.error('Error actualizando tasa BCV:', error);
-    } finally {
-      setLoading(prev => ({ ...prev, bcvRate: false }));
-    }
-  }, []);
+    await loadData();
+  }, [loadData]);
 
   // Manejar cambios de filtros
   const handleFiltersChange = useCallback((newFilters: DashboardFilters) => {
@@ -279,7 +275,7 @@ const Dashboard: React.FC = () => {
             title="Pagos Recibidos"
             value={`$${(stats?.total_pagos_recibidos_usd || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
             subtitle={`${(stats?.total_pagos_recibidos_bs || 0).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs`}
-            icon={HandCoins}
+            icon={Coins}
             color="green"
             trend="up"
             trendValue={12.8}

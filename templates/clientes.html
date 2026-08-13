@@ -5,133 +5,128 @@
 {% block content %}
 <style>
     .clientes-container {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        background-color: #F5F7F5;
         min-height: 100vh;
-        padding: 2rem 0;
+        padding: 1.5rem 0;
     }
 
-    .page-header {
-        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        color: white;
-    }
-
-    .page-header h2 {
+    .page-header-title {
+        color: #2E7D32;
         font-size: 2rem;
         font-weight: 700;
         margin: 0;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
     }
 
     .table-card {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: #FFFFFF;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #E5E7EB;
         margin-top: 20px;
+        overflow: hidden;
     }
 
     .search-card {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background: #FFFFFF;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #E5E7EB;
         margin-bottom: 20px;
         padding: 1.5rem;
     }
 
     .search-card .input-group {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         border-radius: 8px;
         overflow: hidden;
     }
 
     .search-card .input-group-text {
-        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        background: #2E7D32;
         color: white;
         border: none;
-        padding: 0.75rem 1rem;
+        padding: 0.6rem 1rem;
     }
 
     .search-card .form-control {
-        border: 1px solid #e0e0e0;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        color: #1a237e;
+        border: 1px solid #D1D5DB;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        color: #212121;
     }
 
     .search-card .form-control:focus {
-        box-shadow: 0 0 0 0.2rem rgba(26, 35, 126, 0.25);
-        border-color: #1a237e;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+        border-color: #2E7D32;
     }
 
     .search-card .form-select {
-        border: 1px solid #e0e0e0;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        color: #1a237e;
+        border: 1px solid #D1D5DB;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+        color: #212121;
         background-color: white;
         cursor: pointer;
     }
 
     .search-card .form-select:focus {
-        box-shadow: 0 0 0 0.2rem rgba(26, 35, 126, 0.25);
-        border-color: #1a237e;
-    }
-
-    .search-card .btn-primary {
-        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-        border: none;
-        padding: 0.75rem 1.5rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .search-card .btn-primary:hover {
-        background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15);
+        border-color: #2E7D32;
     }
 
     .table th {
-        background-color: #1a237e;
-        color: white;
+        background-color: #2E7D32 !important;
+        color: #FFFFFF !important;
         font-weight: 600;
         text-transform: uppercase;
-        font-size: 1rem;
+        font-size: 0.85rem;
         letter-spacing: 0.5px;
-        padding: 1rem;
+        padding: 0.9rem;
     }
 
     .table td {
-        font-size: 1.1rem;
-        color: #1a237e;
-        padding: 1rem;
+        font-size: 0.95rem;
+        color: #212121;
+        padding: 0.85rem;
         vertical-align: middle;
         font-weight: 500;
     }
 
     .cliente-info {
-        max-width: 200px;
+        max-width: 220px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 600;
-        font-size: 1.1rem;
-        color: #1a237e;
+        font-size: 0.95rem;
+        color: #212121;
     }
 
-    .cliente-info:hover {
-        white-space: normal;
-        overflow: visible;
+    .btn-kisvic-green {
+        background: #2E7D32 !important;
+        border: 1px solid #1B5E20 !important;
+        color: #FFFFFF !important;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.55rem 1.1rem;
     }
 
-    .btn-action {
-        padding: 0.25rem 0.5rem;
-        margin: 0 0.1rem;
+    .btn-kisvic-green:hover {
+        background: #1B5E20 !important;
+        color: #FFFFFF !important;
+    }
+
+    .btn-kisvic-gold {
+        background: #D4A017 !important;
+        border: 1px solid #B8860B !important;
+        color: #FFFFFF !important;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.55rem 1.1rem;
+    }
+
+    .btn-kisvic-gold:hover {
+        background: #B8860B !important;
+        color: #FFFFFF !important;
     }
 
     .contact-buttons {
@@ -196,14 +191,14 @@
     }
 
     .autocomplete-item.selected {
-        background-color: #e3f2fd;
-        border-left: 4px solid #1a237e;
+        background-color: #E8F5E9;
+        border-left: 4px solid #2E7D32;
     }
 
     .autocomplete-item .cliente-avatar {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        background: #2E7D32;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -221,7 +216,7 @@
 
     .autocomplete-item .cliente-nombre {
         font-weight: 600;
-        color: #1a237e;
+        color: #212121;
         font-size: 14px;
         margin-bottom: 2px;
         white-space: nowrap;
@@ -238,181 +233,196 @@
     }
 
     .autocomplete-item .cliente-rif {
-        background: #e8f5e8;
-        color: #2e7d32;
+        background: #E8F5E9;
+        color: #2E7D32;
         padding: 2px 6px;
         border-radius: 4px;
         font-weight: 500;
     }
 
-    .autocomplete-item .cliente-contacto {
-        color: #666;
-    }
-
-    .autocomplete-item .highlight {
-        background-color: #fff3cd;
-        padding: 1px 2px;
-        border-radius: 2px;
-    }
-
-    /* Scrollbar personalizado para el dropdown */
-    .autocomplete-dropdown::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .autocomplete-dropdown::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 3px;
-    }
-
-    .autocomplete-dropdown::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 3px;
-    }
-
-    .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
-
-    /* Loading indicator */
-    .autocomplete-loading {
-        padding: 16px;
-        text-align: center;
-        color: #666;
-        font-style: italic;
-    }
-
-    .autocomplete-loading i {
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* No results */
-    .autocomplete-no-results {
-        padding: 16px;
-        text-align: center;
-        color: #666;
-        font-style: italic;
-    }
-
-    .fa-gmail:before {
-        content: "G";
-        font-family: Arial, sans-serif;
-        font-weight: bold;
-    }
-
-    .badge {
-        font-size: 1rem;
-        padding: 0.6em 1em;
+    .badge-vip {
+        background: #FFF8E1 !important;
+        color: #B8860B !important;
+        border: 1px solid #FDE68A !important;
         font-weight: 600;
-        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-        color: white;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    .text-muted {
-        font-size: 1rem;
-        color: #1a237e !important;
-        font-weight: 500;
+    .badge-frecuente, .badge-activo, .badge-al_dia {
+        background: #E8F5E9 !important;
+        color: #2E7D32 !important;
+        border: 1px solid #C8E6C9 !important;
+        font-weight: 600;
     }
 
-    .text-muted i {
-        margin-right: 5px;
-        color: #1a237e;
+    .badge-regular, .badge-pendiente {
+        background: #FFFBEB !important;
+        color: #D97706 !important;
+        border: 1px solid #FDE68A !important;
+        font-weight: 600;
     }
 
-    .btn-sm {
-        font-size: 1rem;
-        padding: 0.4rem 0.6rem;
+    .badge-inactivo, .badge-moroso {
+        background: #FFEBEE !important;
+        color: #C62828 !important;
+        border: 1px solid #FFCDD2 !important;
+        font-weight: 600;
     }
 
-    @media (max-width: 768px) {
-        .page-header {
-            padding: 1.5rem;
-        }
-        .table-responsive {
-            font-size: 1rem;
-        }
-        .btn-action {
-            padding: 0.2rem 0.4rem;
-        }
-        .cliente-info {
-            font-size: 1rem;
-        }
+    /* Estilos para vista de tarjetas */
+    #vistaTarjetas .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid #E5E7EB;
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-top: 3px solid #2E7D32;
+    }
+    
+    #vistaTarjetas .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    
+    #vistaTarjetas .card-header {
+        background: #FFFFFF;
+        border-bottom: 1px solid #E5E7EB;
+    }
+    
+    #vistaTarjetas .card-title {
+        color: #212121;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
     }
 </style>
 
 <div class="clientes-container">
     <div class="container-fluid">
-        <div class="page-header d-flex justify-content-between align-items-center">
-            <h2><i class="fas fa-users me-2"></i>Gestión de Clientes</h2>
-            <div class="btn-group">
-                <a href="{{ url_for('mapa_avanzado') }}" class="btn btn-info">
-                    <i class="fas fa-map-marked-alt me-2"></i>Mapa Avanzado
-                </a>
-                <a href="{{ url_for('reporte_clientes') }}" class="btn btn-success">
-                    <i class="fas fa-chart-bar me-2"></i>Ver Reporte
-                </a>
-                <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-primary">
-                    <i class="fas fa-plus me-2"></i>Nuevo Cliente
-                </a>
+        <!-- Header Corporativo Kisvic -->
+        <div class="row align-items-center mb-3">
+            <div class="col-md-6">
+                <h2 class="page-header-title"><i class="fas fa-users me-2"></i>Gestión de Clientes</h2>
+                <p class="text-muted mb-0" style="color: #6B7280 !important;">Catálogo y Gestión de Clientes • Productos Naturales Kisvic 1045, C.A.</p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <div class="btn-group gap-2">
+                    <a href="{{ url_for('dashboard_clientes') }}" class="btn btn-kisvic-green">
+                        <i class="fas fa-chart-pie me-2"></i>Dashboard
+                    </a>
+                    <a href="{{ url_for('mapa_avanzado') }}" class="btn btn-kisvic-gold">
+                        <i class="fas fa-map-marked-alt me-2"></i>Mapa Avanzado
+                    </a>
+                    <a href="{{ url_for('reporte_clientes') }}" class="btn btn-kisvic-gold">
+                        <i class="fas fa-chart-bar me-2"></i>Ver Reporte
+                    </a>
+                    <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-kisvic-green">
+                        <i class="fas fa-plus me-2"></i>Nuevo Cliente
+                    </a>
+                </div>
             </div>
         </div>
 
+        <div class="kisvic-gold-divider mb-4"></div>
+
         <div class="search-card">
-            <div class="card-body">
+            <div class="card-body p-0">
                 <form method="get" class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="input-group position-relative">
                             <span class="input-group-text">
                                 <i class="fas fa-search"></i>
                             </span>
                             <input type="text" class="form-control" name="q" id="searchInput"
-                                   placeholder="Buscar por nombre o RIF del cliente..." value="{{ q or '' }}"
+                                   placeholder="Buscar por nombre o RIF..." value="{{ q or '' }}"
                                    autocomplete="off">
                             <div id="autocompleteResults" class="autocomplete-dropdown"></div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <select name="orden" class="form-select">
-                            <option value="nombre" {% if filtro_orden == 'nombre' %}selected{% endif %}>
-                                <i class="fas fa-sort-alpha-down"></i> Ordenar por Nombre
-                            </option>
-                            <option value="rif" {% if filtro_orden == 'rif' %}selected{% endif %}>
-                                <i class="fas fa-sort-numeric-down"></i> Ordenar por RIF
-                            </option>
+                    <div class="col-md-2">
+                        <select name="segmento" class="form-select">
+                            <option value="todos" {% if segmento == 'todos' %}selected{% endif %}>Todos los Segmentos</option>
+                            <option value="vip" {% if segmento == 'vip' %}selected{% endif %}>VIP</option>
+                            <option value="frecuente" {% if segmento == 'frecuente' %}selected{% endif %}>Frecuentes</option>
+                            <option value="activo" {% if segmento == 'activo' %}selected{% endif %}>Activos</option>
+                            <option value="regular" {% if segmento == 'regular' %}selected{% endif %}>Regulares</option>
+                            <option value="inactivo" {% if segmento == 'inactivo' %}selected{% endif %}>Inactivos</option>
+                            <option value="potencial" {% if segmento == 'potencial' %}selected{% endif %}>Potenciales</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
+                        <select name="estado_pago" class="form-select">
+                            <option value="todos" {% if estado_pago == 'todos' %}selected{% endif %}>Todos los Estados</option>
+                            <option value="al_dia" {% if estado_pago == 'al_dia' %}selected{% endif %}>Al Día</option>
+                            <option value="pendiente" {% if estado_pago == 'pendiente' %}selected{% endif %}>Pendiente</option>
+                            <option value="moroso" {% if estado_pago == 'moroso' %}selected{% endif %}>Moroso</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="orden" class="form-select">
+                            <option value="nombre" {% if filtro_orden == 'nombre' %}selected{% endif %}>Por Nombre</option>
+                            <option value="rif" {% if filtro_orden == 'rif' %}selected{% endif %}>Por RIF</option>
+                            <option value="total_facturado" {% if filtro_orden == 'total_facturado' %}selected{% endif %}>Por Facturación</option>
+                            <option value="ultima_compra" {% if filtro_orden == 'ultima_compra' %}selected{% endif %}>Por Última Compra</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-kisvic-green w-100">
                             <i class="fas fa-filter me-2"></i>Filtrar
                         </button>
                     </div>
                 </form>
+                
+                <!-- Filtros de fecha -->
+                <div class="row g-3 mt-2">
+                    <div class="col-md-3">
+                        <label class="form-label small mb-1" style="color: #6B7280;">Fecha desde:</label>
+                        <input type="date" class="form-control form-control-sm" name="fecha_desde" value="{{ fecha_desde or '' }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small mb-1" style="color: #6B7280;">Fecha hasta:</label>
+                        <input type="date" class="form-control form-control-sm" name="fecha_hasta" value="{{ fecha_hasta or '' }}">
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltros()">
+                            <i class="fas fa-times me-1"></i>Limpiar
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="exportarClientes()">
+                            <i class="fas fa-download me-1"></i>Exportar
+                        </button>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-success btn-sm active" id="btnVistaTabla" onclick="cambiarVista('tabla')">
+                                <i class="fas fa-table me-1"></i>Tabla
+                            </button>
+                            <button type="button" class="btn btn-outline-success btn-sm" id="btnVistaTarjetas" onclick="cambiarVista('tarjetas')">
+                                <i class="fas fa-th-large me-1"></i>Tarjetas
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="table-card">
+        <!-- Vista de Tabla -->
+        <div id="vistaTabla" class="table-card">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
                                 <th>RIF</th>
                                 <th>Nombre</th>
+                                <th>Segmento</th>
+                                <th>Facturación</th>
+                                <th>Estado Pago</th>
+                                <th>Última Compra</th>
                                 <th>Contacto</th>
-                                <th>Dirección</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for id, cliente in clientes.items() %}
+                            {% set datos = clientes_totales.get(id, {}) %}
                             <tr>
+
                                 <td>
                                     <span class="badge bg-secondary">{{ id }}</span>
                                 </td>
@@ -420,6 +430,52 @@
                                     <div class="cliente-info" title="{{ cliente.nombre }}">
                                         {{ cliente.nombre }}
                                     </div>
+                                </td>
+                                <td>
+                                    {% set segmento = datos.get('segmento', 'potencial') %}
+                                    {% if segmento == 'vip' %}
+                                        <span class="badge badge-vip">VIP</span>
+                                    {% elif segmento == 'frecuente' %}
+                                        <span class="badge badge-frecuente">Frecuente</span>
+                                    {% elif segmento == 'activo' %}
+                                        <span class="badge badge-activo">Activo</span>
+                                    {% elif segmento == 'regular' %}
+                                        <span class="badge badge-regular">Regular</span>
+                                    {% elif segmento == 'inactivo' %}
+                                        <span class="badge badge-inactivo">Inactivo</span>
+                                    {% else %}
+                                        <span class="badge badge-regular">Potencial</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        <div class="fw-bold" style="color: #2E7D32;">${{ "%.2f"|format(datos.get('total_facturado', 0)) }}</div>
+                                        <small style="color: #6B7280;">{{ datos.get('cantidad_facturas', 0) }} facturas</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set estado = datos.get('estado_pago', 'al_dia') %}
+                                    {% if estado == 'al_dia' %}
+                                        <span class="badge badge-al_dia">Al Día</span>
+                                    {% elif estado == 'pendiente' %}
+                                        <span class="badge badge-pendiente">Pendiente</span>
+                                    {% else %}
+                                        <span class="badge badge-moroso">Moroso</span>
+                                    {% endif %}
+                                    {% if datos.get('total_por_cobrar', 0) > 0 %}
+                                        <br><small style="color: #6B7280;">${{ "%.2f"|format(datos.get('total_por_cobrar', 0)) }}</small>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if datos.get('ultima_compra') %}
+                                        <div class="text-center">
+                                            <div class="small">{{ datos.get('ultima_compra') }}</div>
+                                            <small class="text-muted">{{ datos.get('dias_inactivo', 0) }} días</small>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">Sin compras</span>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <div class="contact-buttons">
@@ -445,11 +501,6 @@
                                     </small>
                                 </td>
                                 <td>
-                                    <div class="cliente-info" title="{{ cliente.direccion }}">
-                                        {{ cliente.direccion }}
-                                    </div>
-                                </td>
-                                <td>
                                     <div class="btn-group">
                                         <a href="{{ url_for('historial_cliente', id=id) }}" 
                                            class="btn btn-info btn-action" title="Ver historial">
@@ -470,6 +521,119 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- Vista de Tarjetas -->
+        <div id="vistaTarjetas" class="container-fluid" style="display: none;">
+            <div class="row g-3">
+                {% for id, cliente in clientes.items() %}
+                {% set datos = clientes_totales.get(id, {}) %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                    <div class="card h-100 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span class="badge bg-secondary">{{ id }}</span>
+                        {% set segmento = datos.get('segmento', 'potencial') %}
+                        {% if segmento == 'vip' %}
+                            <span class="badge" style="background: #FFD700; color: #000;">VIP</span>
+                        {% elif segmento == 'frecuente' %}
+                            <span class="badge" style="background: #32CD32; color: #fff;">Frecuente</span>
+                        {% elif segmento == 'activo' %}
+                            <span class="badge" style="background: #1E90FF; color: #fff;">Activo</span>
+                        {% elif segmento == 'regular' %}
+                            <span class="badge" style="background: #FFA500; color: #fff;">Regular</span>
+                        {% elif segmento == 'inactivo' %}
+                            <span class="badge" style="background: #DC143C; color: #fff;">Inactivo</span>
+                        {% else %}
+                            <span class="badge" style="background: #9370DB; color: #fff;">Potencial</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ cliente.nombre }}</h5>
+                        <p class="card-text text-muted">{{ cliente.direccion }}</p>
+                        
+                        <!-- Métricas -->
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <div class="fw-bold text-success">${{ "%.2f"|format(datos.get('total_facturado', 0)) }}</div>
+                                <small class="text-muted">Facturado</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-warning">${{ "%.2f"|format(datos.get('total_por_cobrar', 0)) }}</div>
+                                <small class="text-muted">Por Cobrar</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="fw-bold text-info">{{ datos.get('cantidad_facturas', 0) }}</div>
+                                <small class="text-muted">Facturas</small>
+                            </div>
+                        </div>
+
+                        <!-- Estado de pago -->
+                        <div class="mb-3">
+                            {% set estado = datos.get('estado_pago', 'al_dia') %}
+                            {% if estado == 'al_dia' %}
+                                <span class="badge bg-success">Al Día</span>
+                            {% elif estado == 'pendiente' %}
+                                <span class="badge bg-warning">Pendiente</span>
+                            {% else %}
+                                <span class="badge bg-danger">Moroso</span>
+                            {% endif %}
+                            
+                            {% if datos.get('ultima_compra') %}
+                                <small class="text-muted d-block mt-1">
+                                    Última compra: {{ datos.get('ultima_compra') }} ({{ datos.get('dias_inactivo', 0) }} días)
+                                </small>
+                            {% else %}
+                                <small class="text-muted d-block mt-1">Sin compras registradas</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- Contacto -->
+                        <div class="mb-3">
+                            {% if cliente.telefono %}
+                            <div class="d-flex align-items-center mb-1">
+                                <i class="fab fa-whatsapp text-success me-2"></i>
+                                <small>{{ cliente.telefono }}</small>
+                            </div>
+                            {% endif %}
+                            {% if cliente.email %}
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-envelope text-primary me-2"></i>
+                                <small>{{ cliente.email }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100">
+                            <a href="{{ url_for('historial_cliente', id=id) }}" 
+                               class="btn btn-info btn-sm" title="Ver historial">
+                                <i class="fas fa-history"></i>
+                            </a>
+                            <a href="{{ url_for('editar_cliente', id=id) }}" 
+                               class="btn btn-warning btn-sm" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if cliente.telefono %}
+                            <a href="https://wa.me/{{ cliente.telefono }}" target="_blank" 
+                               class="btn btn-success btn-sm" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            {% endif %}
+                            {% if cliente.email %}
+                            <a href="mailto:{{ cliente.email }}" class="btn btn-primary btn-sm" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                            {% endif %}
+                            <button type="button" class="btn btn-danger btn-sm" title="Eliminar"
+                                    onclick="confirmarEliminacion('{{ id }}', '{{ cliente.nombre }}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -747,9 +911,65 @@ class ClienteAutocomplete {
     }
 }
 
+// Funciones adicionales para filtros
+function limpiarFiltros() {
+    document.querySelector('input[name="q"]').value = '';
+    document.querySelector('select[name="segmento"]').value = 'todos';
+    document.querySelector('select[name="estado_pago"]').value = 'todos';
+    document.querySelector('select[name="orden"]').value = 'nombre';
+    document.querySelector('input[name="fecha_desde"]').value = '';
+    document.querySelector('input[name="fecha_hasta"]').value = '';
+    document.querySelector('form').submit();
+}
+
+function exportarClientes() {
+    // Crear URL con parámetros actuales
+    const form = document.querySelector('form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+    params.set('exportar', 'excel');
+    
+    // Crear enlace de descarga
+    const url = `${window.location.pathname}?${params.toString()}`;
+    window.open(url, '_blank');
+}
+
+function cambiarVista(vista) {
+    const vistaTabla = document.getElementById('vistaTabla');
+    const vistaTarjetas = document.getElementById('vistaTarjetas');
+    const btnTabla = document.getElementById('btnVistaTabla');
+    const btnTarjetas = document.getElementById('btnVistaTarjetas');
+    
+    if (vista === 'tabla') {
+        vistaTabla.style.display = 'block';
+        vistaTarjetas.style.display = 'none';
+        btnTabla.classList.remove('btn-outline-primary');
+        btnTabla.classList.add('btn-primary');
+        btnTarjetas.classList.remove('btn-primary');
+        btnTarjetas.classList.add('btn-outline-primary');
+        
+        // Guardar preferencia
+        localStorage.setItem('vistaClientes', 'tabla');
+    } else {
+        vistaTabla.style.display = 'none';
+        vistaTarjetas.style.display = 'block';
+        btnTarjetas.classList.remove('btn-outline-primary');
+        btnTarjetas.classList.add('btn-primary');
+        btnTabla.classList.remove('btn-primary');
+        btnTabla.classList.add('btn-outline-primary');
+        
+        // Guardar preferencia
+        localStorage.setItem('vistaClientes', 'tarjetas');
+    }
+}
+
 // Inicializar autocompletado cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     new ClienteAutocomplete();
+    
+    // Restaurar vista preferida
+    const vistaPreferida = localStorage.getItem('vistaClientes') || 'tabla';
+    cambiarVista(vistaPreferida);
 });
 </script>
 {% endblock %}

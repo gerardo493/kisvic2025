@@ -1,0 +1,125 @@
+{
+    "total_bs": 5501.5199999999995,
+    "fecha": "2025-09-05",
+    "numero": "FAC-00000766",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:57:24",
+    "productos": [
+        "4",
+        "10",
+        "12",
+        "11",
+        "17"
+    ],
+    "total_usd": 36.0,
+    "cantidades": [
+        2,
+        3,
+        3,
+        2,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 36.0,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T22:57:24.665358",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "8da8d50e-5053-478b-bb03-2d38bd4e8017",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 22:57:24.665",
+        "firma_digital": "8b9d076981696b5e1c3aa0726598a1a425194e3e97750112ffe4771e7de25b98",
+        "hash_inmutable": "01947601a52896b0e3e8b1c2727cf444017f74096b7399aeaaa2a7ff419d1679",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Calle Soublet Cruze Con Santos Michelena",
+        "email": "",
+        "rif": "V-6471279",
+        "telefono": "+5804144909579",
+        "nombre": "JOSE RODRIGUEZ"
+    },
+    "subtotal_bs": 5501.5199999999995,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-25",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "numero_secuencial": 766,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-6471279",
+    "items": [
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "4",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Bactericida",
+            "subtotal_bs": 916.92,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "10",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 3,
+            "subtotal_usd": 9.0,
+            "id": "12",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 1375.3799999999999,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "11",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 916.92,
+            "codigo_barras": "",
+            "nombre": "CENTELLA A.  C/ ALCACHOFA X 60 CAP"
+        },
+        {
+            "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP",
+            "cantidad": 2,
+            "subtotal_usd": 6.0,
+            "id": "17",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Anti-inflamatorio",
+            "subtotal_bs": 916.92,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 36.0,
+    "firma_fiscal": "870e6608383fd869bd9b3064095a1a1aca4377ab1571522a3235d194f856a1dd",
+    "id": "8da8d50e-5053-478b-bb03-2d38bd4e8017"
+}

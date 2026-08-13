@@ -1,0 +1,68 @@
+{
+    "total_bs": 5748.894,
+    "fecha": "2025-07-16",
+    "numero": "FAC-00000708",
+    "descuento": 0.0,
+    "id": "24439a0f-9cdc-43c5-9732-b0d5d2795fe0",
+    "tasa_bcv": 118.29,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:09:00",
+    "productos": [
+        "34",
+        "30"
+    ],
+    "total_usd": 48.6,
+    "cantidades": [
+        12,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 48.6,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Vargas Cruce Con Negro Primero Cc Antaño Nivel Pb Local Pb-C, Marcay",
+        "email": "t/n..tu.mundo.natural@dominioinventado.com",
+        "rif": "J-504304603",
+        "telefono": "",
+        "nombre": "T/N  TU MUNDO NATURAL"
+    },
+    "subtotal_bs": 5748.894,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-05",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        4.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304603",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "34",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 4258.4400000000005,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 3,
+            "id_producto": "30",
+            "precio_unitario_bs": 496.81800000000004,
+            "categoria": "",
+            "subtotal_bs": 1490.4540000000002,
+            "subtotal_usd": 12.600000000000001,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 48.6,
+    "firma_fiscal": "194ab1c308ef67cdbdfa8a14475e434deb72d36ccb180a239722fbd0b3541404"
+}

@@ -37,10 +37,11 @@ Dashboard moderno, accesible y responsive para el Sistema de Facturación, const
 ## 📦 Instalación
 
 ### Prerrequisitos
-- Node.js 18+ 
-- npm o yarn
+- **Node.js 18+** y npm (para el frontend)
+- **Python 3.10+** y pip (para el backend)
+- Git (para clonar el repositorio)
 
-### Pasos
+### Instalación Rápida (Windows)
 
 1. **Clonar el repositorio**
    ```bash
@@ -48,24 +49,100 @@ Dashboard moderno, accesible y responsive para el Sistema de Facturación, const
    cd sistema-facturacion-dashboard
    ```
 
-2. **Instalar dependencias**
+2. **Ejecutar script de instalación automática**
    ```bash
-   npm install
-   # o
-   yarn install
+   instalar_dependencias.bat
    ```
 
-3. **Ejecutar en modo desarrollo**
-   ```bash
-   npm run dev
-   # o
-   yarn dev
-   ```
+Este script instalará automáticamente todas las dependencias necesarias.
 
-4. **Abrir en el navegador**
-   ```
-   http://localhost:3000
-   ```
+### Instalación Manual
+
+#### 1. Instalar dependencias de Node.js (Frontend)
+
+```bash
+npm install
+```
+
+Esto instalará todas las dependencias del frontend y generará el archivo `package-lock.json` que asegura versiones consistentes entre diferentes máquinas.
+
+#### 2. Instalar dependencias de Python (Backend)
+
+**Opción A: Con entorno virtual (Recomendado)**
+
+```bash
+# Crear entorno virtual
+python -m venv venv
+
+# Activar entorno virtual
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# Instalar dependencias
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+**Opción B: Sin entorno virtual**
+
+```bash
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### Verificación de Instalación
+
+Verifica que todo esté instalado correctamente:
+
+```bash
+# Verificar Node.js
+node --version
+npm --version
+
+# Verificar Python
+python --version
+pip --version
+
+# Verificar módulos de Python
+python -c "import flask; import requests; print('✅ Python OK')"
+```
+
+### Ejecutar la Aplicación
+
+**Backend (Python/Flask):**
+```bash
+python app.py
+```
+
+**Frontend (React/Vite):**
+```bash
+npm run dev
+```
+
+Luego abre en el navegador:
+- Frontend: `http://localhost:3000` (o el puerto que indique Vite)
+- Backend: `http://localhost:5000` (o el puerto configurado en app.py)
+
+### Solución de Problemas
+
+**Error: "faltan dependencias" o "module not found"**
+
+1. Asegúrate de haber ejecutado `npm install` y `pip install -r requirements.txt`
+2. Verifica que `package-lock.json` esté presente en el repositorio
+3. Si usas entorno virtual, asegúrate de activarlo antes de ejecutar el backend
+4. En Windows, ejecuta `instalar_dependencias.bat` para una instalación completa
+
+**Error: "Python no encontrado"**
+
+- Instala Python desde https://www.python.org/
+- Asegúrate de marcar "Add Python to PATH" durante la instalación
+
+**Error: "Node.js no encontrado"**
+
+- Instala Node.js desde https://nodejs.org/
+- Reinicia la terminal después de la instalación
 
 ## 🏗️ Estructura del Proyecto
 

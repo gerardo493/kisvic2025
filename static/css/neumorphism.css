@@ -1,0 +1,292 @@
+/* ==========================================================================
+   PRODUCTOS NATURALES KISVIC 1045, C.A. - SISTEMA DE DISEÑO CORPORATIVO
+   Flat Design 2.0 / Soft UI
+   Paleta: Verde Oscuro (#2E7D32), Verde Medio (#4CAF50), Dorado/Ámbar (#D4A017), Fondo (#F5F7F5)
+   ========================================================================== */
+
+:root {
+    --kisvic-green-dark: #2E7D32;
+    --kisvic-green-medium: #4CAF50;
+    --kisvic-green-light: #E8F5E9;
+    --kisvic-gold: #D4A017;
+    --kisvic-gold-hover: #B8860B;
+    --kisvic-gold-light: #FFF8E1;
+    --kisvic-bg: #F5F7F5;
+    --kisvic-card-bg: #FFFFFF;
+    --kisvic-text-dark: #212121;
+    --kisvic-text-muted: #6B7280;
+    --kisvic-border: #E5E7EB;
+}
+
+body.neu-body, body.flat-body, body.kisvic-body {
+    background-color: var(--kisvic-bg) !important;
+    color: var(--kisvic-text-dark);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.neu-container, .flat-container, .kisvic-container {
+    background-color: var(--kisvic-bg);
+    min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   1. TARJETAS CORPORATIVAS KISVIC (FLAT 2.0 CON ACENTO SUPERIOR)
+   -------------------------------------------------------------------------- */
+.neu-card, .flat-card, .kisvic-card {
+    background-color: var(--kisvic-card-bg) !important;
+    border: 1px solid var(--kisvic-border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.neu-card-hover:hover, .flat-card-hover:hover, .kisvic-card-hover:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+    transform: translateY(-2px);
+}
+
+/* Bordes superiores de acento simulando el anillo del logo Kisvic */
+.kisvic-accent-green {
+    border-top: 3px solid var(--kisvic-green-dark) !important;
+}
+
+.kisvic-accent-emerald {
+    border-top: 3px solid var(--kisvic-green-medium) !important;
+}
+
+.kisvic-accent-gold {
+    border-top: 3px solid var(--kisvic-gold) !important;
+}
+
+.kisvic-accent-red {
+    border-top: 3px solid #E53935 !important;
+}
+
+/* Divisor Dorado Kisvic */
+.kisvic-gold-divider {
+    height: 3px;
+    background: linear-gradient(90deg, #D4A017 0%, #F5D77F 50%, #D4A017 100%);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   2. CONTROLES DE FORMULARIO E INPUTS
+   -------------------------------------------------------------------------- */
+.neu-inset, .flat-inset, .kisvic-inset {
+    background-color: #F0F4F1 !important;
+    border: 1px solid var(--kisvic-border) !important;
+    border-radius: 8px !important;
+    color: var(--kisvic-text-dark) !important;
+}
+
+.neu-input, .neu-select, .flat-input, .flat-select, .kisvic-input, .kisvic-select {
+    background-color: #FFFFFF !important;
+    border: 1px solid #D1D5DB !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: var(--kisvic-text-dark) !important;
+    padding: 0.55rem 0.9rem;
+    font-weight: 500;
+    outline: none !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.neu-input:focus, .neu-select:focus, .flat-input:focus, .flat-select:focus, .kisvic-input:focus, .kisvic-select:focus {
+    border-color: var(--kisvic-green-dark) !important;
+    box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.15) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. BOTONES CORPORATIVOS KISVIC
+   -------------------------------------------------------------------------- */
+.neu-btn, .flat-btn, .kisvic-btn {
+    background-color: #FFFFFF;
+    border: 1px solid #D1D5DB !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    color: var(--kisvic-text-dark);
+    font-weight: 600;
+    padding: 0.55rem 1.1rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+}
+
+.neu-btn:hover, .flat-btn:hover, .kisvic-btn:hover {
+    background-color: #F5F7F5;
+    border-color: #9CA3AF !important;
+    color: var(--kisvic-green-dark);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.neu-btn-primary, .flat-btn-primary, .kisvic-btn-primary {
+    background-color: var(--kisvic-green-dark) !important;
+    border-color: var(--kisvic-green-dark) !important;
+    color: #FFFFFF !important;
+}
+
+.neu-btn-primary:hover, .flat-btn-primary:hover, .kisvic-btn-primary:hover {
+    background-color: #1B5E20 !important;
+    border-color: #1B5E20 !important;
+    color: #FFFFFF !important;
+}
+
+.neu-btn-success, .flat-btn-success, .kisvic-btn-gold {
+    background-color: var(--kisvic-gold) !important;
+    border-color: var(--kisvic-gold) !important;
+    color: #FFFFFF !important;
+}
+
+.neu-btn-success:hover, .flat-btn-success:hover, .kisvic-btn-gold:hover {
+    background-color: var(--kisvic-gold-hover) !important;
+    border-color: var(--kisvic-gold-hover) !important;
+    color: #FFFFFF !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. CÍRCULOS DE ICONOS CORPORATIVOS KISVIC
+   -------------------------------------------------------------------------- */
+.neu-icon-circle, .flat-icon-circle, .kisvic-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.neu-icon-green, .flat-icon-green, .kisvic-icon-green { 
+    background-color: var(--kisvic-green-light); 
+    color: var(--kisvic-green-dark); 
+}
+
+.neu-icon-yellow, .flat-icon-yellow, .kisvic-icon-gold { 
+    background-color: var(--kisvic-gold-light); 
+    color: var(--kisvic-gold); 
+}
+
+.neu-icon-blue, .flat-icon-blue, .kisvic-icon-blue { 
+    background-color: #E0F2FE; 
+    color: #0284C7; 
+}
+
+.neu-icon-red, .flat-icon-red, .kisvic-icon-red { 
+    background-color: #FFEBEE; 
+    color: #C62828; 
+}
+
+/* --------------------------------------------------------------------------
+   5. BARRAS DE PROGRESO PLANAS
+   -------------------------------------------------------------------------- */
+.neu-progress-track, .flat-progress-track, .kisvic-progress-track {
+    background-color: #E5E7EB;
+    border-radius: 6px;
+    height: 8px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.neu-progress-fill, .flat-progress-fill, .kisvic-progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    background-color: var(--kisvic-green-dark);
+    transition: width 0.4s ease;
+}
+
+.neu-progress-fill-success, .flat-progress-fill-success {
+    background-color: var(--kisvic-green-medium);
+}
+
+.neu-progress-fill-warning, .flat-progress-fill-warning {
+    background-color: var(--kisvic-gold);
+}
+
+/* --------------------------------------------------------------------------
+   6. BADGES PLANOS CORPORATIVOS
+   -------------------------------------------------------------------------- */
+.flat-badge-por_cobrar {
+    background-color: var(--kisvic-gold-light) !important;
+    color: #B78103 !important;
+    border: 1px solid #FDE68A !important;
+}
+
+.flat-badge-abonada {
+    background-color: #E0F2FE !important;
+    color: #0369A1 !important;
+    border: 1px solid #BAE6FD !important;
+}
+
+.flat-badge-cobrada {
+    background-color: var(--kisvic-green-light) !important;
+    color: var(--kisvic-green-dark) !important;
+    border: 1px solid #C8E6C9 !important;
+}
+
+.flat-badge-vencida {
+    background-color: #FFEBEE !important;
+    color: #C62828 !important;
+    border: 1px solid #FFCDD2 !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. SKELETON LOADER CORPORATIVO
+   -------------------------------------------------------------------------- */
+.neu-skeleton, .flat-skeleton {
+    background: linear-gradient(90deg, #E5E7EB 0%, #F5F7F5 50%, #E5E7EB 100%);
+    background-size: 200% 100%;
+    animation: kisvicSkeletonShimmer 1.4s infinite ease-in-out;
+    border-radius: 6px;
+}
+
+@keyframes kisvicSkeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* --------------------------------------------------------------------------
+   8. ESTILOS ACCIONES RÁPIDAS Y DASHBOARD INDEX
+   -------------------------------------------------------------------------- */
+.modern-action-btn-green {
+    background: #2E7D32 !important;
+    border: 1px solid #1B5E20 !important;
+    color: #ffffff !important;
+}
+
+.modern-action-btn-green:hover {
+    background: #1B5E20 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.25);
+}
+
+.modern-action-btn-gold {
+    background: #D4A017 !important;
+    border: 1px solid #B8860B !important;
+    color: #ffffff !important;
+}
+
+.modern-action-btn-gold:hover {
+    background: #B8860B !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 160, 23, 0.25);
+}
+
+.modern-icon-gold {
+    background: #FFF8E1 !important;
+    color: #D4A017 !important;
+    box-shadow: 0 4px 14px 0 rgba(212, 160, 23, 0.15) !important;
+}
+
+.modern-icon-green {
+    background: #E8F5E9 !important;
+    color: #2E7D32 !important;
+    box-shadow: 0 4px 14px 0 rgba(46, 125, 50, 0.15) !important;
+}
+

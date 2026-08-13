@@ -1,0 +1,92 @@
+{
+    "total_bs": 5838.6,
+    "fecha": "2025-06-03",
+    "numero": "FAC-00000646",
+    "descuento": 0.0,
+    "id": "3f88fe88-cdd6-4e7b-a244-8d3f9a7c1653",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "14:26:00",
+    "productos": [
+        "37",
+        "52",
+        "53"
+    ],
+    "total_usd": 60.0,
+    "cantidades": [
+        10,
+        6,
+        6
+    ],
+    "total_abonado": 60.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:56:58",
+            "metodo": "efectivo_usd",
+            "id": "a15ef746-946a-4512-9d4e-0901aff4637d",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 60.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 5838.6,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-23",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        1.5,
+        1.5
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 10,
+            "id_producto": "37",
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 4087.02,
+            "subtotal_usd": 42.0,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "cantidad": 6,
+            "id_producto": "52",
+            "precio_unitario_bs": 145.965,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "53",
+            "precio_unitario_bs": 145.965,
+            "categoria": "",
+            "subtotal_bs": 875.79,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 1.5
+        }
+    ],
+    "subtotal_usd": 60.0,
+    "firma_fiscal": "cd87aa2bc54570300ccfa234e79035ec8b68e5bf6a072463550926d8363edaa4"
+}

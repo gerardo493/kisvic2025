@@ -1,0 +1,81 @@
+{
+    "total_bs": 1739.925,
+    "fecha": "2025-06-14",
+    "numero": "FAC-00000665",
+    "descuento": 0.0,
+    "id": "d4047c11-7b25-482a-a25e-e5ddabe16477",
+    "tasa_bcv": 105.45,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "14:36:00",
+    "productos": [
+        "8",
+        "52",
+        "14"
+    ],
+    "total_usd": 16.5,
+    "cantidades": [
+        3,
+        3,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 16.5,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Soublet Cruze Con Santos Michelena",
+        "email": "",
+        "rif": "V-6471279",
+        "telefono": "+5804144909579",
+        "nombre": "JOSE RODRIGUEZ"
+    },
+    "subtotal_bs": 1739.925,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-04",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        1.5,
+        1.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-6471279",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "8",
+            "precio_unitario_bs": 316.35,
+            "categoria": "",
+            "subtotal_bs": 949.0500000000001,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "52",
+            "cantidad": 3,
+            "precio_unitario_bs": 158.175,
+            "categoria": "",
+            "subtotal_bs": 474.52500000000003,
+            "subtotal_usd": 4.5,
+            "precio_unitario_usd": 1.5
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "14",
+            "precio_unitario_bs": 105.45,
+            "categoria": "",
+            "subtotal_bs": 316.35,
+            "subtotal_usd": 3.0,
+            "precio_unitario_usd": 1.0
+        }
+    ],
+    "subtotal_usd": 16.5,
+    "firma_fiscal": "030bfc34a853747e74837555b828fa2737db4e72293a18fe831fc33716f5979c"
+}

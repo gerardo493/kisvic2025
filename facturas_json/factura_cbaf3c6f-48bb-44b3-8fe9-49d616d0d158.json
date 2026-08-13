@@ -1,0 +1,92 @@
+{
+    "total_bs": 8105.344,
+    "fecha": "2025-06-04",
+    "numero": "FAC-00000649",
+    "descuento": 0.0,
+    "id": "cbaf3c6f-48bb-44b3-8fe9-49d616d0d158",
+    "tasa_bcv": 97.42,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "15:47:00",
+    "productos": [
+        "12",
+        "10",
+        "21"
+    ],
+    "total_usd": 83.2,
+    "cantidades": [
+        6,
+        6,
+        20
+    ],
+    "total_abonado": 83.2,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:59:56",
+            "metodo": "efectivo_usd",
+            "id": "8ff6a704-907d-4248-aaa1-1131d606a900",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 83.2
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Urb Las Beatrices Manzana 11 # 09 C/ Bolivar - Edo- Bolivar",
+        "email": "alicia.luna@dominioinventado.com",
+        "rif": "V-13.058.545",
+        "telefono": "+5804121123420",
+        "nombre": "ALICIA LUNA"
+    },
+    "subtotal_bs": 8105.344,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-24",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-13.058.545",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "12",
+            "precio_unitario_bs": 253.292,
+            "categoria": "",
+            "subtotal_bs": 1519.7520000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "id_producto": "10",
+            "precio_unitario_bs": 253.292,
+            "categoria": "",
+            "subtotal_bs": 1519.7520000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 20,
+            "id_producto": "21",
+            "precio_unitario_bs": 253.292,
+            "categoria": "",
+            "subtotal_bs": 5065.84,
+            "subtotal_usd": 52.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 83.2,
+    "firma_fiscal": "c52776e2872a5159023c186e4c468da5bbeb93e9a8da15f433e89a55ef16117a"
+}

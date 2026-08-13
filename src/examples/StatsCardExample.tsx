@@ -2,7 +2,7 @@ import React from 'react';
 import StatsCard from '@/components/dashboard/StatsCard';
 import { 
   DollarSign, 
-  HandCoins, 
+  Coins, 
   Receipt, 
   FileText,
   Users,
@@ -44,7 +44,7 @@ const StatsCardExample: React.FC = () => {
             subtitle="7,945,678.90 Bs"
             trend="+8%"
             trendValue={8}
-            icon={HandCoins}
+            icon={Coins}
             color="green"
             helpText="Este mes"
           />
@@ -137,7 +137,7 @@ const StatsCardExample: React.FC = () => {
             <StatsCard 
               title="Cargando..."
               value={0}
-              icon={HandCoins}
+              icon={Coins}
               color="green"
               loading={true}
             />
@@ -176,7 +176,7 @@ const StatsCardExample: React.FC = () => {
               title="Ver Reportes"
               value="$8,901.23"
               subtitle="Click para reportes"
-              icon={HandCoins}
+              icon={Coins}
               color="green"
               onClick={() => alert('¡Hiciste clic en Pagos Recibidos!')}
             />

@@ -1,5 +1,4 @@
-# Dockerfile para mi-app-web
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 # Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
@@ -15,19 +14,15 @@ RUN apt-get update && apt-get install -y \
 # Configurar directorio de trabajo
 WORKDIR /app
 
-# Copiar requirements
-COPY requirements_render_definitivo.txt .
-
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements_render_definitivo.txt
+# Copiar e instalar dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar código de la aplicación
 COPY . .
 
-# Exponer puerto
-EXPOSE 5000
-
-# Configurar variables de entorno
+# Cloud Run expone PORT (normalmente 8080)
+EXPOSE 8080
 ENV FLASK_ENV=production
 ENV PYTHONPATH=/app
 

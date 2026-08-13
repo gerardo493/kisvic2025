@@ -1,0 +1,79 @@
+{
+    "total_bs": 6857.28,
+    "fecha": "2025-05-12",
+    "numero": "FAC-00000614",
+    "descuento": 0.0,
+    "id": "b24e5a29-54ac-4901-b80c-08357b3ff4c3",
+    "tasa_bcv": 95.24,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:37:00",
+    "productos": [
+        "19",
+        "34"
+    ],
+    "total_usd": 72.0,
+    "cantidades": [
+        12,
+        12
+    ],
+    "total_abonado": 72.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 21:04:01",
+            "metodo": "pago_movil",
+            "id": "35a0d9c4-808d-4193-a457-2a04a4982b61",
+            "banco": "0137",
+            "captura_path": null,
+            "referencia": "5555",
+            "monto": 72.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Terminal Pasajeros Maracay- Aragua",
+        "email": "t/n.farma.botica@dominioinventado.com",
+        "rif": "J-503178575",
+        "telefono": "+5804243383334",
+        "nombre": "T/N FARMA BOTICA"
+    },
+    "subtotal_bs": 6857.28,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-01",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178575",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "19",
+            "cantidad": 12,
+            "precio_unitario_bs": 285.71999999999997,
+            "categoria": "",
+            "subtotal_bs": 3428.64,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "34",
+            "cantidad": 12,
+            "precio_unitario_bs": 285.71999999999997,
+            "categoria": "",
+            "subtotal_bs": 3428.64,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 72.0,
+    "firma_fiscal": "3b5c978d936b6e484cbe233aa5ad96e830c347ad14ff6f4d9bbf0c7665c543a4"
+}

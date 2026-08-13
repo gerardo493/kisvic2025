@@ -1,0 +1,146 @@
+{
+    "total_bs": 11630.52,
+    "fecha": "2025-06-05",
+    "numero": "FAC-00000650",
+    "descuento": 0.0,
+    "id": "d8fee480-5ef9-48be-a069-0886deef33e1",
+    "tasa_bcv": 97.9,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:00:00",
+    "productos": [
+        "12",
+        "10",
+        "1",
+        "14",
+        "34",
+        "27",
+        "4",
+        "9"
+    ],
+    "total_usd": 118.8,
+    "cantidades": [
+        10,
+        4,
+        5,
+        24,
+        3,
+        2,
+        4,
+        2
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 118.8,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Vargas Cruce Con Negro Primero Cc Antaño Nivel Pb Local Pb-C, Marcay",
+        "email": "t/n..tu.mundo.natural@dominioinventado.com",
+        "rif": "J-504304603",
+        "telefono": "",
+        "nombre": "T/N  TU MUNDO NATURAL"
+    },
+    "subtotal_bs": 11630.52,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-25",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        1.2,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304603",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "12",
+            "cantidad": 10,
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 2937.0,
+            "subtotal_usd": 30.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "10",
+            "cantidad": 4,
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 1174.8000000000002,
+            "subtotal_usd": 12.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "1",
+            "cantidad": 5,
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 1468.5,
+            "subtotal_usd": 15.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 1.2,
+            "id_producto": "14",
+            "cantidad": 24,
+            "precio_unitario_bs": 117.48,
+            "categoria": "",
+            "subtotal_bs": 2819.52,
+            "subtotal_usd": 28.799999999999997,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "34",
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 881.1,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 2,
+            "id_producto": "27",
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 587.4000000000001,
+            "subtotal_usd": 6.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 4,
+            "id_producto": "4",
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 1174.8000000000002,
+            "subtotal_usd": 12.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "cantidad": 2,
+            "id_producto": "9",
+            "precio_unitario_bs": 293.70000000000005,
+            "categoria": "",
+            "subtotal_bs": 587.4000000000001,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 118.8,
+    "firma_fiscal": "dfff8733e69b293388bbddca5fea379ba886e92cd302369f700dcf958a81147b"
+}

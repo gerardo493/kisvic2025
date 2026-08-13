@@ -1,0 +1,153 @@
+{
+    "total_bs": 15995.454,
+    "fecha": "2025-08-02",
+    "numero": "FAC-00000725",
+    "descuento": 0.0,
+    "tasa_bcv": 138.13,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "20:53:12",
+    "productos": [
+        "48",
+        "20",
+        "10",
+        "12",
+        "17",
+        "30",
+        "24"
+    ],
+    "total_usd": 115.8,
+    "cantidades": [
+        5,
+        5,
+        5,
+        6,
+        5,
+        5,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 115.8,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-08-19T20:53:12.543854",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "97c5504d-a361-4a57-a311-3a40d78b4490",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-08-19 20:53:12.549",
+        "firma_digital": "99b3f3671474e06a300b74cc379ab616648d806feabcd3adcd0f098d7f9e282a",
+        "hash_inmutable": "e6390227cfdba824a85ec33974d643a10920934a1126cb5130a0251692cc8e1f",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Villa De Cura  Edo Aragua",
+        "email": "t/n.variedades.andrea.adrealuz@dominioinventado.com",
+        "rif": "J-504304604",
+        "telefono": "",
+        "nombre": "T/N VARIEDADES ANDREA ADREALUZ"
+    },
+    "subtotal_bs": 15995.454,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-22",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        4.2,
+        1.8
+    ],
+    "numero_secuencial": 725,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304604",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 5,
+            "subtotal_usd": 21.0,
+            "id": "48",
+            "precio_unitario_bs": 580.146,
+            "categoria": "Vitaminas y Minerales",
+            "subtotal_bs": 2900.73,
+            "codigo_barras": "",
+            "nombre": "CITRATO DE MAGNESIO"
+        },
+        {
+            "nombre": "GINKGO C/ GINSENG X 60 CAP",
+            "cantidad": 5,
+            "subtotal_usd": 15.0,
+            "id": "20",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Oxigenante/ Energizante",
+            "subtotal_bs": 2071.95,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CASTAÑA DE INDIA X 60  CAP",
+            "cantidad": 5,
+            "subtotal_usd": 15.0,
+            "id": "10",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 2071.95,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CENTELLA ASIATICA X 60 CAP",
+            "cantidad": 6,
+            "subtotal_usd": 18.0,
+            "id": "12",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Adelgazante-Diuretico",
+            "subtotal_bs": 2486.34,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 5,
+            "subtotal_usd": 15.0,
+            "id": "17",
+            "precio_unitario_bs": 414.39,
+            "categoria": "Anti-inflamatorio",
+            "subtotal_bs": 2071.95,
+            "codigo_barras": "",
+            "nombre": "CURCUMA C/ PIIMIENTA NEGRA X 60 CAP"
+        },
+        {
+            "nombre": "OMEGA 3 X 30 UND",
+            "cantidad": 5,
+            "subtotal_usd": 21.0,
+            "id": "30",
+            "precio_unitario_bs": 580.146,
+            "categoria": "Cardiovascular",
+            "subtotal_bs": 2900.73,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "nombre": "JARABE MIEL  EUCALIPTAL X 240 ML",
+            "cantidad": 6,
+            "codigo_barras": "",
+            "id": "24",
+            "precio_unitario_bs": 248.634,
+            "categoria": "Bronco-Dilatadores",
+            "subtotal_bs": 1491.804,
+            "subtotal_usd": 10.8,
+            "precio_unitario_usd": 1.8
+        }
+    ],
+    "subtotal_usd": 115.8,
+    "firma_fiscal": "aff3c66a8b9aea93fee2244778eafc8360544771880e046bad451b33cc03ac3a",
+    "id": "97c5504d-a361-4a57-a311-3a40d78b4490"
+}

@@ -1,0 +1,153 @@
+{
+    "total_bs": 54649.92,
+    "fecha": "2025-08-08",
+    "numero": "FAC-00000737",
+    "descuento": 0.0,
+    "tasa_bcv": 150.8,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:44:48",
+    "productos": [
+        "9",
+        "16",
+        "28",
+        "35",
+        "25",
+        "55",
+        "24"
+    ],
+    "total_usd": 362.4,
+    "cantidades": [
+        24,
+        10,
+        10,
+        10,
+        80,
+        30,
+        40
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 362.4,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-02T22:44:48.758220",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "181652f6-828e-43a3-bb56-5bbb1fa8e8f0",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-02 22:44:48.769",
+        "firma_digital": "6d9d713d5b873f6b4ff158c3788ca632983e685cd51957898ee921b71158a8fe",
+        "hash_inmutable": "35e5056c3b69d32ed4704d22a6ef3aca716248f5a34d7d566d02f3bffbf839a8",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Carrera 29 # 14.59, Urb La Coromoto, La Corcordia, Edo- Tachira",
+        "email": "drogueria.pronaltivo@dominioinventado.com",
+        "rif": "J-312239760",
+        "telefono": "+5804123873431",
+        "nombre": "DROGUERIA PRONALTIVO"
+    },
+    "subtotal_bs": 54649.92,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-28",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.3,
+        2.6,
+        1.5,
+        1.5,
+        1.5
+    ],
+    "numero_secuencial": 737,
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-312239760",
+    "items": [
+        {
+            "nombre": "CARDO MARIANO X 60 CAP",
+            "cantidad": 24,
+            "subtotal_usd": 62.400000000000006,
+            "id": "9",
+            "precio_unitario_bs": 392.08000000000004,
+            "categoria": "Protector Hepatico",
+            "subtotal_bs": 9409.920000000002,
+            "codigo_barras": "",
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 10,
+            "subtotal_usd": 26.0,
+            "id": "16",
+            "precio_unitario_bs": 392.08000000000004,
+            "categoria": "Limpieza De colon",
+            "subtotal_bs": 3920.8,
+            "codigo_barras": "",
+            "nombre": "COLON CLEANSER X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 2.3,
+            "cantidad": 10,
+            "subtotal_usd": 23.0,
+            "id": "28",
+            "precio_unitario_bs": 346.84,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 3468.4,
+            "codigo_barras": "",
+            "nombre": "MAPURITE X 60 CAP"
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 10,
+            "subtotal_usd": 26.0,
+            "id": "35",
+            "precio_unitario_bs": 392.08000000000004,
+            "categoria": "Antitumorales - anticancerigeno",
+            "subtotal_bs": 3920.8,
+            "codigo_barras": "",
+            "nombre": "UÑA DE GATO C/MAPURITE X 60 CAP"
+        },
+        {
+            "nombre": "JARABE REGENERADOR PULMONAR X 240 ML",
+            "cantidad": 80,
+            "subtotal_usd": 120.0,
+            "id": "25",
+            "precio_unitario_bs": 226.20000000000002,
+            "categoria": "Bronco-Dilatadores",
+            "subtotal_bs": 18096.0,
+            "codigo_barras": "",
+            "precio_unitario_usd": 1.5
+        },
+        {
+            "precio_unitario_usd": 1.5,
+            "cantidad": 30,
+            "subtotal_usd": 45.0,
+            "id": "55",
+            "precio_unitario_bs": 226.20000000000002,
+            "categoria": "Via Respiratoria",
+            "subtotal_bs": 6786.000000000001,
+            "codigo_barras": "",
+            "nombre": "TOTUMO Y JEMGIBRE X 240 ML"
+        },
+        {
+            "nombre": "JARABE MIEL  EUCALIPTAL X 240 ML",
+            "cantidad": 40,
+            "subtotal_usd": 60.0,
+            "id": "24",
+            "precio_unitario_bs": 226.20000000000002,
+            "categoria": "Bronco-Dilatadores",
+            "subtotal_bs": 9048.0,
+            "codigo_barras": "",
+            "precio_unitario_usd": 1.5
+        }
+    ],
+    "subtotal_usd": 362.4,
+    "firma_fiscal": "8b75556da4f6d553c57e18cb325006c41c6d895c76710a1754cb9f764749a91c",
+    "id": "181652f6-828e-43a3-bb56-5bbb1fa8e8f0"
+}

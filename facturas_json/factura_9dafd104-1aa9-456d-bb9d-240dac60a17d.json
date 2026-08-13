@@ -1,0 +1,102 @@
+{
+    "total_bs": 7428.719999999999,
+    "fecha": "2025-05-15",
+    "numero": "FAC-00000616",
+    "descuento": 0.0,
+    "id": "9dafd104-1aa9-456d-bb9d-240dac60a17d",
+    "tasa_bcv": 95.24,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:40:00",
+    "productos": [
+        "12",
+        "10",
+        "14"
+    ],
+    "total_usd": 78.0,
+    "cantidades": [
+        12,
+        12,
+        6
+    ],
+    "total_abonado": 78.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-08-28 23:04:51",
+            "metodo": "pago_movil",
+            "id": "93c01881-4c84-4102-aa02-4dba2d0f4b0a",
+            "banco": "banco_venezuela",
+            "captura_path": null,
+            "referencia": "1000",
+            "monto": 77.0
+        },
+        {
+            "moneda": "USD",
+            "fecha": "2025-08-28 23:05:05",
+            "metodo": "efectivo_usd",
+            "id": "6a10ae39-85c0-4f76-a2ef-a6237854e1c9",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 1.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Casco Central Villa Cura",
+        "email": "perfumeria.la.gran.oferta@dominioinventado.com",
+        "rif": "J-308435380",
+        "telefono": "",
+        "nombre": "PERFUMERIA LA GRAN OFERTA"
+    },
+    "subtotal_bs": 7428.719999999999,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-04",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        1.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-308435380",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "12",
+            "precio_unitario_bs": 285.71999999999997,
+            "categoria": "",
+            "subtotal_bs": 3428.64,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "10",
+            "precio_unitario_bs": 285.71999999999997,
+            "categoria": "",
+            "subtotal_bs": 3428.64,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "14",
+            "cantidad": 6,
+            "precio_unitario_bs": 95.24,
+            "categoria": "",
+            "subtotal_bs": 571.4399999999999,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 1.0
+        }
+    ],
+    "subtotal_usd": 78.0,
+    "firma_fiscal": "a2dcf1f3341ec386cabc1a009df965bd9933c107c92934508b0f89c7c8dd2d6c"
+}

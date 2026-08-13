@@ -1,0 +1,146 @@
+{
+    "total_bs": 14857.224,
+    "fecha": "2025-07-16",
+    "numero": "FAC-00000706",
+    "descuento": 0.0,
+    "id": "e050bb5f-5b47-4ca2-8860-03832b386571",
+    "tasa_bcv": 118.29,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:51:00",
+    "productos": [
+        "36",
+        "8",
+        "9",
+        "40",
+        "12",
+        "51",
+        "30",
+        "11"
+    ],
+    "total_usd": 125.6,
+    "cantidades": [
+        3,
+        3,
+        3,
+        3,
+        10,
+        10,
+        3,
+        5
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 125.6,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Av. Bolivar Cc Parque Aragua Nivel 4 Local 22 Maracay",
+        "email": "",
+        "rif": "J-075272994",
+        "telefono": "",
+        "nombre": "CENTRO NATURAL SRL"
+    },
+    "subtotal_bs": 14857.224,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-08-05",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        3.2,
+        4.2,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-075272994",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "36",
+            "cantidad": 3,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "8",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "9",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 3,
+            "id_producto": "40",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1064.6100000000001,
+            "subtotal_usd": 9.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 10,
+            "id_producto": "12",
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 3548.7000000000003,
+            "subtotal_usd": 30.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.2,
+            "cantidad": 10,
+            "id_producto": "51",
+            "precio_unitario_bs": 378.528,
+            "categoria": "",
+            "subtotal_bs": 3785.28,
+            "subtotal_usd": 32.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "30",
+            "cantidad": 3,
+            "precio_unitario_bs": 496.81800000000004,
+            "categoria": "",
+            "subtotal_bs": 1490.4540000000002,
+            "subtotal_usd": 12.600000000000001,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "11",
+            "cantidad": 5,
+            "precio_unitario_bs": 354.87,
+            "categoria": "",
+            "subtotal_bs": 1774.3500000000001,
+            "subtotal_usd": 15.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 125.6,
+    "firma_fiscal": "84ca4cf8cb95d18a7d109ff5338cd6a5c9c5fa6dcc8d7d139659e0850fd2412e"
+}

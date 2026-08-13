@@ -1,0 +1,94 @@
+{
+    "total_bs": 21409.920000000002,
+    "fecha": "2025-06-09",
+    "numero": "FAC-00000659",
+    "descuento": 0.0,
+    "id": "e9a0bdea-0384-4a38-85c9-1d10a6c1b73a",
+    "tasa_bcv": 99.12,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "23:18:00",
+    "productos": [
+        "49",
+        "9",
+        "4",
+        "2"
+    ],
+    "total_usd": 216.0,
+    "cantidades": [
+        24,
+        24,
+        12,
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 216.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Gran Demócrata, 18 sector centro I, Palo Negro 2117, Aragua",
+        "email": "",
+        "rif": "N/A",
+        "telefono": "0243-2673767",
+        "nombre": "T/N CASA VERDE"
+    },
+    "subtotal_bs": 21409.920000000002,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-06-29",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        3.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "N/A",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 24,
+            "id_producto": "49",
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 7136.64,
+            "subtotal_usd": 72.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "9",
+            "cantidad": 24,
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 7136.64,
+            "subtotal_usd": 72.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "4",
+            "cantidad": 12,
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 3568.32,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 12,
+            "id_producto": "2",
+            "precio_unitario_bs": 297.36,
+            "categoria": "",
+            "subtotal_bs": 3568.32,
+            "subtotal_usd": 36.0,
+            "precio_unitario_usd": 3.0
+        }
+    ],
+    "subtotal_usd": 216.0,
+    "firma_fiscal": "5fb035531310294bed2ca6c2b2213127f6270d94d88721f1ef3ed444be61d14c"
+}

@@ -1,0 +1,105 @@
+{
+    "total_bs": 15413.904,
+    "fecha": "2025-05-23",
+    "numero": "FAC-00000629",
+    "descuento": 0.0,
+    "id": "9b88536c-1d9c-4ece-9086-e99c125de700",
+    "tasa_bcv": 97.31,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "16:25:00",
+    "productos": [
+        "11",
+        "10",
+        "4",
+        "48"
+    ],
+    "total_usd": 158.4,
+    "cantidades": [
+        12,
+        12,
+        12,
+        12
+    ],
+    "total_abonado": 158.4,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-02 21:48:00",
+            "metodo": "efectivo_usd",
+            "id": "5dbb5f94-b4b8-419d-8d34-ae5d2f8cdc6f",
+            "banco": "",
+            "captura_path": null,
+            "referencia": "",
+            "monto": 158.4
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Miranda, Con Dr Manzo Frente Al Edif Kilzi Center, Villa De Cura.",
+        "email": "variedades.vive.verde@dominioinventado.com",
+        "rif": "J-502357718",
+        "telefono": "+5804144512744",
+        "nombre": "VARIEDADES VIVE VERDE"
+    },
+    "subtotal_bs": 15413.904,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-06-12",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        3.0,
+        4.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-502357718",
+    "items": [
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "11",
+            "cantidad": 12,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 3503.16,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 12,
+            "id_producto": "10",
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 3503.16,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "id_producto": "4",
+            "cantidad": 12,
+            "precio_unitario_bs": 291.93,
+            "categoria": "",
+            "subtotal_bs": 3503.16,
+            "subtotal_usd": 36.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "48",
+            "cantidad": 12,
+            "precio_unitario_bs": 408.70200000000006,
+            "categoria": "",
+            "subtotal_bs": 4904.424000000001,
+            "subtotal_usd": 50.400000000000006,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 158.4,
+    "firma_fiscal": "d57510fce08e1b395f15a5b0cf77d4bedc269d5cead3053635107c8daafafa94"
+}

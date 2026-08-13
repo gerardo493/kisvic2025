@@ -1,0 +1,81 @@
+{
+    "total_bs": 3644.784,
+    "fecha": "2025-07-02",
+    "numero": "FAC-00000686",
+    "descuento": 0.0,
+    "id": "fa83d9a4-c6b8-47af-8495-6b90e5ea5b34",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:29:00",
+    "productos": [
+        "59",
+        "11",
+        "7"
+    ],
+    "total_usd": 31.200000000000003,
+    "cantidades": [
+        3,
+        2,
+        3
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 31.2,
+    "dias_credito": "15",
+    "cliente_datos": {
+        "direccion": "Calle Soublet Cruze Con Santos Michelena",
+        "email": "",
+        "rif": "V-6471279",
+        "telefono": "+5804144909579",
+        "nombre": "JOSE RODRIGUEZ"
+    },
+    "subtotal_bs": 3644.784,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-16",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        4.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-6471279",
+    "items": [
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "59",
+            "cantidad": 3,
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 1471.932,
+            "subtotal_usd": 12.600000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "11",
+            "cantidad": 2,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 700.92,
+            "subtotal_usd": 6.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "cantidad": 3,
+            "id_producto": "7",
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 1471.932,
+            "subtotal_usd": 12.600000000000001,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 31.200000000000003,
+    "firma_fiscal": "05e22946961c33b5e2e7bcf9181eb5b8cce8fe1e391174b1f683df3509b1d1f8"
+}

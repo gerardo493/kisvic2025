@@ -1,0 +1,125 @@
+{
+    "total_bs": 8802.432,
+    "fecha": "2025-08-23",
+    "numero": "FAC-00000753",
+    "descuento": 0.0,
+    "tasa_bcv": 152.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "21:07:27",
+    "productos": [
+        "30",
+        "10",
+        "4",
+        "14",
+        "46"
+    ],
+    "total_usd": 57.6,
+    "cantidades": [
+        3,
+        1,
+        1,
+        7,
+        4
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "saldo_pendiente": 57.6,
+    "moneda_principal": "USD",
+    "timestamp_creacion": "2025-09-04T21:07:27.275882",
+    "dias_credito": "21",
+    "_metadatos_seguridad": {
+        "id_documento": "62322853-0793-48c8-8c02-f2b0c19f1cc7",
+        "mac_address": "d8:9e:f3:41:8b:22",
+        "inmutable": true,
+        "fecha_creacion": "2025-09-04 21:07:27.275",
+        "firma_digital": "0b63241a7e014b6b713e4bd7e2ef7ddc04ad5d66ea428c46406ed676886316f8",
+        "hash_inmutable": "4288d9fe87cbb262fb561a238599a15d9c632123d43438f766e45d3987565c6f",
+        "hostname": "DESKTOP-S2434A2",
+        "tipo_documento": "FACTURA",
+        "version_sistema": "1.0.0"
+    },
+    "cliente_datos": {
+        "direccion": "Caña De Azucar Maracay",
+        "email": "nellyda@dominioinventado.com",
+        "rif": "V-12189390",
+        "telefono": "",
+        "nombre": "NELLYDA"
+    },
+    "subtotal_bs": 8802.432,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-09-12",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        3.0,
+        3.0,
+        1.0,
+        8.0
+    ],
+    "numero_secuencial": 753,
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-12189390",
+    "items": [
+        {
+            "nombre": "OMEGA 3 X 30 UND",
+            "cantidad": 3,
+            "subtotal_usd": 12.600000000000001,
+            "id": "30",
+            "precio_unitario_bs": 641.844,
+            "categoria": "Cardiovascular",
+            "subtotal_bs": 1925.5320000000002,
+            "codigo_barras": "",
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 1,
+            "subtotal_usd": 3.0,
+            "id": "10",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Circulación Insuficiencia Venosa",
+            "subtotal_bs": 458.46,
+            "codigo_barras": "",
+            "nombre": "CASTAÑA DE INDIA X 60  CAP"
+        },
+        {
+            "nombre": "ARANDANO ROJO X 60 CAP",
+            "cantidad": 1,
+            "subtotal_usd": 3.0,
+            "id": "4",
+            "precio_unitario_bs": 458.46,
+            "categoria": "Bactericida",
+            "subtotal_bs": 458.46,
+            "codigo_barras": "",
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "CLORURO DE MAGNESIO X 33 GR",
+            "cantidad": 7,
+            "codigo_barras": "",
+            "id": "14",
+            "precio_unitario_bs": 152.82,
+            "categoria": "Regenerador osio",
+            "subtotal_bs": 1069.74,
+            "subtotal_usd": 7.0,
+            "precio_unitario_usd": 1.0
+        },
+        {
+            "precio_unitario_usd": 8.0,
+            "cantidad": 4,
+            "subtotal_usd": 32.0,
+            "id": "46",
+            "precio_unitario_bs": 1222.56,
+            "categoria": "Laxante",
+            "subtotal_bs": 4890.24,
+            "codigo_barras": "",
+            "nombre": "DOC QUENOPODIO X 12 UND"
+        }
+    ],
+    "subtotal_usd": 57.6,
+    "firma_fiscal": "6e19ae965bdfa1fe040ffe4993b95cee55886ce837da26589e33909483221ac0",
+    "id": "62322853-0793-48c8-8c02-f2b0c19f1cc7"
+}

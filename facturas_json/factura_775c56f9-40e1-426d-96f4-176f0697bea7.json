@@ -1,0 +1,131 @@
+{
+    "total_bs": 6896.664,
+    "fecha": "2025-06-06",
+    "numero": "FAC-00000655",
+    "descuento": 0.0,
+    "id": "775c56f9-40e1-426d-96f4-176f0697bea7",
+    "tasa_bcv": 99.09,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "19:57:00",
+    "productos": [
+        "37",
+        "48",
+        "57",
+        "38",
+        "11",
+        "33"
+    ],
+    "total_usd": 69.6,
+    "cantidades": [
+        4,
+        4,
+        3,
+        3,
+        3,
+        1
+    ],
+    "total_abonado": 60.0,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-07-21 22:54:59",
+            "metodo": "pago_movil",
+            "id": "18b8dd18-ac41-4f1a-99ef-8896997cf5e1",
+            "banco": "0102",
+            "captura_path": null,
+            "referencia": "4545",
+            "monto": 60.0
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 9.6,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Villa De Cura  Edo Aragua",
+        "email": "t/n.variedades.andrea.adrealuz@dominioinventado.com",
+        "rif": "J-504304604",
+        "telefono": "",
+        "nombre": "T/N VARIEDADES ANDREA ADREALUZ"
+    },
+    "subtotal_bs": 6896.664,
+    "estado": "abonada",
+    "fecha_vencimiento": "2025-06-26",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2,
+        4.2,
+        3.0,
+        3.0,
+        3.0,
+        9.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-504304604",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "37",
+            "cantidad": 4,
+            "precio_unitario_bs": 416.17800000000005,
+            "categoria": "",
+            "subtotal_bs": 1664.7120000000002,
+            "subtotal_usd": 16.8,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "nombre": "",
+            "cantidad": 4,
+            "id_producto": "48",
+            "precio_unitario_bs": 416.17800000000005,
+            "categoria": "",
+            "subtotal_bs": 1664.7120000000002,
+            "subtotal_usd": 16.8,
+            "precio_unitario_usd": 4.2
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "57",
+            "precio_unitario_bs": 297.27,
+            "categoria": "",
+            "subtotal_bs": 891.8100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "38",
+            "precio_unitario_bs": 297.27,
+            "categoria": "",
+            "subtotal_bs": 891.8100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 3.0,
+            "cantidad": 3,
+            "id_producto": "11",
+            "precio_unitario_bs": 297.27,
+            "categoria": "",
+            "subtotal_bs": 891.8100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 9.0,
+            "cantidad": 1,
+            "id_producto": "33",
+            "precio_unitario_bs": 891.8100000000001,
+            "categoria": "",
+            "subtotal_bs": 891.8100000000001,
+            "subtotal_usd": 9.0,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 69.6,
+    "firma_fiscal": "3d05bd99f96826745dd1b6d98d0ba3d79f09af90e7f9ab4948d5af749eebe1db"
+}

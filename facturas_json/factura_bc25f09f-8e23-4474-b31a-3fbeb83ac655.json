@@ -1,0 +1,81 @@
+{
+    "total_bs": 17663.183999999997,
+    "fecha": "2025-07-04",
+    "numero": "FAC-00000687",
+    "descuento": 0.0,
+    "id": "bc25f09f-8e23-4474-b31a-3fbeb83ac655",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:31:00",
+    "productos": [
+        "49",
+        "32",
+        "30"
+    ],
+    "total_usd": 151.2,
+    "cantidades": [
+        36,
+        6,
+        6
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 151.2,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Calle Gran Demócrata, 18 sector centro I, Palo Negro 2117, Aragua",
+        "email": "",
+        "rif": "N/A",
+        "telefono": "0243-2673767",
+        "nombre": "T/N CASA VERDE"
+    },
+    "subtotal_bs": 17663.183999999997,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-24",
+    "descuento_total": 0.0,
+    "precios": [
+        3.0,
+        3.0,
+        4.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "N/A",
+    "items": [
+        {
+            "nombre": "",
+            "id_producto": "49",
+            "cantidad": 36,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 12616.56,
+            "subtotal_usd": 108.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "nombre": "",
+            "id_producto": "32",
+            "cantidad": 6,
+            "precio_unitario_bs": 350.46,
+            "categoria": "",
+            "subtotal_bs": 2102.7599999999998,
+            "subtotal_usd": 18.0,
+            "precio_unitario_usd": 3.0
+        },
+        {
+            "precio_unitario_usd": 4.2,
+            "id_producto": "30",
+            "cantidad": 6,
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 2943.864,
+            "subtotal_usd": 25.200000000000003,
+            "nombre": ""
+        }
+    ],
+    "subtotal_usd": 151.2,
+    "firma_fiscal": "4cb05ae980d0e4acc377e595a7b8da74a879c0e664188588a257efb553aef224"
+}

@@ -1,0 +1,209 @@
+{
+    "total_bs": 21068.08,
+    "fecha": "2025-05-02",
+    "numero": "FAC-00000603",
+    "descuento": 0.0,
+    "id": "449f3338-97c2-44ae-9f26-086ff3dca8dd",
+    "tasa_bcv": 97.9,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "18:02:00",
+    "productos": [
+        "32",
+        "29",
+        "38",
+        "22",
+        "34",
+        "2",
+        "15",
+        "31",
+        "49",
+        "50",
+        "28",
+        "46"
+    ],
+    "total_usd": 215.20000000000002,
+    "cantidades": [
+        6,
+        6,
+        6,
+        6,
+        12,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        4
+    ],
+    "total_abonado": 215.2,
+    "iva": 0.0,
+    "pagos": [
+        {
+            "moneda": "USD",
+            "fecha": "2025-06-04 18:58:21",
+            "metodo": "pago_movil",
+            "id": "36264463-79c0-403d-a3cb-f4107d48e079",
+            "banco": "0102",
+            "captura_path": null,
+            "referencia": "3569",
+            "monto": 215.2
+        }
+    ],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 0.0,
+    "dias_credito": "21",
+    "cliente_datos": {
+        "direccion": "Urb Las Beatrices Manzana 11 # 09 C/ Bolivar - Edo- Bolivar",
+        "email": "alicia.luna@dominioinventado.com",
+        "rif": "V-13.058.545",
+        "telefono": "+5804121123420",
+        "nombre": "ALICIA LUNA"
+    },
+    "subtotal_bs": 21068.08,
+    "estado": "pagada",
+    "fecha_vencimiento": "2025-05-22",
+    "descuento_total": 0.0,
+    "precios": [
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        2.6,
+        7.0
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "V-13.058.545",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "32",
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "id_producto": "29",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "id_producto": "38",
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "cantidad": 6,
+            "id_producto": "22",
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 12,
+            "id_producto": "34",
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 3054.4800000000005,
+            "subtotal_usd": 31.200000000000003,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "2",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "",
+            "id_producto": "15",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "nombre": "",
+            "id_producto": "31",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "precio_unitario_usd": 2.6
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "id_producto": "49",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "id_producto": "50",
+            "cantidad": 6,
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "precio_unitario_usd": 2.6,
+            "cantidad": 6,
+            "id_producto": "28",
+            "precio_unitario_bs": 254.54000000000002,
+            "categoria": "",
+            "subtotal_bs": 1527.2400000000002,
+            "subtotal_usd": 15.600000000000001,
+            "nombre": ""
+        },
+        {
+            "nombre": "",
+            "id_producto": "46",
+            "cantidad": 4,
+            "precio_unitario_bs": 685.3000000000001,
+            "categoria": "",
+            "subtotal_bs": 2741.2000000000003,
+            "subtotal_usd": 28.0,
+            "precio_unitario_usd": 7.0
+        }
+    ],
+    "subtotal_usd": 215.20000000000002,
+    "firma_fiscal": "4a981a85ecd46a16ccb77296139caf255459fff601cfec7be5c41398a1fc3551"
+}

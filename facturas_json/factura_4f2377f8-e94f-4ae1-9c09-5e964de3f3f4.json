@@ -1,0 +1,55 @@
+{
+    "total_bs": 5887.728,
+    "fecha": "2025-07-04",
+    "numero": "FAC-00000689",
+    "descuento": 0.0,
+    "id": "4f2377f8-e94f-4ae1-9c09-5e964de3f3f4",
+    "tasa_bcv": 116.82,
+    "iva_total": 0.0,
+    "condicion_pago": "credito",
+    "tipo_descuento": "bs",
+    "hora": "22:37:00",
+    "productos": [
+        "48"
+    ],
+    "total_usd": 50.400000000000006,
+    "cantidades": [
+        12
+    ],
+    "total_abonado": 0,
+    "iva": 0.0,
+    "pagos": [],
+    "moneda_principal": "USD",
+    "saldo_pendiente": 50.4,
+    "dias_credito": "2",
+    "cliente_datos": {
+        "direccion": "Calle El Comercio Cc Paseo Colonial Don Pedro Nivel, Pb, Higuerote Edo Miranda",
+        "email": "salud.dietetica.v&d.2006.c.a.@dominioinventado.com",
+        "rif": "J-503178574",
+        "telefono": "",
+        "nombre": "SALUD DIETETICA V&D 2006 C.A."
+    },
+    "subtotal_bs": 5887.728,
+    "estado": "pendiente",
+    "fecha_vencimiento": "2025-07-05",
+    "descuento_total": 0.0,
+    "precios": [
+        4.2
+    ],
+    "moneda_secundaria": "VES",
+    "cliente_id": "J-503178574",
+    "items": [
+        {
+            "nombre": "",
+            "cantidad": 12,
+            "id_producto": "48",
+            "precio_unitario_bs": 490.644,
+            "categoria": "",
+            "subtotal_bs": 5887.728,
+            "subtotal_usd": 50.400000000000006,
+            "precio_unitario_usd": 4.2
+        }
+    ],
+    "subtotal_usd": 50.400000000000006,
+    "firma_fiscal": "52eb9960fe910f16773f95cb3535b2f62f72738235b08935b89f07176e59329a"
+}
